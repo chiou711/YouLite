@@ -581,7 +581,9 @@ public class Util
 
 		String sentString = NEW_LINE;
 
-		int pageTableId = TabsHost.mTabsPagerAdapter.getItem(tabPos).page_tableId;
+		DB_folder mDb_folder = new DB_folder(MainAct.mAct, Pref.getPref_focusView_folder_tableId(MainAct.mAct));
+		int pageTableId = mDb_folder.getPageTableId(tabPos,true);
+
 		List<Long> noteIdArray = new ArrayList<>();
 
 		DB_page dbPage = new DB_page(MainAct.mAct, pageTableId);
@@ -736,6 +738,8 @@ public class Util
 			link.put("note_link_uri", linkUrl);
 			link.put("note_title", title);
 			links.put(link);
+
+			cursorNote.close();
 		}
 		dbPage.close();
 		return links;

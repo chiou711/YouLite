@@ -229,19 +229,19 @@ public class MailPagesFragment extends Fragment{
 				String defaultFileName;
 				if((list_selPage.isCheckAll) ||
 				   (list_selPage.mListStrArr.size() == countChecked) )
-					defaultFileName = list_selPage.mFolderTitle + ".xml";
+					defaultFileName = list_selPage.mFolderTitle;// + ".xml";
 				else
-					defaultFileName = pagesName + ".xml";
+					defaultFileName = pagesName;// + ".xml";
 
 				// save to SD card
 				attachmentFileName[0] = Util.getStorageDirName(getActivity()) + "_SEND_" + // file name
-										defaultFileName +
+										defaultFileName + "_" +
 										Util.getCurrentTimeString() + // time
 										".xml"; // extension name
 
 				attachmentFileName[1] = Util.getStorageDirName(getActivity()) + "_SEND_" + // file name
-										defaultFileName +
-										Util.getCurrentTimeString() + // time
+										defaultFileName + "_" +
+						Util.getCurrentTimeString() + // time
 										".txt"; // extension name
 
 				Util util = new Util(getActivity());
