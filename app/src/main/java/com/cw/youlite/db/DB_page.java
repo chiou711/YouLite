@@ -80,7 +80,7 @@ public class DB_page
 		//try to get note cursor
 		try
 		{
-//			System.out.println("DB_page / _open / open page table Try / table name = " + DB_PAGE_TABLE_NAME);
+//			System.out.println("DB_page / _open / open page table Try / getFocusPage_tableId() = " + getFocusPage_tableId());
 			mCursor_note = this.getNoteCursor_byPageTableId(getFocusPage_tableId());
 		}
 		catch(Exception e)

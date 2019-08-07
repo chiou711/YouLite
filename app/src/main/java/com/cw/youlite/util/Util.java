@@ -300,12 +300,10 @@ public class Util
 				page.put("title", mDbFolder.getPageTitle(i,true) );
 				page.put("links", getJson(i, ID_FOR_TABS));
 				pages.put(page);
-				System.out.println("Util / _queryJsonDB / curData = " + curData);
 			}
-
-			category = new JSONObject();
 		}
 
+		category = new JSONObject();
 		category.put("category", "test YouLite");
 		category.put("link_page", pages);
 
@@ -686,7 +684,11 @@ public class Util
 	 */
 	public static JSONArray getJson(int tabPos, long noteId) throws JSONException
 	{
-		int pageTableId = TabsHost.mTabsPagerAdapter.getItem(tabPos).page_tableId;
+		DB_folder mDb_folder = new DB_folder(MainAct.mAct, Pref.getPref_focusView_folder_tableId(MainAct.mAct));
+		int pageTableId = mDb_folder.getPageTableId(tabPos,true);
+
+		System.out.println("Util / _getJson / pageTableId = " + pageTableId );
+
 		List<Long> noteIdArray = new ArrayList<>();
 
 		DB_page dbPage = new DB_page(MainAct.mAct, pageTableId);
@@ -717,26 +719,25 @@ public class Util
 		dbPage.close();
 
 		JSONArray links = new JSONArray();
+		dbPage.open();
 		// when page has page name only, no notes
 		for(int i=0;i< noteIdArray.size();i++)
 		{
-			dbPage.open();
 			Cursor cursorNote = dbPage.queryNote(noteIdArray.get(i));
 			String title = cursorNote.getString(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_TITLE));
-			title = replaceEscapeCharacter(title);
+			//title = replaceEscapeCharacter(title);
 
 			String linkUrl = cursorNote.getString(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_LINK_URI));
 
-			linkUrl = replaceEscapeCharacter(linkUrl);
+			//linkUrl = replaceEscapeCharacter(linkUrl);
 
 			JSONObject link = new JSONObject();
 			link.put("note_id", String.valueOf(i+1));//id starts with 1
 			link.put("note_link_uri", linkUrl);
 			link.put("note_title", title);
 			links.put(link);
-
-			dbPage.close();
 		}
+		dbPage.close();
 		return links;
 	}
 
