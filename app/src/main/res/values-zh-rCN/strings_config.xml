@@ -24,6 +24,7 @@
     <string name="config_delete_DB_toast">所有页面已被删除。</string>
     <string name="config_export_SDCard_title">汇出笔记:到SD卡</string>
     <string name="config_export_SDCard_JSON_title">汇出笔记:到SD卡 JSON</string>
+    <string name="config_export_SDCard_all_JSON_title">汇出笔记:到SD卡 all JSON</string>
     <string name="config_export_SDCard_btn">汇出</string>
     <string name="config_export_SDCard_toast">汇出笔记到SD卡：OK</string>
     <string name="config_export_none_toast">还没有笔记</string>

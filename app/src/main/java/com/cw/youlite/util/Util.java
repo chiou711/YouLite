@@ -42,6 +42,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.cw.youlite.db.DB_drawer;
 import com.cw.youlite.main.MainAct;
 import com.cw.youlite.page.Checked_notes_option;
 import com.cw.youlite.R;
@@ -199,6 +200,20 @@ public class Util
 		data = queryJsonDB(data,checkedTabs);
 		exportToSdCardFile(filename,data);
 	}
+
+	// export to SD card all Json
+	public void exportToSdCardAllJson(String filename) throws JSONException
+	{
+		//first row text
+		String data ="";
+
+		System.out.println("Util / _exportToSdCardAllJson ");
+
+		//get data from DB
+		data = queryAllJsonDB(data);
+		exportToSdCardFile(filename,data);
+	}
+
 	
 	// Export data to be SD Card file
 	public void exportToSdCardFile(String filename,String data)
@@ -319,6 +334,55 @@ public class Util
 		System.out.println("Util / queryJsonDB / curData = " + curData);
 		return curData;
 	}
+
+	private String queryAllJsonDB(String data) throws JSONException
+	{
+		String curData = data;
+
+		// from small to large:
+		//	JSONObject: link , page (= links + title), category (= pages + category_name) , client ( = categories + clientName)
+		//	JSONArray: links, pages, categories
+
+		DB_drawer dB_drawer = new DB_drawer(MainAct.mAct);
+		int foldersCount = dB_drawer.getFoldersCount(true);
+
+		JSONArray categories = new JSONArray();
+
+		for(int folderIndex = 0; folderIndex < foldersCount; folderIndex++)
+		{
+			// folder
+			int folderTableId = dB_drawer.getFolderTableId(folderIndex,true);
+			mDbFolder = new DB_folder(mContext, folderTableId);
+
+			// page
+			int tabCount = mDbFolder.getPagesCount(true);
+			JSONArray pages = new JSONArray();
+			for (int i = 0; i < tabCount; i++) {
+				JSONObject page = new JSONObject();
+
+				page.put("title", mDbFolder.getPageTitle(i, true));
+				page.put("links", getAllJson(folderTableId,i, ID_FOR_TABS));
+				pages.put(page);
+			}
+
+			JSONObject category = new JSONObject();
+			category.put("category", dB_drawer.getFolderTitle(folderIndex,true));
+			category.put("link_page", pages);
+
+			categories.put(category);
+		}
+
+		JSONObject clientObj = new JSONObject();
+		clientObj.put("client","TV YouTube" );
+		clientObj.put("content",categories);
+
+		curData = clientObj.toString();
+
+		System.out.println("Util / queryJsonDB / curData = " + curData);
+		return curData;
+	}
+
+
 
     // get current time string
     public static String getCurrentTimeString()
@@ -687,6 +751,74 @@ public class Util
 	public static JSONArray getJson(int tabPos, long noteId) throws JSONException
 	{
 		DB_folder mDb_folder = new DB_folder(MainAct.mAct, Pref.getPref_focusView_folder_tableId(MainAct.mAct));
+		int pageTableId = mDb_folder.getPageTableId(tabPos,true);
+
+		System.out.println("Util / _getJson / pageTableId = " + pageTableId );
+
+		List<Long> noteIdArray = new ArrayList<>();
+
+		DB_page dbPage = new DB_page(MainAct.mAct, pageTableId);
+		dbPage.open();
+
+		int count = dbPage.getNotesCount(false);
+
+		if(noteId == ID_FOR_TABS)
+		{
+			for (int i = 0; i < count; i++)
+				noteIdArray.add(i, dbPage.getNoteId(i, false));
+		}
+		else if(noteId == ID_FOR_NOTES)
+		{
+			// for checked notes
+			int j=0;
+			for (int i = 0; i < count; i++)
+			{
+				if(dbPage.getNoteMarking(i,false) == 1) {
+					noteIdArray.add(j, dbPage.getNoteId(i, false));
+					j++;
+				}
+			}
+		}
+		else
+			noteIdArray.add(0, noteId);//only one for View note case
+
+		dbPage.close();
+
+		JSONArray links = new JSONArray();
+		dbPage.open();
+		// when page has page name only, no notes
+		for(int i=0;i< noteIdArray.size();i++)
+		{
+			Cursor cursorNote = dbPage.queryNote(noteIdArray.get(i));
+			String title = cursorNote.getString(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_TITLE));
+			//title = replaceEscapeCharacter(title);
+
+			String linkUrl = cursorNote.getString(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_LINK_URI));
+
+			//linkUrl = replaceEscapeCharacter(linkUrl);
+
+			JSONObject link = new JSONObject();
+			link.put("note_id", String.valueOf(i+1));//id starts with 1
+			link.put("note_link_uri", linkUrl);
+			link.put("note_title", title);
+			links.put(link);
+
+			cursorNote.close();
+		}
+		dbPage.close();
+		return links;
+	}
+
+
+	/**
+	 * Get string with Json tags
+	 * @param tabPos tab position
+	 * @param noteId: ID_FOR_TABS for checked tabs(pages), ID_FOR_NOTES for checked notes
+	 * @return string with tags
+	 */
+	public static JSONArray getAllJson(int folder_table_id, int tabPos, long noteId) throws JSONException
+	{
+		DB_folder mDb_folder = new DB_folder(MainAct.mAct, folder_table_id);
 		int pageTableId = mDb_folder.getPageTableId(tabPos,true);
 
 		System.out.println("Util / _getJson / pageTableId = " + pageTableId );

@@ -37,6 +37,7 @@ import com.cw.youlite.operation.audio.AudioPlayer_page;
 import com.cw.youlite.operation.audio.BackgroundAudioService;
 import com.cw.youlite.operation.delete.DeleteFolders;
 import com.cw.youlite.operation.delete.DeletePages;
+import com.cw.youlite.operation.import_export.Export_toSDCardAllJsonFragment;
 import com.cw.youlite.operation.import_export.Export_toSDCardJsonFragment;
 import com.cw.youlite.operation.import_export.Import_fileView;
 import com.cw.youlite.operation.import_export.Import_webAct;
@@ -1208,6 +1209,9 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
              */
             mMenu.setGroupVisible(R.id.group_pages_and_more, foldersCnt >0);
 
+            // EXPORT TO SD CARD ALL JSON
+            mMenu.findItem(R.id.EXPORT_TO_SD_CARD_ALL_JSON).setVisible(foldersCnt >0);
+
             if(foldersCnt>0)
             {
                 getSupportActionBar().setTitle(mFolderTitle);
@@ -1689,6 +1693,15 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 {
                     Toast.makeText(this, R.string.no_page_yet, Toast.LENGTH_SHORT).show();
                 }
+                return true;
+
+            case MenuId.EXPORT_TO_SD_CARD_ALL_JSON:
+                //hide the menu
+                mMenu.setGroupVisible(R.id.group_notes, false);
+                mMenu.setGroupVisible(R.id.group_pages_and_more, false);
+                Export_toSDCardAllJsonFragment exportFragment = new Export_toSDCardAllJsonFragment();
+                transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+                transaction.replace(R.id.content_frame, exportFragment,"export").addToBackStack(null).commit();
                 return true;
 
             case MenuId.SEND_PAGES:

@@ -42,7 +42,8 @@ public class MenuId {
         static final int ENABLE_NOTE_DRAG_AND_DROP = R.id.ENABLE_NOTE_DRAG_AND_DROP;
         static final int SEND_PAGES = R.id.SEND_PAGES;
 		static final int EXPORT_TO_SD_CARD = R.id.EXPORT_TO_SD_CARD;
-		static final int EXPORT_TO_SD_CARD_JSON = R.id.EXPORT_TO_SD_CARD_JSON;
+        static final int EXPORT_TO_SD_CARD_JSON = R.id.EXPORT_TO_SD_CARD_JSON;
+        static final int EXPORT_TO_SD_CARD_ALL_JSON = R.id.EXPORT_TO_SD_CARD_ALL_JSON;
         static final int IMPORT_FROM_SD_CARD = R.id.IMPORT_FROM_SD_CARD;
         static final int IMPORT_FROM_WEB = R.id.IMPORT_FROM_WEB;
         static final int CONFIG = R.id.CONFIG;
