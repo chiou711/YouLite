@@ -55,4 +55,9 @@
     <string name="blank_folder">Blank folder</string>
     <string name="sample_notes_title">Sample of notes</string>
     <string name="sample_notes_message">Do you want to create sample of notes? If yes, you need to allow the access of photos,media, and files on your device in next dialog.</string>
+    <string name="select_folder">Select a folder</string>
+    <string name="select_file">Select file</string>
+    <string name="file_not_selected">No file selected, can not continue.</string>
+    <string name="content_updated">Successfully edited contents.</string>
+    <string name="content_update_failed">Error while editing contents.</string>
 </resources>

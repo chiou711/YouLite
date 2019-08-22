@@ -18,7 +18,7 @@ package com.cw.youlite.util;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.support.v7.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatEditText;
 
 /**
  * Created by cw on 2018/2/6.

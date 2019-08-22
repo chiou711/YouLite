@@ -25,6 +25,7 @@
     <string name="config_export_SDCard_title">匯出記事:到SD卡</string>
     <string name="config_export_SDCard_JSON_title">匯出記事:到SD卡 JSON</string>
     <string name="config_export_SDCard_all_JSON_title">匯出記事:到SD卡 all JSON</string>
+    <string name="config_export_GDrive_all_JSON_title">匯出記事:到Google Drive all JSON</string>
     <string name="config_export_SDCard_btn">匯出</string>
     <string name="config_export_SDCard_toast">匯出記事到SD卡: OK</string>
     <string name="config_export_none_toast">還沒有記事</string>

@@ -55,4 +55,9 @@
     <string name="blank_folder">空白文件夾</string>
     <string name="sample_notes_title">筆記樣本</string>
     <string name="sample_notes_message">你想創建筆記樣本嗎？ 如果是，則需要允許在下一個對話框中訪問設備上的照片，媒體和文件。</string>
+    <string name="select_folder">Select a folder</string>
+    <string name="select_file">Select file</string>
+    <string name="file_not_selected">No file selected, can not continue.</string>
+    <string name="content_updated">Successfully edited contents.</string>
+    <string name="content_update_failed">Error while editing contents.</string>
 </resources>

@@ -25,6 +25,7 @@
     <string name="config_export_SDCard_title">Export notes to SD card</string>
     <string name="config_export_SDCard_JSON_title">Export notes to SD card JSON</string>
     <string name="config_export_SDCard_all_JSON_title">Export notes to SD card all JSON</string>
+    <string name="config_export_GDrive_all_JSON_title">Export notes to Google Drive all JSON</string>
     <string name="config_export_SDCard_btn">export</string>
     <string name="config_export_SDCard_toast">Export notes to SD card: OK</string>
     <string name="config_export_none_toast">No note yet</string>

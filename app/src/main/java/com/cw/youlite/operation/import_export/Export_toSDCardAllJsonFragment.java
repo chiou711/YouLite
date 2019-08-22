@@ -23,7 +23,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -123,7 +123,8 @@ public class Export_toSDCardAllJsonFragment extends Fragment {
 		int folderTableId = getPref_focusView_folder_tableId(mContext);
 		DB_drawer db_drawer = new DB_drawer(mContext);
 
-		mDefaultFileName = db_drawer.getFolderTitle(folderTableId,true) + ".json";
+//		mDefaultFileName = db_drawer.getFolderTitle(folderTableId,true) + ".json";
+		mDefaultFileName = "g_drive_src.json";
 		editSDCardFileNameText.setText(mDefaultFileName);
 
 		builder1.setTitle(R.string.config_export_SDCard_edit_filename)

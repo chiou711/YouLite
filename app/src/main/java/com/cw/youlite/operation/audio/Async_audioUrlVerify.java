@@ -21,7 +21,7 @@ import com.cw.youlite.util.Util;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Audio Url verification task

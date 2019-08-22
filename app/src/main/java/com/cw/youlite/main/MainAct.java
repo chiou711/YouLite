@@ -39,6 +39,7 @@ import com.cw.youlite.operation.delete.DeleteFolders;
 import com.cw.youlite.operation.delete.DeletePages;
 import com.cw.youlite.operation.import_export.Export_toSDCardAllJsonFragment;
 import com.cw.youlite.operation.import_export.Export_toSDCardJsonFragment;
+import com.cw.youlite.operation.import_export.GDriveRewriteAct;
 import com.cw.youlite.operation.import_export.Import_fileView;
 import com.cw.youlite.operation.import_export.Import_webAct;
 import com.cw.youlite.page.Checked_notes_option;
@@ -52,9 +53,7 @@ import com.cw.youlite.operation.import_export.Import_filesList;
 import com.cw.youlite.db.DB_drawer;
 import com.cw.youlite.util.Dialog_EULA;
 import com.cw.youlite.util.audio.UtilAudio;
-import com.cw.youlite.operation.gallery.GalleryGridAct;
 import com.cw.youlite.operation.slideshow.SlideshowInfo;
-import com.cw.youlite.operation.slideshow.SlideshowPlayer;
 import com.cw.youlite.util.image.UtilImage;
 import com.cw.youlite.define.Define;
 import com.cw.youlite.operation.mail.MailNotes;
@@ -82,17 +81,17 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NotificationManagerCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentManager.OnBackStackChangedListener;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.app.NotificationManagerCompat;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -1212,6 +1211,9 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             // EXPORT TO SD CARD ALL JSON
             mMenu.findItem(R.id.EXPORT_TO_SD_CARD_ALL_JSON).setVisible(foldersCnt >0);
 
+            // EXPORT TO Google Drive ALL JSON
+            mMenu.findItem(R.id.EXPORT_TO_GDrive_ALL_JSON).setVisible(foldersCnt >0);
+
             if(foldersCnt>0)
             {
                 getSupportActionBar().setTitle(mFolderTitle);
@@ -1702,6 +1704,14 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 Export_toSDCardAllJsonFragment exportFragment = new Export_toSDCardAllJsonFragment();
                 transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
                 transaction.replace(R.id.content_frame, exportFragment,"export").addToBackStack(null).commit();
+                return true;
+
+            case MenuId.EXPORT_TO_GDRIVE_ALL_JSON:
+                //hide the menu
+                mMenu.setGroupVisible(R.id.group_notes, false);
+                mMenu.setGroupVisible(R.id.group_pages_and_more, false);
+                Intent intent = new Intent(this, GDriveRewriteAct.class);
+                startActivity(intent);
                 return true;
 
             case MenuId.SEND_PAGES:
