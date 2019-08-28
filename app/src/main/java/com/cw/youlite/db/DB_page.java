@@ -36,8 +36,8 @@ public class DB_page
     private SQLiteDatabase mSqlDb;
 
 	// Table name format: Page1_2
-	private static String DB_PAGE_TABLE_PREFIX = "Page";
-    private static String DB_PAGE_TABLE_NAME; // Note: name = prefix + id
+	public static String DB_PAGE_TABLE_PREFIX = "Page";
+    public static String DB_PAGE_TABLE_NAME; // Note: name = prefix + id
 
 	// Note rows
     public static final String KEY_NOTE_ID = "_id"; //do not rename _id for using CursorAdapter (BaseColumns._ID)

@@ -16,10 +16,15 @@ package com.cw.youlite.operation.import_export;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.cw.youlite.R;
+import com.cw.youlite.util.Util;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -37,8 +42,12 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 
+import org.json.JSONException;
+
 import java.util.HashSet;
 import java.util.Set;
+
+import androidx.annotation.Nullable;
 
 /**
  * An abstract activity that handles authorization and connection to the Drive services.
@@ -71,11 +80,75 @@ public abstract class GDriveBaseAct extends Activity {
      */
     private TaskCompletionSource<DriveId> mOpenItemTaskSource;
 
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        System.out.println("GDriveBaseAct / _onCreate");
+        setContentView(R.layout.progress_bar);
+        mProgressBar = findViewById(R.id.export_progress);
+        mStrSDCardFileName = "g_drive_src.json";
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
-        signIn();
+        System.out.println("GDriveBaseAct / _onStart");
+
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.export_progress);
+        ShowProgressBarAsyncTask task = new ShowProgressBarAsyncTask();
+        task.setProgressBar(progressBar);
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        //signIn();
     }
+
+
+    String mStrSDCardFileName;
+//    AlertDialog mDialog;
+    ProgressBar mProgressBar;
+    // Show progress bar
+    public class ShowProgressBarAsyncTask extends AsyncTask<Void, Integer, Void> {
+
+        ProgressBar bar;
+        public void setProgressBar(ProgressBar bar) {
+            this.bar = bar;
+            mProgressBar.setVisibility(View.VISIBLE);
+            bar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            if (this.bar != null) {
+                bar.setProgress(values[0]);
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Util util = new Util(GDriveBaseAct.this);
+            try {
+                util.exportToSdCardAllJson(mStrSDCardFileName); // attachment name
+            } catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            bar.setVisibility(View.GONE);
+//            Toast.makeText(GDriveBaseAct.this,
+//                    R.string.btn_Finish,
+//                    Toast.LENGTH_SHORT).show();
+
+            signIn();
+        }
+    }
+
 
     /**
      * Handles resolution callbacks.

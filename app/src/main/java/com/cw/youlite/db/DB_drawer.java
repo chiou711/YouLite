@@ -40,16 +40,16 @@ public class DB_drawer
     private SQLiteDatabase mSqlDb;
 
     // Table name format: Drawer
-    static String DB_DRAWER_TABLE_NAME = "Drawer";
+    public static String DB_DRAWER_TABLE_NAME = "Drawer";
 
 	// Table name format: Folder1
-	private static String DB_FOLDER_TABLE_PREFIX = "Folder";
+	public static String DB_FOLDER_TABLE_PREFIX = "Folder";
 
 	// Folder rows
-    static final String KEY_FOLDER_ID = "folder_id"; //can rename _id for using BaseAdapter
-    static final String KEY_FOLDER_TABLE_ID = "folder_table_id"; //can rename _id for using BaseAdapter
+	public static final  String KEY_FOLDER_ID = "folder_id"; //can rename _id for using BaseAdapter
+	public static final  String KEY_FOLDER_TABLE_ID = "folder_table_id"; //can rename _id for using BaseAdapter
     public static final String KEY_FOLDER_TITLE = "folder_title";
-    static final String KEY_FOLDER_CREATED = "folder_created";
+	public static final  String KEY_FOLDER_CREATED = "folder_created";
 
 	// Cursor
 	public static Cursor mCursor_folder;
@@ -234,7 +234,11 @@ public class DB_drawer
         if(enDbOpenClose)
             this.open();
         mCursor_folder.moveToPosition(position);
-        int id = mCursor_folder.getInt(mCursor_folder.getColumnIndex(KEY_FOLDER_TABLE_ID));
+
+        int id = 1;
+
+        if((mCursor_folder != null) && (mCursor_folder.getCount() >0) )
+        	id = mCursor_folder.getInt(mCursor_folder.getColumnIndex(KEY_FOLDER_TABLE_ID));
 
         if(enDbOpenClose)
             this.close();

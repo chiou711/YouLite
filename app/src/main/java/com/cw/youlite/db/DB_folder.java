@@ -36,18 +36,18 @@ public class DB_folder
     public SQLiteDatabase mSqlDb;
 
 	// Table name format: Folder1
-	private static String DB_FOLDER_TABLE_PREFIX = "Folder";
+	public static String DB_FOLDER_TABLE_PREFIX = "Folder";
 
 	// Table name format: Page1_2
-	private static String DB_PAGE_TABLE_PREFIX = "Page";
+	public static String DB_PAGE_TABLE_PREFIX = "Page";
     private static String DB_PAGE_TABLE_NAME; // Note: name = prefix + id
 
 	// Page rows
-    static final String KEY_PAGE_ID = "page_id"; //can rename _id for using BaseAdapter
-    static final String KEY_PAGE_TITLE = "page_title";
-    static final String KEY_PAGE_TABLE_ID = "page_table_id";
-    static final String KEY_PAGE_STYLE = "page_style";
-    static final String KEY_PAGE_CREATED = "page_created";
+    public static final String KEY_PAGE_ID = "page_id"; //can rename _id for using BaseAdapter
+    public static final String KEY_PAGE_TITLE = "page_title";
+    public static final String KEY_PAGE_TABLE_ID = "page_table_id";
+    public static final String KEY_PAGE_STYLE = "page_style";
+    public static final String KEY_PAGE_CREATED = "page_created";
 
 	// DB
     DB_folder mDb_folder;

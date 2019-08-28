@@ -745,7 +745,10 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return cursor.getCount();//mDataSet.length; //todo bug: Attempt to invoke interface method 'int android.database.Cursor.getCount()' on a null object reference
+	    if(cursor != null)
+            return cursor.getCount();//mDataSet.length; //todo bug: Attempt to invoke interface method 'int android.database.Cursor.getCount()' on a null object reference
+	    else
+	    	return 0;
     }
 
     // toggle mark of note

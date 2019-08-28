@@ -24,8 +24,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.cw.youlite.R;
+import com.cw.youlite.Utils;
 import com.cw.youlite.config.About;
 import com.cw.youlite.config.Config;
+import com.cw.youlite.data.FetchService_category;
+import com.cw.youlite.data.FetchService_video;
 import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.db.DB_page;
 import com.cw.youlite.drawer.Drawer;
@@ -92,6 +95,8 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import androidx.core.view.GravityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -99,6 +104,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static android.os.Build.VERSION_CODES.M;
 import static android.os.Build.VERSION_CODES.O;
 
@@ -128,6 +135,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     public final static int STATE_PAUSED = 0;
     public final static int STATE_PLAYING = 1;
     public boolean bEULA_accepted;
+
+    private final int INIT_NUMBER = 1;
 
 	// Main Act onCreate
     @Override
@@ -160,10 +169,10 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 //        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_INITIAL);
 
         /** 2 debug, assets */
-        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_ASSETS);
+//        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_ASSETS);
 
         /** 3 debug, download */
-//        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_DOWNLOAD);
+        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_DOWNLOAD);
 
         /** 4 release, initial */
 //        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_INITIAL);
@@ -259,7 +268,15 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                             checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
                         else {
                             if (Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) {
-                                createDefaultContent_byDownload();
+//                                createDefaultContent_byDownload();
+
+                                Utils.setPref_focus_category_number(this, INIT_NUMBER);
+
+                                // start Fetch category service
+                                System.out.println("MainAct / _onCreate / start Fetch category service =================================");
+                                Intent serviceIntent = new Intent(this, FetchService_category.class);
+                                serviceIntent.putExtra("FetchUrl", getDefaultUrl());
+                                startService(serviceIntent);
                             }
                             else {
                                 Pref.setPref_will_create_default_content(this, true);
@@ -319,6 +336,17 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
     }
 
+    // get default URL
+    private String getDefaultUrl()
+    {
+        // data base is not created yet, call service for the first time
+        String urlName = "catalog_url_".concat(String.valueOf(INIT_NUMBER));
+        int id = getResources().getIdentifier(urlName,"string",getPackageName());
+        return getString(id);
+
+        //return getActivity().getResources().getString(R.string.catalog_url_1);
+    }
+
     // check permission dialog
     void checkPermission(Bundle savedInstanceState,int permissions_request)
     {
@@ -375,18 +403,18 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             }//if(ENABLE_DB_CHECK)
 
             // get focus folder table Id, default folder table Id: 1
-            DB_drawer dB_drawer = new DB_drawer(this);
-            dB_drawer.open();
-            if (savedInstanceState == null) {
-                for (int i = 0; i < dB_drawer.getFoldersCount(false); i++) {
-                    if (dB_drawer.getFolderTableId(i, false) == Pref.getPref_focusView_folder_tableId(this)) {
-                        FolderUi.setFocus_folderPos(i);
-                        System.out.println("MainAct / _mainAction / FolderUi.getFocus_folderPos() = " + FolderUi.getFocus_folderPos());
-                    }
-                }
-                Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_STOP);
-            }
-            dB_drawer.close();
+//            DB_drawer dB_drawer = new DB_drawer(this);
+//            dB_drawer.open();
+//            if (savedInstanceState == null) {
+//                for (int i = 0; i < dB_drawer.getFoldersCount(false); i++) {
+//                    if (dB_drawer.getFolderTableId(i, false) == Pref.getPref_focusView_folder_tableId(this)) {
+//                        FolderUi.setFocus_folderPos(i);
+//                        System.out.println("MainAct / _mainAction / FolderUi.getFocus_folderPos() = " + FolderUi.getFocus_folderPos());
+//                    }
+//                }
+//                Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_STOP);
+//            }
+//            dB_drawer.close();
 
             // enable ActionBar app icon to behave as action to toggle nav drawer
 //	        getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -603,8 +631,16 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             switch (requestCode)
             {
                 case Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES:
-                    if(Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD)
-                        createDefaultContent_byDownload();
+                    if(Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) {
+//                        createDefaultContent_byDownload();
+                        Utils.setPref_focus_category_number(this, INIT_NUMBER);
+
+                        // start Fetch category service
+                        System.out.println("MainAct / _onRequestPermissionsResult / start Fetch category service =================================");
+                        Intent serviceIntent = new Intent(MainAct.this, FetchService_category.class);
+                        serviceIntent.putExtra("FetchUrl", getDefaultUrl());
+                        startService(serviceIntent);
+                    }
                     else {
                         Pref.setPref_will_create_default_content(this, true);
                         recreate();
@@ -634,8 +670,12 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
          * LiteNote_default_content.xml
          * Unit: folder
          */
-        // LiteNote_default_content.xml
-        String srcUrl = "https://drive.google.com/uc?authuser=0&id=1qAfMUJ9DMsciVkb7hEQAwLrmcyfN95sF&export=download";
+        // LiteNotes_default_content.xml
+//        String srcUrl = "https://drive.google.com/uc?authuser=0&id=1qAfMUJ9DMsciVkb7hEQAwLrmcyfN95sF&export=download";
+
+        // JSON file at Google Drive
+//        String srcUrl = "https://drive.google.com/open?id=1rmE2Vm3F0bBWRWOWy-_HzAE-MAFd88F-";
+        String srcUrl = "https://drive.google.com/uc?authuser=0&id=1rmE2Vm3F0bBWRWOWy-_HzAE-MAFd88F-&export=download";
 
         Async_default_byDownload async = new Async_default_byDownload(mAct,srcUrl);
         async.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"Downloading file ...");
@@ -857,6 +897,10 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         System.out.println("MainAct / _onPause");
     }
 
+
+    private FetchServiceResponseReceiver responseReceiver;
+    LocalBroadcastManager localBroadcastMgr;
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -869,6 +913,56 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         // Sync the toggle state after onRestoreInstanceState has occurred.
         if(bEULA_accepted)
             drawer.drawerToggle.syncState();
+
+        // receiver for fetch video service
+        IntentFilter statusIntentFilter = new IntentFilter(FetchService_video.Constants.BROADCAST_ACTION);
+        responseReceiver = new FetchServiceResponseReceiver();
+
+        // Registers the FetchServiceResponseReceiver and its intent filters
+        localBroadcastMgr = LocalBroadcastManager.getInstance(this);
+        localBroadcastMgr.registerReceiver(responseReceiver, statusIntentFilter );
+    }
+
+    // Broadcast receiver for receiving status updates from the IntentService
+    class FetchServiceResponseReceiver extends BroadcastReceiver {
+        // Called when the BroadcastReceiver gets an Intent it's registered to receive
+        public void onReceive(Context context, Intent intent) {
+            /*
+             * You get notified here when your IntentService is done
+             * obtaining data form the server!
+             */
+            String statusStr = intent.getExtras().getString(FetchService_category.Constants.EXTENDED_DATA_STATUS);
+            System.out.println("MainFragment / _FetchServiceResponseReceiver / _onReceive / statusStr = " + statusStr);
+
+            // after fetch category
+            if((statusStr != null) && statusStr.equalsIgnoreCase("FetchCategoryServiceIsDone"))
+            {
+                if (context != null) {
+                    // avoid endless loop due to empty category selection
+                    Utils.setPref_focus_category_number(MainAct.this,1);
+
+                    Intent serviceIntent = new Intent(MainAct.this, FetchService_video.class);
+                    serviceIntent.putExtra("FetchUrl", getDefaultUrl());
+                    startService(serviceIntent);
+                }
+            }
+
+            // after fetch video
+            if((statusStr != null) && statusStr.equalsIgnoreCase("FetchVideoServiceIsDone"))
+            {
+                if (context != null) {
+                    // unregister receiver
+                    localBroadcastMgr.unregisterReceiver(responseReceiver);//todo check
+                    responseReceiver = null;
+
+                    System.out.println("MainFragment / _FetchServiceResponseReceiver / will start new main activity");
+                    Intent new_intent = new Intent(context, MainAct.class);
+                    new_intent.addFlags(FLAG_ACTIVITY_CLEAR_TASK);
+                    new_intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(new_intent);
+                }
+            }
+        }
     }
 
 
@@ -936,6 +1030,10 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         NotificationManagerCompat.from(MainAct.mAct).cancel(BackgroundAudioService.id);
 
         mMediaBrowserCompat = null;
+
+        // unregister receiver
+        localBroadcastMgr.unregisterReceiver(responseReceiver);
+        responseReceiver = null;
 
         super.onDestroy();
     }

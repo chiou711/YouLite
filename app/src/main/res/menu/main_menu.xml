@@ -142,7 +142,7 @@
             app:showAsAction="ifRoom|withText"
             android:title="@string/backup_operation"
             >
-        <menu xmlns:android="http://schemas.android.com/apk/res/android">
+        <menu android:background ="#4f004f">
             <item
                 android:id="@+id/IMPORT_FROM_WEB"
                 android:orderInCategory="1"
@@ -178,7 +178,7 @@
                 android:orderInCategory="6"
                 app:showAsAction="never"
                 android:title="@string/config_export_GDrive_all_JSON_title"
-                android:icon="@android:drawable/ic_menu_save"/>
+                android:icon="@drawable/google_drive"/>
             <item
                 android:id="@+id/SEND_PAGES"
                 android:orderInCategory="7"

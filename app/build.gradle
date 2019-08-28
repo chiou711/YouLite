@@ -1,6 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        gdrive {
+
+        }
+    }
     compileSdkVersion 28
     buildToolsVersion '28.0.3'
 
@@ -27,7 +32,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.gdrive
         }
     }
     sourceSets {
@@ -69,19 +74,23 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.cardview:cardview:1.0.0'
+
     // if ENABLE_ADMOB = true, enable the following
     //    implementation 'com.android.support:support-annotations:28.0.0'
     //    implementation 'com.google.android.gms:play-services-ads:16.0.0'
-    // group: short and best
-    implementation('com.google.api-client:google-api-client-android:1.27.0') {
-        exclude group: 'org.apache.httpcomponents'
-    }
-    implementation('com.google.apis:google-api-services-youtube:v3-rev20180511-1.27.0') {
-        exclude group: 'org.apache.httpcomponents'
-    }
 
     // for Google Drive API
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
     implementation 'com.google.android.gms:play-services-drive:17.0.0'
+
+    // group: short and best
+//    implementation('com.google.api-client:google-api-client-android:1.27.0') {
+//        exclude group: 'org.apache.httpcomponents'
+//    }
+    implementation('com.google.apis:google-api-services-youtube:v3-rev20180511-1.27.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+
+
 
 }

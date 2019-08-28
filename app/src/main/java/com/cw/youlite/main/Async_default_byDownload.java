@@ -82,13 +82,15 @@ class Async_default_byDownload extends AsyncTask<String,Integer,String>
 
 //		String srcUrl =   "https://drive.google.com/uc?authuser=0&id=1qAfMUJ9DMsciVkb7hEQAwLrmcyfN95sF&export=download";
 
-		String targetUrl = "file://" + "/storage/emulated/0/LiteNote" + "/default_content_by_download.xml";
+//		String targetUrl = "file://" + "/storage/emulated/0/YouLite" + "/default_content_by_download.xml";
+
+		String targetUrl = "file://" + "/storage/emulated/0/YouLite" + "/default_content_by_download.json";
 
 		DownloadManager downloadmanager = (DownloadManager) act.getSystemService(Context.DOWNLOAD_SERVICE);
 		Uri uri = Uri.parse(srcUrl);
 
 		DownloadManager.Request request = new DownloadManager.Request(uri);
-		request.setTitle("LiteNote download");
+		request.setTitle("YouLite download");
 		request.setDescription("Downloading");
 //                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 //                    request.setVisibleInDownloadsUi(true);
@@ -100,7 +102,9 @@ class Async_default_byDownload extends AsyncTask<String,Integer,String>
 				"/" +
 				Util.getStorageDirName(MainAct.mAct);
 		File storageRoot = new File(dirString);
-		File downloadedFile = new File(storageRoot, "default_content_by_download.xml");
+//		File downloadedFile = new File(storageRoot, "default_content_by_download.xml");
+
+		File downloadedFile = new File(storageRoot, "default_content_by_download.json");
 
 		// waiting until time out
 		int timeOutCount = 20;
