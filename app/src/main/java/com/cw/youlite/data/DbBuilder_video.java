@@ -43,7 +43,7 @@ import androidx.annotation.NonNull;
  */
 public class DbBuilder_video {
     public static final String TAG_LINK_PAGE = "link_page";
-    public static final String TAG_MEDIA = "links";
+    public static final String TAG_LINKS = "links";
     public static final String TAG_TITLE = "title";
 
     private static final String TAG = "DbBuilder_video";
@@ -63,7 +63,7 @@ public class DbBuilder_video {
      * @param url The location of the video list
      */
     public @NonNull
-    List<List<ContentValues>> fetch(String url)
+    List<List<List<ContentValues>>> fetch(String url)
             throws IOException, JSONException {
         JSONObject videoData = fetchJSON(url);
         System.out.println("DbBuilder_video / _fetch / videoData length = " + videoData.length()) ;
@@ -75,15 +75,17 @@ public class DbBuilder_video {
      * @param jsonObj The JSON object of videos
      * @throws JSONException if the JSON object is invalid
      */
-    public List<List<ContentValues>> buildMedia(JSONObject jsonObj) throws JSONException {
+    public List<List<List<ContentValues>>> buildMedia(JSONObject jsonObj) throws JSONException {
 
         System.out.println("DbBuilder_video / _buildMedia / jsonObj.toString = " + jsonObj.toString());
 
         JSONArray contentArray = jsonObj.getJSONArray("content");
-        List<List<ContentValues>> contentList = new ArrayList<>();
-        List<ContentValues> videosToInsert = null;
+        List<List<List<ContentValues>>> contentList = new ArrayList<>();
+        List<List<ContentValues>> pagesToInsert = null;
+        List<ContentValues> pageToInsert = null;
         System.out.println("DbBuilder_video / _buildMedia / contentArray.length() = " + contentArray.length());
 
+        // categories (folder level)
         for (int h = 0; h < contentArray.length(); h++) {
 
             System.out.println("DbBuilder_video / _buildMedia / h = " + h);
@@ -108,12 +110,14 @@ public class DbBuilder_video {
 
             JSONArray pageArray = contentObj.getJSONArray(TAG_LINK_PAGE);
 
-            videosToInsert = new ArrayList<>();
+            System.out.println("DbBuilder_video / _buildMedia / pageArray.length() = " + pageArray.length());
 
+            pagesToInsert = new ArrayList<>();
+
+            // pages ( page level)
             for (int i = 0; i < pageArray.length(); i++) {
 
-                JSONArray linksArray;
-
+                // page title
                 JSONObject page = pageArray.getJSONObject(i);
                 String pageTitle = page.getString(TAG_TITLE);
 
@@ -121,7 +125,7 @@ public class DbBuilder_video {
 
                 DB_folder db_folder = new DB_folder(mContext, id);
 
-                  //db_folder.insertPageTable(db_folder, i, j, true);
+                //db_folder.insertPageTable(db_folder, i, j, true);
 
                 // insert page data to folder table
                 db_folder.insertPage(
@@ -130,9 +134,13 @@ public class DbBuilder_video {
                         i+1,
                         Define.STYLE_DEFAULT,true);//Define.STYLE_PREFER
 
-                linksArray = page.getJSONArray(TAG_MEDIA);
+                // page links
+                JSONArray linksArray;
+                linksArray = page.getJSONArray(TAG_LINKS);
+                System.out.println("DbBuilder_video / _buildMedia / linksArray.length() = " + linksArray.length());
 
-                // links
+                pageToInsert = new ArrayList<>();
+                // links ( note level)
                 for (int j = 0; j < linksArray.length(); j++) {
                     JSONObject link = linksArray.getJSONObject(j);
 
@@ -142,7 +150,7 @@ public class DbBuilder_video {
                     String linkUrl = (String) link.opt("note_link_uri"); // Get the first link only.
 
                     ContentValues videoValues = new ContentValues();
-                    videoValues.put(Contract.VideoEntry.COLUMN_NOTE_TITLE, pageTitle);
+                    videoValues.put(Contract.VideoEntry.COLUMN_NOTE_TITLE, linkTitle);
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_PICTURE_URI, "");
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_AUDIO_URI, "");
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_DRAWING_URI, "");
@@ -151,33 +159,32 @@ public class DbBuilder_video {
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_MARKING, 1);
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_CREATED, 1); //todo temp
 
-                    videosToInsert.add(videoValues);
+                    pageToInsert.add(videoValues);
                 }
+
+                //Will call DbHelper.onCreate()first time when WritableDatabase is not created yet
+                sqlDb = mOpenHelper.getWritableDatabase();
+                String tableId = String.valueOf(h+1).concat("_").concat(String.valueOf(i+1)); //Id starts from 1
+                // Create a table to hold videos.
+                final String SQL_CREATE_PAGE_TABLE = "CREATE TABLE IF NOT EXISTS " + Contract.VideoEntry.PAGE_TABLE_NAME.concat(tableId) + " (" +
+                        Contract.VideoEntry._ID + " INTEGER PRIMARY KEY," +
+                        Contract.VideoEntry.COLUMN_NOTE_TITLE + " TEXT," +
+                        Contract.VideoEntry.COLUMN_NOTE_PICTURE_URI + " TEXT," +
+                        Contract.VideoEntry.COLUMN_NOTE_AUDIO_URI + " TEXT," +
+                        Contract.VideoEntry.COLUMN_NOTE_DRAWING_URI + " TEXT," +
+                        Contract.VideoEntry.COLUMN_NOTE_LINK_URI + " TEXT NOT NULL," + // TEXT UNIQUE NOT NULL will make the URL unique.
+                        Contract.VideoEntry.COLUMN_NOTE_BODY + " TEXT," +
+                        Contract.VideoEntry.COLUMN_NOTE_MARKING + " INTEGER," +
+                        Contract.VideoEntry.COLUMN_NOTE_CREATED + " INTEGER);";
+
+                // Do the creating of the databases.
+                sqlDb.execSQL(SQL_CREATE_PAGE_TABLE);
+
+                pagesToInsert.add(pageToInsert);
 
             }
 
-            contentList.add(videosToInsert);
-
-            // Will call DbHelper.onCreate()first time when WritableDatabase is not created yet
-            //DbHelper mOpenHelper = new DbHelper(mContext);
-            //SQLiteDatabase sqlDb;
-            sqlDb = mOpenHelper.getWritableDatabase();
-            String tableId = String.valueOf(h+1); //Id starts from 1
-            // Create a table to hold videos.
-            final String SQL_CREATE_PAGE_TABLE = "CREATE TABLE IF NOT EXISTS " + Contract.VideoEntry.PAGE_TABLE_NAME.concat(tableId) + " (" +
-                    Contract.VideoEntry._ID + " INTEGER PRIMARY KEY," +
-                    Contract.VideoEntry.COLUMN_NOTE_TITLE + " TEXT," +
-                    Contract.VideoEntry.COLUMN_NOTE_PICTURE_URI + " TEXT," +
-                    Contract.VideoEntry.COLUMN_NOTE_AUDIO_URI + " TEXT," +
-                    Contract.VideoEntry.COLUMN_NOTE_DRAWING_URI + " TEXT," +
-                    Contract.VideoEntry.COLUMN_NOTE_LINK_URI + " TEXT NOT NULL," + // TEXT UNIQUE NOT NULL will make the URL unique.
-                    Contract.VideoEntry.COLUMN_NOTE_BODY + " TEXT," +
-                    Contract.VideoEntry.COLUMN_NOTE_MARKING + " INTEGER," +
-                    Contract.VideoEntry.COLUMN_NOTE_CREATED + " INTEGER);";
-
-            // Do the creating of the databases.
-            sqlDb.execSQL(SQL_CREATE_PAGE_TABLE);
-
+            contentList.add(pagesToInsert);
         }
         return contentList;
     }

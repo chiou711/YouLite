@@ -46,12 +46,8 @@ public class FetchService_video extends IntentService {
 	    System.out.println("FetchService_video / _constructor");
     }
 
-    int start_id;
 	@Override
 	public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-		System.out.println("FetchService_video / _onStartCommand / startId =  " + startId);
-		System.out.println("FetchService_video / _onStartCommand / flags =  " + flags);
-		start_id = startId;
 		return super.onStartCommand(intent, flags, startId);
 	}
 
@@ -59,24 +55,27 @@ public class FetchService_video extends IntentService {
     protected void onHandleIntent(Intent workIntent) {
 	    serviceUrl = workIntent.getStringExtra("FetchUrl");
 		System.out.println("FetchService_video / _onHandleIntent / serviceUrl = " + serviceUrl);
-		System.out.println("FetchService_video / _onHandleIntent / start_id = " + start_id);
         DbBuilder_video builder = new DbBuilder_video(getApplicationContext());
 
         try {
-			List<List<ContentValues>> contentValuesList = builder.fetch(serviceUrl);
+			List<List<List<ContentValues>>> contentValuesList = builder.fetch(serviceUrl);
 	        System.out.println("FetchService_video / _onHandleIntent / contentValuesList.size() = " + contentValuesList.size());
 
 			for(int i=0;i<contentValuesList.size();i++) {
 
-				ContentValues[] downloadedVideoContentValues =
-						contentValuesList.get(i).toArray(new ContentValues[contentValuesList.get(i).size()]);
-
-				ContentResolver contentResolver = getApplicationContext().getContentResolver();
 				System.out.println("FetchService_video / _onHandleIntent / i = " + i);
-//				System.out.println("FetchService_video / _onHandleIntent / contentResolver = " + contentResolver.toString());
 
-				Provider.tableId = String.valueOf(i+1);
-				contentResolver.bulkInsert(Contract.VideoEntry.CONTENT_URI, downloadedVideoContentValues);
+				for(int j=0;j<contentValuesList.get(i).size();j++) {
+					ContentValues[] downloadedVideoContentValues =
+							contentValuesList.get(i).get(j).toArray(new ContentValues[contentValuesList.get(i).get(j).size()]);
+
+					System.out.println("FetchService_video / _onHandleIntent / j = " + j);
+
+					ContentResolver contentResolver = getApplicationContext().getContentResolver();
+
+					Provider.tableId = String.valueOf(i + 1).concat("_").concat(String.valueOf(j + 1));//todo temp
+					contentResolver.bulkInsert(Contract.VideoEntry.CONTENT_URI, downloadedVideoContentValues);
+				}
 			}
 
         } catch (IOException | JSONException e) {
@@ -85,7 +84,7 @@ public class FetchService_video extends IntentService {
         }
 
         // add to avoid multiple service calls
-        stopSelf();
+        stopSelf(); // or stopService()
 
         // Puts the status into the Intent
         String status = "FetchVideoServiceIsDone"; // any data that you want to send back to receivers
