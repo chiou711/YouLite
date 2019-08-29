@@ -63,26 +63,26 @@ public class Provider extends ContentProvider {
 
         mOpenHelper = new DbHelper(context);
 
-        int focusCategoryNumber = Utils.getPref_focus_category_number(context);
-        table_id = String.valueOf(focusCategoryNumber);
-        System.out.println("Provider / _onCreate / table_id = " + table_id);
-
-
-        sVideosContainingQueryBuilder = new SQLiteQueryBuilder();
-        sVideosContainingQueryBuilder.setTables(Contract.VideoEntry.PAGE_TABLE_NAME.concat(table_id));
-        sVideosContainingQueryBuilder.setProjectionMap(sColumnMap);
-        sVideosContainingQueryColumns = new String[]{
-                Contract.VideoEntry._ID,
-                Contract.VideoEntry.COLUMN_NOTE_TITLE,
-                Contract.VideoEntry.COLUMN_NOTE_PICTURE_URI,
-                Contract.VideoEntry.COLUMN_NOTE_AUDIO_URI,
-                Contract.VideoEntry.COLUMN_NOTE_DRAWING_URI,
-                Contract.VideoEntry.COLUMN_NOTE_LINK_URI,
-                Contract.VideoEntry.COLUMN_NOTE_BODY,
-                Contract.VideoEntry.COLUMN_NOTE_MARKING,
-                Contract.VideoEntry.COLUMN_NOTE_CREATED,
-                SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID
-        };
+//        int focusCategoryNumber = Utils.getPref_focus_category_number(context);
+//        table_id = String.valueOf(focusCategoryNumber);
+//        System.out.println("Provider / _onCreate / table_id = " + table_id);
+//
+//
+//        sVideosContainingQueryBuilder = new SQLiteQueryBuilder();
+//        sVideosContainingQueryBuilder.setTables(Contract.VideoEntry.PAGE_TABLE_NAME.concat(table_id));
+//        sVideosContainingQueryBuilder.setProjectionMap(sColumnMap);
+//        sVideosContainingQueryColumns = new String[]{
+//                Contract.VideoEntry._ID,
+//                Contract.VideoEntry.COLUMN_NOTE_TITLE,
+//                Contract.VideoEntry.COLUMN_NOTE_PICTURE_URI,
+//                Contract.VideoEntry.COLUMN_NOTE_AUDIO_URI,
+//                Contract.VideoEntry.COLUMN_NOTE_DRAWING_URI,
+//                Contract.VideoEntry.COLUMN_NOTE_LINK_URI,
+//                Contract.VideoEntry.COLUMN_NOTE_BODY,
+//                Contract.VideoEntry.COLUMN_NOTE_MARKING,
+//                Contract.VideoEntry.COLUMN_NOTE_CREATED,
+//                SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID
+//        };
 
 
         return true;
@@ -140,31 +140,31 @@ public class Provider extends ContentProvider {
                         String[] selectionArgs, String sortOrder) {
         System.out.println("----------------Provider / _query/ uri =  " + uri.toString());
 
-        table_id = String.valueOf(Utils.getPref_focus_category_number(context));
-        System.out.println("----------------Provider / _query/ table_id =  " + table_id);
+//        table_id = String.valueOf(Utils.getPref_focus_category_number(context));
+//        System.out.println("----------------Provider / _query/ table_id =  " + table_id);
 
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
-            case SEARCH_SUGGEST: {
-                String rawQuery = "";
-                if (selectionArgs != null && selectionArgs.length > 0) {
-                    rawQuery = selectionArgs[0];
-                }
-                retCursor = getSuggestions(rawQuery);
-                break;
-            }
-            case VIDEO: {
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        Contract.VideoEntry.PAGE_TABLE_NAME.concat(table_id),//todo temp
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                );
-                break;
-            }
+//            case SEARCH_SUGGEST: {
+//                String rawQuery = "";
+//                if (selectionArgs != null && selectionArgs.length > 0) {
+//                    rawQuery = selectionArgs[0];
+//                }
+//                retCursor = getSuggestions(rawQuery);
+//                break;
+//            }
+//            case VIDEO: {
+//                retCursor = mOpenHelper.getReadableDatabase().query(
+//                        Contract.VideoEntry.PAGE_TABLE_NAME.concat(table_id),//todo temp
+//                        projection,
+//                        selection,
+//                        selectionArgs,
+//                        null,
+//                        null,
+//                        sortOrder
+//                );
+//                break;
+//            }
             case CATEGORY: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         Contract.CategoryEntry.DRAWER_TABLE_NAME,//todo temp

@@ -186,6 +186,12 @@
                             app:showAsAction="never"
                             android:title="@string/mail_notes_title"
                             android:icon="@android:drawable/ic_menu_send"/>
+                        <item
+                            android:id="@+id/IMPORT_RENEW"
+                            android:orderInCategory="8"
+                            app:showAsAction="never"
+                            android:title="@string/config_import_renew"
+                            android:icon="@drawable/perm_group_sync_settings"/>
                     </menu>
                 </item>
 

@@ -24,11 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.cw.youlite.R;
-import com.cw.youlite.Utils;
 import com.cw.youlite.config.About;
 import com.cw.youlite.config.Config;
+import com.cw.youlite.data.Contract;
+import com.cw.youlite.data.DbHelper;
 import com.cw.youlite.data.FetchService_category;
 import com.cw.youlite.data.FetchService_video;
+import com.cw.youlite.data.Provider;
 import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.db.DB_page;
 import com.cw.youlite.drawer.Drawer;
@@ -71,6 +73,8 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -268,10 +272,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                             checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
                         else {
                             if (Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) {
-//                                createDefaultContent_byDownload();
-
-                                Utils.setPref_focus_category_number(this, INIT_NUMBER);
-
                                 // start Fetch category service
                                 System.out.println("MainAct / _onCreate / start Fetch category service =================================");
                                 Intent serviceIntent = new Intent(this, FetchService_category.class);
@@ -632,9 +632,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             {
                 case Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES:
                     if(Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) {
-//                        createDefaultContent_byDownload();
-                        Utils.setPref_focus_category_number(this, INIT_NUMBER);
-
                         // start Fetch category service
                         System.out.println("MainAct / _onRequestPermissionsResult / start Fetch category service =================================");
                         Intent serviceIntent = new Intent(MainAct.this, FetchService_category.class);
@@ -939,8 +936,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             {
                 if (context != null) {
                     // avoid endless loop due to empty category selection
-                    Utils.setPref_focus_category_number(MainAct.this,1);
-
                     Intent serviceIntent = new Intent(MainAct.this, FetchService_video.class);
                     serviceIntent.putExtra("FetchUrl", getDefaultUrl());
                     startService(serviceIntent);
@@ -1825,6 +1820,43 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 {
                     Toast.makeText(this, R.string.no_page_yet, Toast.LENGTH_SHORT).show();
                 }
+                return true;
+
+            case MenuId.IMPORT_RENEW:
+                mMenu.setGroupVisible(R.id.group_notes, false); //hide the menu
+                // delete database
+                try {
+                    System.out.println("MainAct/ _onOptionsItemSelected / will delete DB");
+                    deleteDatabase(DbHelper.DATABASE_NAME);
+
+                    ContentResolver resolver = getContentResolver();
+                    ContentProviderClient client = resolver.acquireContentProviderClient(Contract.CONTENT_AUTHORITY);
+                    Provider provider = (Provider) client.getLocalContentProvider();
+
+                    provider.mContentResolver = resolver;
+                    provider.mOpenHelper.close();
+
+                    provider.mOpenHelper = new DbHelper(this);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                        client.close();
+                    else
+                        client.release();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // start Fetch category service
+                System.out.println("MainAct / _onOptionsItemSelected / start Fetch category service =================================");
+                Intent serviceIntent = new Intent(MainAct.this, FetchService_category.class);
+                serviceIntent.putExtra("FetchUrl", getDefaultUrl());
+                startService(serviceIntent);
+
+                // reset focus view position
+                Pref.setPref_focusView_folder_tableId(this, 1);
+                Pref.setPref_focusView_page_tableId(this, 1);
+
                 return true;
 
             case MenuId.CONFIG:
