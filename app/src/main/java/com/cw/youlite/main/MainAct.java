@@ -246,94 +246,100 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         */
         UtilImage.getDefaultScaleInPercent(MainAct.this);
 
-        // EULA
-        Dialog_EULA dialog_EULA = new Dialog_EULA(this);
-        bEULA_accepted = dialog_EULA.isEulaAlreadyAccepted();
+//        // EULA
+//        Dialog_EULA dialog_EULA = new Dialog_EULA(this);
+//        bEULA_accepted = dialog_EULA.isEulaAlreadyAccepted();
+//
+//        // Show dialog of EULA
+//        if (!bEULA_accepted)
+//        {
+//            // Ok button listener
+//            dialog_EULA.clickListener_Ok = (DialogInterface dialog, int i) -> {
+//
+//                dialog_EULA.applyPreference();
+//
+//                // dialog: with default content
+//                if( (Define.DEFAULT_CONTENT == Define.BY_ASSETS) ||
+//                    (Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) )
+//                {
+//                    // Click Yes
+//                    DialogInterface.OnClickListener click_Yes = (DialogInterface dlg, int j) -> {
+//                        // Close dialog
+//                        dialog.dismiss();
+//
+//                        // check build version for permission request (starts from API 23)
+//                        if(Build.VERSION.SDK_INT >= 23)
+//                            checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
+//                        else {
+//                            if (Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) {
+//                                // start Fetch category service
+//                                System.out.println("MainAct / _onCreate / start Fetch category service =================================");
+//                                Intent serviceIntent = new Intent(this, FetchService_category.class);
+//                                serviceIntent.putExtra("FetchUrl", getDefaultUrl());
+//                                startService(serviceIntent);
+//                            }
+//                            else {
+//                                Pref.setPref_will_create_default_content(this, true);
+//                                recreate();
+//                            }
+//                        }
+//                    };
+//
+//                    // Click No
+//                    DialogInterface.OnClickListener click_No = (DialogInterface dlg, int j) -> {
+//                        // Close dialog
+//                        dialog.dismiss();
+//
+//                        // check build version for permission request
+//                        if(Build.VERSION.SDK_INT >= 23)
+//                            checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO);
+//                        else {
+//                            Pref.setPref_will_create_default_content(this, false);
+//                            recreate();
+//                        }
+//                    };
+//
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(mAct)
+//                            .setTitle(R.string.sample_notes_title)
+//                            .setMessage(R.string.sample_notes_message)
+//                            .setCancelable(false)
+//                            .setPositiveButton(R.string.confirm_dialog_button_yes, click_Yes)
+//                            .setNegativeButton(R.string.confirm_dialog_button_no, click_No);
+//                    builder.create().show();
+//                }
+//                else if((Define.DEFAULT_CONTENT == Define.BY_INITIAL_TABLES) && (Define.INITIAL_FOLDERS_COUNT > 0))
+//                {
+//                    if(Build.VERSION.SDK_INT >= 23)
+//                        checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
+//                    else
+//                    {
+//                        Pref.setPref_will_create_default_content(this, true);
+//                        recreate();
+//                    }
+//                    // Close dialog
+//                    dialog.dismiss();
+//                }
+//            };
+//
+//            // No button listener
+//            dialog_EULA.clickListener_No = (DialogInterface dialog, int which) -> {
+//                    // Close the activity as they have declined
+//                    // the EULA
+//                    dialog.dismiss();
+//                    mAct.finish();
+//            };
+//
+//            dialog_EULA.show();
+//        }
+//        else
+//            doCreate(savedInstanceState);
 
-        // Show dialog of EULA
-        if (!bEULA_accepted)
-        {
-            // Ok button listener
-            dialog_EULA.clickListener_Ok = (DialogInterface dialog, int i) -> {
-
-                dialog_EULA.applyPreference();
-
-                // dialog: with default content
-                if( (Define.DEFAULT_CONTENT == Define.BY_ASSETS) ||
-                    (Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) )
-                {
-                    // Click Yes
-                    DialogInterface.OnClickListener click_Yes = (DialogInterface dlg, int j) -> {
-                        // Close dialog
-                        dialog.dismiss();
-
-                        // check build version for permission request (starts from API 23)
-                        if(Build.VERSION.SDK_INT >= 23)
-                            checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
-                        else {
-                            if (Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) {
-                                // start Fetch category service
-                                System.out.println("MainAct / _onCreate / start Fetch category service =================================");
-                                Intent serviceIntent = new Intent(this, FetchService_category.class);
-                                serviceIntent.putExtra("FetchUrl", getDefaultUrl());
-                                startService(serviceIntent);
-                            }
-                            else {
-                                Pref.setPref_will_create_default_content(this, true);
-                                recreate();
-                            }
-                        }
-                    };
-
-                    // Click No
-                    DialogInterface.OnClickListener click_No = (DialogInterface dlg, int j) -> {
-                        // Close dialog
-                        dialog.dismiss();
-
-                        // check build version for permission request
-                        if(Build.VERSION.SDK_INT >= 23)
-                            checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO);
-                        else {
-                            Pref.setPref_will_create_default_content(this, false);
-                            recreate();
-                        }
-                    };
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(mAct)
-                            .setTitle(R.string.sample_notes_title)
-                            .setMessage(R.string.sample_notes_message)
-                            .setCancelable(false)
-                            .setPositiveButton(R.string.confirm_dialog_button_yes, click_Yes)
-                            .setNegativeButton(R.string.confirm_dialog_button_no, click_No);
-                    builder.create().show();
-                }
-                else if((Define.DEFAULT_CONTENT == Define.BY_INITIAL_TABLES) && (Define.INITIAL_FOLDERS_COUNT > 0))
-                {
-                    if(Build.VERSION.SDK_INT >= 23)
-                        checkPermission(savedInstanceState, Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES);
-                    else
-                    {
-                        Pref.setPref_will_create_default_content(this, true);
-                        recreate();
-                    }
-                    // Close dialog
-                    dialog.dismiss();
-                }
-            };
-
-            // No button listener
-            dialog_EULA.clickListener_No = (DialogInterface dialog, int which) -> {
-                    // Close the activity as they have declined
-                    // the EULA
-                    dialog.dismiss();
-                    mAct.finish();
-            };
-
-            dialog_EULA.show();
+        if(Pref.getPref_DB_ready(this)) {
+            bEULA_accepted = true; //todo temp force setting
+            doCreate(savedInstanceState);
         }
         else
-            doCreate(savedInstanceState);
-
+            renewDB();
     }
 
     // get default URL
@@ -949,6 +955,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                     // unregister receiver
                     localBroadcastMgr.unregisterReceiver(responseReceiver);//todo check
                     responseReceiver = null;
+
+                    Pref.setPref_DB_ready(MainAct.this,true);
 
                     System.out.println("MainFragment / _FetchServiceResponseReceiver / will start new main activity");
                     Intent new_intent = new Intent(context, MainAct.class);
@@ -1884,6 +1892,44 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+
+    // renew data base
+    void renewDB()
+    {
+        try {
+            System.out.println("MainAct/ _renewDB");
+            deleteDatabase(DbHelper.DATABASE_NAME);
+
+            ContentResolver resolver = getContentResolver();
+            ContentProviderClient client = resolver.acquireContentProviderClient(Contract.CONTENT_AUTHORITY);
+            Provider provider = (Provider) client.getLocalContentProvider();
+
+            provider.mContentResolver = resolver;
+            provider.mOpenHelper.close();
+
+            provider.mOpenHelper = new DbHelper(this);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                client.close();
+            else
+                client.release();
+
+            Pref.setPref_DB_ready(this,false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // start Fetch category service
+        System.out.println("MainAct / _onOptionsItemSelected / start Fetch category service =================================");
+        Intent serviceIntent = new Intent(MainAct.this, FetchService_category.class);
+        serviceIntent.putExtra("FetchUrl", getDefaultUrl());
+        startService(serviceIntent);
+
+        // reset focus view position
+        Pref.setPref_focusView_folder_tableId(this, 1);
+        Pref.setPref_focusView_page_tableId(this, 1);
     }
 
     void playFirstAudio()

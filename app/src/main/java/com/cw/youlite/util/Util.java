@@ -214,6 +214,18 @@ public class Util
 		exportToSdCardFile(filename,data);
 	}
 
+	// get all Json string
+	public String getAllJson() throws JSONException
+	{
+		//first row text
+		String data ="";
+
+		System.out.println("Util / _getAllJson ");
+
+		//get data from DB
+		return queryAllJsonDB(data);
+	}
+
 	
 	// Export data to be SD Card file
 	public void exportToSdCardFile(String filename,String data)

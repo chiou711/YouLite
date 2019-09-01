@@ -79,6 +79,7 @@ public abstract class GDriveBaseAct extends Activity {
      * Tracks completion of the drive picker
      */
     private TaskCompletionSource<DriveId> mOpenItemTaskSource;
+    String allJsonStr;
 
 
     @Override
@@ -129,7 +130,8 @@ public abstract class GDriveBaseAct extends Activity {
         protected Void doInBackground(Void... params) {
             Util util = new Util(GDriveBaseAct.this);
             try {
-                util.exportToSdCardAllJson(mStrSDCardFileName); // attachment name
+                //util.exportToSdCardAllJson(mStrSDCardFileName); // attachment name
+                allJsonStr = util.getAllJson();
             } catch (JSONException e)
             {
                 e.printStackTrace();

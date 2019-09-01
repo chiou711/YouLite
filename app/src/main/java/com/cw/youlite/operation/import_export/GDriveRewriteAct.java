@@ -54,25 +54,26 @@ public class GDriveRewriteAct extends GDriveBaseAct {
                                 "/" + Util.getStorageDirName(this);
         System.out.println("GDriveRewriteAct / dirString = " + dirString);
 
-        File srcFile = new File(dirString,"g_drive_src.json");
-        StringBuilder total = null;
-        try
-        {
-            FileInputStream fileInputStream = new FileInputStream(srcFile);
-            BufferedReader r = new BufferedReader(new InputStreamReader(fileInputStream));
-            total = new StringBuilder();
+//        File srcFile = new File(dirString,"g_drive_src.json");
+//        StringBuilder total = null;
+//        try
+//        {
+//            FileInputStream fileInputStream = new FileInputStream(srcFile);
+//            BufferedReader r = new BufferedReader(new InputStreamReader(fileInputStream));
+//            total = new StringBuilder();
+//
+//            for (String line; (line = r.readLine()) != null; )
+//            {
+//                total.append(line).append('\n');
+//            }
+//        }
+//        catch(IOException e)
+//        {
+//            e.printStackTrace();
+//        }
 
-            for (String line; (line = r.readLine()) != null; )
-            {
-                total.append(line).append('\n');
-            }
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-
-        final String jsonString = total.toString();
+//        final String jsonString = total.toString();
+        final String jsonString = allJsonStr;//todo json string entry
         System.out.println("GDriveRewriteAct / jsonString = " + jsonString);
 
         // [START drive_android_open_for_write]
