@@ -142,6 +142,7 @@ public class Util
 	public static final int PERMISSIONS_REQUEST_CAMERA = 10;
 	public static final int PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES = 11;
 	public static final int PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO = 12;
+	public static final int PERMISSIONS_REQUEST_STORAGE = 13;
 
 	public Util(){}
     

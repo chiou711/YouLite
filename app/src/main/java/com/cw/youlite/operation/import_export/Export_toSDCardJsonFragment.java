@@ -136,7 +136,7 @@ public class Export_toSDCardJsonFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		System.out.println("--- onResume");
+		System.out.println("Export_toSDCardJsonFragment / _onResume");
 	}
 
 	// step 2: input file name
