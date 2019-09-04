@@ -20,8 +20,6 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.fragment.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,8 +29,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cw.youlite.main.MainAct;
 import com.cw.youlite.R;
+import com.cw.youlite.main.MainAct;
 import com.cw.youlite.util.BaseBackPressedListener;
 import com.cw.youlite.util.ColorSet;
 import com.cw.youlite.util.Util;
@@ -47,7 +45,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-public class Import_filesList extends ListFragment
+import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.ListFragment;
+
+public class Import_filesListJson extends ListFragment
 {
     private List<String> filePathArray = null;
     List<String> fileNames = null;
@@ -108,7 +109,7 @@ public class Import_filesList extends ListFragment
                         File targetFile = new File(targetDirPath + "/" + srcFile.getName());
                         System.out.println("targetFile.getName() = " + targetFile.getName());
                         try {
-                            if (srcFile.getName().contains("XML") || srcFile.getName().contains("xml"))
+                            if (srcFile.getName().contains("JSON") || srcFile.getName().contains("json") || srcFile.getName().contains("Json"))
                                 FileUtils.copyFile(srcFile, targetFile);
                         } catch (IOException e) {
 
@@ -170,15 +171,16 @@ public class Import_filesList extends ListFragment
             {
             	// view the selected file's content
             	if( file.isFile() &&
-                   (file.getName().contains("XML") ||
-                    file.getName().contains("xml")     ))
+                   (file.getName().contains("JSON") ||
+                    file.getName().contains("Json") ||
+                    file.getName().contains("json")     ))
             	{
                     View view1 = getActivity().findViewById(R.id.view_back_btn_bg);
                     view1.setVisibility(View.GONE);
                     View view2 = getActivity().findViewById(R.id.file_list_title);
                     view2.setVisibility(View.GONE);
 
-                    Import_fileView fragment = new Import_fileView();
+                    Import_fileViewJson fragment = new Import_fileViewJson();
                     final Bundle args = new Bundle();
                     args.putString("KEY_FILE_PATH", currFilePath);
                     fragment.setArguments(args);
@@ -217,16 +219,14 @@ public class Import_filesList extends ListFragment
 
 	        for(File file : files)
 	        {
-                // add for filtering non-XML file
-                if(file.getName().contains("XML") || file.getName().contains("xml"))
+                // add for filtering non-JSON file
+                if(file.getName().contains("JSON") || file.getName().contains("Json") || file.getName().contains("json"))
                 {
                     filePathArray.add(file.getPath());
                     fileNames.add(file.getName());
                 }
 	        }
-//	        fileListAdapter = new ArrayAdapter<>(getActivity(),
-//	        									 R.layout.import_sd_files_list_row,
-//	        									 fileNames);
+
             FileNameAdapter fileListAdapter = new FileNameAdapter(getActivity(),
                                                                   R.layout.import_sd_files_list_row,
                                                                   fileNames);
@@ -276,7 +276,7 @@ public class Import_filesList extends ListFragment
             tv.setText(fileNames.get(position));
             if(fileNames.get(position).equalsIgnoreCase("sdcard")   ||
                fileNames.get(position).equalsIgnoreCase(appName)    ||
-               fileNames.get(position).equalsIgnoreCase("LiteNote") || //todo need to change for different app name
+               fileNames.get(position).equalsIgnoreCase("YouLite") || //todo need to change for different app name
                fileNames.get(position).equalsIgnoreCase("Download")   )
                 tv.setTypeface(null, Typeface.BOLD);
             else

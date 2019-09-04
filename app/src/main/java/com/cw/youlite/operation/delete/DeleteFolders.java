@@ -144,7 +144,8 @@ public class DeleteFolders extends Fragment{
 
                 int focusFolder_tableId = Pref.getPref_focusView_folder_tableId(act);
                 DB_folder db_folder = new DB_folder(act,focusFolder_tableId);
-                if((db_drawer.getFoldersCount(true) == 0) || (db_folder.getPagesCount(true) == 0))
+                int pagesCount = db_folder.getPagesCount(true);
+                if((db_drawer.getFoldersCount(true) == 0) || (pagesCount == 0))
                 {
                     System.out.println("DeleteFolders / _btnSelPageCancel / will call MainAct");
                     getActivity().finish();

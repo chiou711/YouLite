@@ -257,7 +257,9 @@ public class DB_folder
 		if(enDbOpenClose)
 			this.open();
 
-        int count = mCursor_page.getCount();
+		int count = 0;
+		if((mCursor_page != null) && !mCursor_page.isClosed())
+            count = mCursor_page.getCount();
 
         if(enDbOpenClose)
 			this.close();

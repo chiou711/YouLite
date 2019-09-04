@@ -142,7 +142,8 @@ public class Util
 	public static final int PERMISSIONS_REQUEST_CAMERA = 10;
 	public static final int PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES = 11;
 	public static final int PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO = 12;
-	public static final int PERMISSIONS_REQUEST_STORAGE = 13;
+	public static final int PERMISSIONS_REQUEST_STORAGE1 = 13;
+	public static final int PERMISSIONS_REQUEST_STORAGE2 = 14;
 
 	public Util(){}
     
@@ -198,7 +199,7 @@ public class Util
 		System.out.println("Util / _exportToSdCardJson / checkedTabs = " + checkedTabs);
 
 		//get data from DB
-		data = queryJsonDB(data,checkedTabs);
+		data = queryJsonDB(filename.replace(".json",""),data,checkedTabs);
 		exportToSdCardFile(filename,data);
 	}
 
@@ -303,7 +304,7 @@ public class Util
 	 *
 	 */
 
-	private String queryJsonDB(String data, List<Boolean> checkedTabs) throws JSONException
+	private String queryJsonDB(String catName,String data, List<Boolean> checkedTabs) throws JSONException
 	{
 		String curData = data;
 
@@ -332,7 +333,7 @@ public class Util
 		}
 
 		category = new JSONObject();
-		category.put("category", "test YouLite");
+		category.put("category", catName);
 		category.put("link_page", pages);
 
 		JSONArray categories = new JSONArray();

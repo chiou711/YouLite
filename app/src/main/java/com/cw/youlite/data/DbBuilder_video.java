@@ -63,8 +63,7 @@ public class DbBuilder_video {
      * @param url The location of the video list
      */
     public @NonNull
-    List<List<List<ContentValues>>> fetch(String url)
-            throws IOException, JSONException {
+    List<List<List<ContentValues>>> fetch(String url) throws IOException, JSONException {
         JSONObject videoData = fetchJSON(url);
         System.out.println("DbBuilder_video / _fetch / videoData length = " + videoData.length()) ;
         return buildMedia(videoData);

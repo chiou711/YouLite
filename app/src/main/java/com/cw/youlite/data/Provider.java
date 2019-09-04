@@ -303,11 +303,12 @@ public class Provider extends ContentProvider {
         return rowsUpdated;
     }
 
-    static String tableId;
+    public static String tableId;
 
     @Override
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
         System.out.println("Provider / _bulkInsert / uri = " + uri.toString());
+        System.out.println("Provider / _bulkInsert / values.length = " + values.length);
         switch (sUriMatcher.match(uri)) {
             case VIDEO: {
                 final SQLiteDatabase db = mOpenHelper.getWritableDatabase();

@@ -46,6 +46,7 @@ import com.cw.youlite.operation.import_export.Export_toSDCardAllJsonFragment;
 import com.cw.youlite.operation.import_export.Export_toSDCardJsonFragment;
 import com.cw.youlite.operation.import_export.GDriveRewriteAct;
 import com.cw.youlite.operation.import_export.Import_fileView;
+import com.cw.youlite.operation.import_export.Import_filesListJson;
 import com.cw.youlite.operation.import_export.Import_webAct;
 import com.cw.youlite.page.Checked_notes_option;
 import com.cw.youlite.page.PageUi;
@@ -56,7 +57,6 @@ import com.cw.youlite.util.DeleteFileAlarmReceiver;
 import com.cw.youlite.operation.import_export.Export_toSDCardFragment;
 import com.cw.youlite.operation.import_export.Import_filesList;
 import com.cw.youlite.db.DB_drawer;
-import com.cw.youlite.util.Dialog_EULA;
 import com.cw.youlite.util.audio.UtilAudio;
 import com.cw.youlite.operation.slideshow.SlideshowInfo;
 import com.cw.youlite.util.image.UtilImage;
@@ -623,7 +623,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         return false;
     }
 
-    private boolean isStorageRequested = false;
+    private boolean isStorageRequested1 = false;
+    private boolean isStorageRequested2 = false;
 
     // callback of granted permission
     @Override
@@ -656,9 +657,13 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                     recreate();
                 break;
 
-	            case Util.PERMISSIONS_REQUEST_STORAGE:
-		            isStorageRequested = true;
-				break;
+                case Util.PERMISSIONS_REQUEST_STORAGE1:
+                    isStorageRequested1 = true;
+                    break;
+
+                case Util.PERMISSIONS_REQUEST_STORAGE2:
+                    isStorageRequested2 = true;
+                    break;
             }
         }
         else
@@ -979,32 +984,36 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         System.out.println("MainAct / _onResumeFragments ");
         super.onResumeFragments();
 
-        if(isStorageRequested)
+        if(isStorageRequested1 || isStorageRequested2)
         {
-            System.out.println("MainAct / _onResumeFragments / 4");
+            //hide the menu
             mMenu.setGroupVisible(R.id.group_notes, false);
             mMenu.setGroupVisible(R.id.group_pages_and_more, false);
-            DB_folder dB_folder = new DB_folder(this, Pref.getPref_focusView_folder_tableId(this));
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            if(dB_folder.getPagesCount(true)>0)
-            {
-                System.out.println("MainAct / _onResumeFragments / 5");
-                Export_toSDCardJsonFragment exportFragment = new Export_toSDCardJsonFragment();
-                transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-                transaction.replace(R.id.content_frame, exportFragment,"export")
-                        .addToBackStack(null)
-//						.commitAllowingStateLoss();
-                        .commit();
 
-                if(FolderUi.mHandler != null)
-                    FolderUi.mHandler.removeCallbacks(FolderUi.mTabsHostRun);
+            if(isStorageRequested1) {
+                DB_folder dB_folder = new DB_folder(this, Pref.getPref_focusView_folder_tableId(this));
+                if (dB_folder.getPagesCount(true) > 0) {
+                        Export_toSDCardJsonFragment exportFragment = new Export_toSDCardJsonFragment();
+                        transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+                        transaction.replace(R.id.content_frame, exportFragment, "export")
+                                .addToBackStack(null)
+                                .commit();
+                } else
+                    Toast.makeText(this, R.string.no_page_yet, Toast.LENGTH_SHORT).show();
+                isStorageRequested1 = false;
             }
-            else
+
+            if(isStorageRequested2)
             {
-                System.out.println("MainAct / _onPostResume / 6");
-                Toast.makeText(this, R.string.no_page_yet, Toast.LENGTH_SHORT).show();
+                Export_toSDCardAllJsonFragment exportFragment = new Export_toSDCardAllJsonFragment();
+                transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+                transaction.replace(R.id.content_frame, exportFragment, "export").addToBackStack(null).commit();
+                isStorageRequested2 = false;
             }
-            isStorageRequested = false;
+
+            if (FolderUi.mHandler != null)
+                FolderUi.mHandler.removeCallbacks(FolderUi.mTabsHostRun);
         }
 		// fix: home button failed after power off/on in Config fragment
         else {
@@ -1341,7 +1350,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             /**
              * Page group and more
              */
-            mMenu.setGroupVisible(R.id.group_pages_and_more, foldersCnt >0);
+//            mMenu.setGroupVisible(R.id.group_pages_and_more, foldersCnt >0);//todo temp need overall check
 
             // EXPORT TO SD CARD ALL JSON
             mMenu.findItem(R.id.EXPORT_TO_SD_CARD_ALL_JSON).setVisible(foldersCnt >0);
@@ -1800,6 +1809,16 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 transaction.replace(R.id.content_frame, importFragment,"import").addToBackStack(null).commit();
                 return true;
 
+	        case MenuId.IMPORT_FROM_SD_CARD_JSON:
+		        //hide the menu
+		        mMenu.setGroupVisible(R.id.group_notes, false);
+		        mMenu.setGroupVisible(R.id.group_pages_and_more, false);
+		        // replace fragment
+		        Import_filesListJson importFragmentJson = new Import_filesListJson();
+		        transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+		        transaction.replace(R.id.content_frame, importFragmentJson,"import").addToBackStack(null).commit();
+		        return true;
+
             case MenuId.EXPORT_TO_SD_CARD:
                 //hide the menu
                 mMenu.setGroupVisible(R.id.group_notes, false);
@@ -1825,7 +1844,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                     ActivityCompat.requestPermissions(this,
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                     Manifest.permission.READ_EXTERNAL_STORAGE},
-                            Util.PERMISSIONS_REQUEST_STORAGE);
+                            Util.PERMISSIONS_REQUEST_STORAGE1);
                 }
                 else {
                     //hide the menu
@@ -1845,12 +1864,24 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 return true;
 
             case MenuId.EXPORT_TO_SD_CARD_ALL_JSON:
-                //hide the menu
-                mMenu.setGroupVisible(R.id.group_notes, false);
-                mMenu.setGroupVisible(R.id.group_pages_and_more, false);
-                Export_toSDCardAllJsonFragment exportFragment = new Export_toSDCardAllJsonFragment();
-                transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-                transaction.replace(R.id.content_frame, exportFragment,"export").addToBackStack(null).commit();
+                if( (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) && //API23
+                        (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) // check permission
+                                != PackageManager.PERMISSION_GRANTED))
+                {
+                    // No explanation needed, we can request the permission.
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE},
+                            Util.PERMISSIONS_REQUEST_STORAGE2);
+                }
+                else {
+                    //hide the menu
+                    mMenu.setGroupVisible(R.id.group_notes, false);
+                    mMenu.setGroupVisible(R.id.group_pages_and_more, false);
+                    Export_toSDCardAllJsonFragment exportFragment = new Export_toSDCardAllJsonFragment();
+                    transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+                    transaction.replace(R.id.content_frame, exportFragment, "export").addToBackStack(null).commit();
+                }
                 return true;
 
             case MenuId.EXPORT_TO_GDRIVE_ALL_JSON:

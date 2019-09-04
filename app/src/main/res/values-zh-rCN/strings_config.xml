@@ -33,6 +33,7 @@
     <string name="config_SDCard_filename">档案名称: </string>
     <string name="config_SDCard_file_content">档案内容: </string>
     <string name="config_import_SDCard_entry">汇入XML:从SD卡</string>
+    <string name="config_import_SDCard_Json_entry">汇入JSON:从SD卡</string>
     <string name="config_import_SDCard_title">选择要汇入的档案：</string>
     <string name="config_import">汇入</string>
     <string name="config_import_Web">汇入XML:从Web</string>

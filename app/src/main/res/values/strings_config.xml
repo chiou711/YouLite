@@ -33,6 +33,7 @@
     <string name="config_SDCard_filename">file name: </string>
     <string name="config_SDCard_file_content">File content: </string>
     <string name="config_import_SDCard_entry">Import XML:from SD card</string>
+    <string name="config_import_SDCard_Json_entry">Import JSON:from SD card</string>
     <string name="config_import_SDCard_title">Select file to import:</string>
     <string name="config_import">Import</string>
     <string name="config_import_Web">Import XML:from Web</string>
