@@ -130,10 +130,8 @@ class Import_fileViewJson_asyncTask extends AsyncTask<Void, Integer, Void> {
         // import data by HandleXmlByFile class
         if(fileInputStream != null) {
             importObject = new ParseJsonToDB(fileInputStream, act);
-            importObject.enableInsertDB(enableInsertDB);
-            importObject.handleJson();
+            importObject.handleJson(enableInsertDB);
             while (importObject.isParsing) ;
         }
     }
 }
-
