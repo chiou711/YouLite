@@ -26,13 +26,11 @@ import com.cw.youlite.R;
 import com.cw.youlite.util.Util;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 /**
- * Created by cw on 2017/9/16.
+ * Created by cw on 2019/9/7
  */
 // Show progress progressBar
 class Import_fileViewJson_asyncTask extends AsyncTask<Void, Integer, Void> {
@@ -45,6 +43,7 @@ class Import_fileViewJson_asyncTask extends AsyncTask<Void, Integer, Void> {
     private TextView bodyViewText;
     private View file_view;
     private File file;
+    private String filePath;
 
     Import_fileViewJson_asyncTask(AppCompatActivity _act, View _rootView, String _filePath)
     {
@@ -62,7 +61,7 @@ class Import_fileViewJson_asyncTask extends AsyncTask<Void, Integer, Void> {
         progressBar = (ProgressBar) rootView.findViewById(R.id.import_progress);
         progressBar.setVisibility(View.VISIBLE);
 
-        file = new File(_filePath);
+        filePath = _filePath;
     }
 
     void enableSaveDB(boolean enable)
@@ -78,10 +77,20 @@ class Import_fileViewJson_asyncTask extends AsyncTask<Void, Integer, Void> {
         }
     }
 
+    ParseJsonToDB importObject;
     @Override
     protected Void doInBackground(Void... params)
     {
-        insertSelectedFileContentToDB(enableSaveDB);
+        file = new File(filePath);
+        importObject = new ParseJsonToDB(filePath, act);
+
+        if(enableSaveDB)
+            importObject.handleParseJsonFileAndInsertDB();
+        else
+            importObject.handleViewJson();
+
+        while (ParseJsonToDB.isParsing) {}
+
         return null;
     }
 
@@ -94,7 +103,6 @@ class Import_fileViewJson_asyncTask extends AsyncTask<Void, Integer, Void> {
 
         if(enableSaveDB)
         {
-//            backToListFragment();
             act.getSupportFragmentManager().popBackStack();
 
             View view1 = act.findViewById(R.id.view_back_btn_bg);
@@ -102,7 +110,6 @@ class Import_fileViewJson_asyncTask extends AsyncTask<Void, Integer, Void> {
             View view2 = act.findViewById(R.id.file_list_title);
             view2.setVisibility(View.VISIBLE);
 
-//				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
             Util.unlockOrientation(act);
             Toast.makeText(act, R.string.toast_import_finished,Toast.LENGTH_SHORT).show();
         }
@@ -114,24 +121,4 @@ class Import_fileViewJson_asyncTask extends AsyncTask<Void, Integer, Void> {
         }
     }
 
-    ParseJsonToDB importObject;
-    private void insertSelectedFileContentToDB(boolean enableInsertDB)
-    {
-        FileInputStream fileInputStream = null;
-        try
-        {
-            fileInputStream = new FileInputStream(file);
-        }
-        catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-
-        // import data by HandleXmlByFile class
-        if(fileInputStream != null) {
-            importObject = new ParseJsonToDB(fileInputStream, act);
-            importObject.handleJson(enableInsertDB);
-            while (importObject.isParsing) ;
-        }
-    }
 }

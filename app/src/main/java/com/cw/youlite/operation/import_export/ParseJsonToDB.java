@@ -34,7 +34,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -44,24 +46,40 @@ import static com.cw.youlite.data.DbBuilder_video.TAG_LINKS;
 import static com.cw.youlite.data.DbBuilder_video.TAG_LINK_PAGE;
 import static com.cw.youlite.data.DbBuilder_video.TAG_TITLE;
 
-class ParseJsonToDB {
+public class ParseJsonToDB {
 
     private Context mContext;
-    private FileInputStream fileInputStream;
-    static boolean isParsing;
+    public static boolean isParsing;
     String fileBody = "";
+    String filePath;
 
-    ParseJsonToDB(FileInputStream fileInputStream, Context context)
+    ParseJsonToDB(String filePath, Context context)
     {
         mContext = context;
-        this.fileInputStream = fileInputStream;
+        this.filePath = filePath;
+        isParsing = true;
+    }
+
+    public ParseJsonToDB(Context context)
+    {
+        mContext = context;
         isParsing = true;
     }
 
     //
     // parse JSON file and insert content to DB tables
     //
-    private void parseJsonAndInsertDB(FileInputStream stream) throws JSONException
+    private void parseJsonFileAndInsertDB(String filePath) throws JSONException
+    {
+        final String jsonString = getJsonStringByFile(filePath);
+        JSONObject jsonObj = new JSONObject(jsonString);
+        parseJsonAndInsertDB(jsonObj);
+    }
+
+    //
+    // parse JSON object and insert content to DB tables
+    //
+    public void parseJsonAndInsertDB(JSONObject jsonObj) throws JSONException
     {
         ContentResolver contentResolver = mContext.getApplicationContext().getContentResolver();
 
@@ -69,10 +87,6 @@ class ParseJsonToDB {
         FolderUi.renewFirstAndLast_folderId();
         int lastFolderTableId = FolderUi.mLastExist_folderTableId;
 //        System.out.println("ParseJsonToDB / _parseJsonAndInsertDB / lastFolderTableId = " + lastFolderTableId);
-
-        // get Json string
-        final String jsonString = getJsonString(stream);
-        JSONObject jsonObj = new JSONObject(jsonString);
 
         // start parsing
         JSONArray contentArray = jsonObj.getJSONArray("content");
@@ -110,11 +124,11 @@ class ParseJsonToDB {
             int folder_table_id = lastFolderTableId+h+1;
             String folderTableCreated = DB_folder.DB_FOLDER_TABLE_PREFIX.concat(String.valueOf(folder_table_id));
             final String DB_CREATE_FOLDER_TABLE = "CREATE TABLE IF NOT EXISTS " + folderTableCreated + "(" +
-                                                    DB_folder.KEY_PAGE_ID + " INTEGER PRIMARY KEY," +
-                                                    DB_folder.KEY_PAGE_TITLE + " TEXT," +
-                                                    DB_folder.KEY_PAGE_TABLE_ID + " INTEGER," +
-                                                    DB_folder.KEY_PAGE_STYLE + " INTEGER," +
-                                                    DB_folder.KEY_PAGE_CREATED + " INTEGER);";
+                    DB_folder.KEY_PAGE_ID + " INTEGER PRIMARY KEY," +
+                    DB_folder.KEY_PAGE_TITLE + " TEXT," +
+                    DB_folder.KEY_PAGE_TABLE_ID + " INTEGER," +
+                    DB_folder.KEY_PAGE_STYLE + " INTEGER," +
+                    DB_folder.KEY_PAGE_CREATED + " INTEGER);";
             sqlDb.execSQL(DB_CREATE_FOLDER_TABLE);
 
             //----------------------------
@@ -122,7 +136,7 @@ class ParseJsonToDB {
             //----------------------------
             List<List<ContentValues>>  listL2 = new ArrayList<>();
             JSONArray pageArray = cateObj.getJSONArray(TAG_LINK_PAGE);
- //           System.out.println("ParseJsonToDB / _parseJsonAndInsertDB / pageArray.length() = " + pageArray.length());
+            //           System.out.println("ParseJsonToDB / _parseJsonAndInsertDB / pageArray.length() = " + pageArray.length());
             for (int i = 0; i < pageArray.length(); i++) {
 
                 // get page content
@@ -133,9 +147,9 @@ class ParseJsonToDB {
                 // level 2 insert content: page to folder table
                 DB_folder db_folder = new DB_folder(mContext, folder_table_id);
                 db_folder.insertPage( folderTableCreated,
-                                      pageTitle,
-                                    i+1,
-                                      Define.STYLE_DEFAULT,true);//Define.STYLE_PREFER
+                        pageTitle,
+                        i+1,
+                        Define.STYLE_DEFAULT,true);//Define.STYLE_PREFER
 
                 //----------------------------
                 // level 3
@@ -202,16 +216,30 @@ class ParseJsonToDB {
                 contentResolver.bulkInsert(Contract.VideoEntry.CONTENT_URI, contentValues);
             }
         }
+
+        isParsing = false;
     }
 
 
-    private String getJsonString(FileInputStream stream)
+    private String getJsonStringByFile(String filePath)
     {
+        File file = new File(filePath);
+
+        FileInputStream fileInputStream = null;
+        try
+        {
+            fileInputStream = new FileInputStream(file);
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+
 
         StringBuilder total = null;
         try
         {
-            BufferedReader r = new BufferedReader(new InputStreamReader(stream));
+            BufferedReader r = new BufferedReader(new InputStreamReader(fileInputStream));
             total = new StringBuilder();
 
             for (String line; (line = r.readLine()) != null; )
@@ -230,9 +258,7 @@ class ParseJsonToDB {
         return jsonString;
     }
 
-
-
-    void handleJson(boolean enableInsertDB)
+    void handleParseJsonFileAndInsertDB()
     {
         Thread thread = new Thread(new Runnable()
         {
@@ -241,15 +267,28 @@ class ParseJsonToDB {
             {
                 try
                 {
-                    if(enableInsertDB) {
-                        parseJsonAndInsertDB(fileInputStream);
-                        isParsing = false;
-                    }
-                    else
-                    {
-                        fileBody = getJsonString(fileInputStream);
-                        isParsing = false;
-                    }
+                   parseJsonFileAndInsertDB(filePath);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+    }
+
+    void handleViewJson()
+    {
+        Thread thread = new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    fileBody = getJsonStringByFile(filePath);
+                    isParsing = false;
                 }
                 catch (Exception e)
                 {

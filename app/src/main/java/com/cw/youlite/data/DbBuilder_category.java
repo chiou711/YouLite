@@ -56,10 +56,10 @@ public class DbBuilder_category {
      * @param url The location of the video list
      */
     public @NonNull
-    List<ContentValues> fetch(String url) throws IOException, JSONException {
+    JSONObject fetchJasonObject(String url) throws IOException, JSONException {
         JSONObject videoData = fetchJSON(url);
-        System.out.println("DbBuilder_category / _fetch / videoData length = " + videoData.length());
-        return buildMedia(videoData);
+        System.out.println("DbBuilder_category / _fetchJasonObject / videoData length = " + videoData.length());
+        return videoData;
     }
 
     /**
@@ -84,7 +84,6 @@ public class DbBuilder_category {
 
             // save category names
             ContentValues categoryValues = new ContentValues();
-//            categoryValues.put("category_name", category_name);
             categoryValues.put("folder_title", category_name);
             categoryValues.put("folder_table_id", h+1);
 

@@ -623,8 +623,9 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         return false;
     }
 
-    private boolean isStorageRequested1 = false;
-    private boolean isStorageRequested2 = false;
+    private boolean isStorageRequestedExportOne = false;
+    private boolean isStorageRequestedExportAll = false;
+    private boolean isStorageRequestedImport = false;
 
     // callback of granted permission
     @Override
@@ -657,12 +658,16 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                     recreate();
                 break;
 
-                case Util.PERMISSIONS_REQUEST_STORAGE1:
-                    isStorageRequested1 = true;
+                case Util.PERMISSIONS_REQUEST_STORAGE_EXPORT_ONE:
+                    isStorageRequestedExportOne = true;
                     break;
 
-                case Util.PERMISSIONS_REQUEST_STORAGE2:
-                    isStorageRequested2 = true;
+                case Util.PERMISSIONS_REQUEST_STORAGE_EXPORT_ALL:
+                    isStorageRequestedExportAll = true;
+                    break;
+
+                case Util.PERMISSIONS_REQUEST_STORAGE_IMPORT:
+                    isStorageRequestedImport = true;
                     break;
             }
         }
@@ -947,23 +952,11 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             String statusStr = intent.getExtras().getString(FetchService_category.Constants.EXTENDED_DATA_STATUS);
             System.out.println("MainFragment / _FetchServiceResponseReceiver / _onReceive / statusStr = " + statusStr);
 
-            // after fetch category
             if((statusStr != null) && statusStr.equalsIgnoreCase("FetchCategoryServiceIsDone"))
             {
                 if (context != null) {
-                    // avoid endless loop due to empty category selection
-                    Intent serviceIntent = new Intent(MainAct.this, FetchService_video.class);
-                    serviceIntent.putExtra("FetchUrl", getDefaultUrl());
-                    startService(serviceIntent);
-                }
-            }
-
-            // after fetch video
-            if((statusStr != null) && statusStr.equalsIgnoreCase("FetchVideoServiceIsDone"))
-            {
-                if (context != null) {
                     // unregister receiver
-                    localBroadcastMgr.unregisterReceiver(responseReceiver);//todo check
+                    localBroadcastMgr.unregisterReceiver(responseReceiver);
                     responseReceiver = null;
 
                     Pref.setPref_DB_ready(MainAct.this,true);
@@ -984,14 +977,16 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         System.out.println("MainAct / _onResumeFragments ");
         super.onResumeFragments();
 
-        if(isStorageRequested1 || isStorageRequested2)
+        if(isStorageRequestedExportOne ||
+           isStorageRequestedExportAll ||
+           isStorageRequestedImport      )
         {
             //hide the menu
             mMenu.setGroupVisible(R.id.group_notes, false);
             mMenu.setGroupVisible(R.id.group_pages_and_more, false);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-            if(isStorageRequested1) {
+            if(isStorageRequestedExportOne) {
                 DB_folder dB_folder = new DB_folder(this, Pref.getPref_focusView_folder_tableId(this));
                 if (dB_folder.getPagesCount(true) > 0) {
                         Export_toSDCardJsonFragment exportFragment = new Export_toSDCardJsonFragment();
@@ -1001,15 +996,23 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                                 .commit();
                 } else
                     Toast.makeText(this, R.string.no_page_yet, Toast.LENGTH_SHORT).show();
-                isStorageRequested1 = false;
+                isStorageRequestedExportOne = false;
             }
 
-            if(isStorageRequested2)
+            if(isStorageRequestedExportAll)
             {
                 Export_toSDCardAllJsonFragment exportFragment = new Export_toSDCardAllJsonFragment();
                 transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
                 transaction.replace(R.id.content_frame, exportFragment, "export").addToBackStack(null).commit();
-                isStorageRequested2 = false;
+                isStorageRequestedExportAll = false;
+            }
+
+            if(isStorageRequestedImport)
+            {
+                Import_filesListJson importFragmentJson = new Import_filesListJson();
+                transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+                transaction.replace(R.id.content_frame, importFragmentJson, "import").addToBackStack(null).commit();
+                isStorageRequestedImport = false;
             }
 
             if (FolderUi.mHandler != null)
@@ -1800,39 +1803,48 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 return true;
 
             case MenuId.IMPORT_FROM_SD_CARD:
-                //hide the menu
-                mMenu.setGroupVisible(R.id.group_notes, false);
-                mMenu.setGroupVisible(R.id.group_pages_and_more, false);
-                // replace fragment
-                Import_filesList importFragment = new Import_filesList();
-                transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-                transaction.replace(R.id.content_frame, importFragment,"import").addToBackStack(null).commit();
+	            //hide the menu
+	            mMenu.setGroupVisible(R.id.group_notes, false);
+	            mMenu.setGroupVisible(R.id.group_pages_and_more, false);
+	            // replace fragment
+	            Import_filesList importFragment = new Import_filesList();
+	            transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+	            transaction.replace(R.id.content_frame, importFragment, "import").addToBackStack(null).commit();
                 return true;
 
 	        case MenuId.IMPORT_FROM_SD_CARD_JSON:
-		        //hide the menu
-		        mMenu.setGroupVisible(R.id.group_notes, false);
-		        mMenu.setGroupVisible(R.id.group_pages_and_more, false);
-		        // replace fragment
-		        Import_filesListJson importFragmentJson = new Import_filesListJson();
-		        transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-		        transaction.replace(R.id.content_frame, importFragmentJson,"import").addToBackStack(null).commit();
+		        if( (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) && //API23
+				        (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) // check permission
+						        != PackageManager.PERMISSION_GRANTED))
+		        {
+			        // No explanation needed, we can request the permission.
+			        ActivityCompat.requestPermissions(this,
+					        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+							        Manifest.permission.READ_EXTERNAL_STORAGE},
+					        Util.PERMISSIONS_REQUEST_STORAGE_IMPORT);
+		        }
+		        else {
+			        //hide the menu
+			        mMenu.setGroupVisible(R.id.group_notes, false);
+			        mMenu.setGroupVisible(R.id.group_pages_and_more, false);
+			        // replace fragment
+			        Import_filesListJson importFragmentJson = new Import_filesListJson();
+			        transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+			        transaction.replace(R.id.content_frame, importFragmentJson, "import").addToBackStack(null).commit();
+		        }
 		        return true;
 
             case MenuId.EXPORT_TO_SD_CARD:
-                //hide the menu
-                mMenu.setGroupVisible(R.id.group_notes, false);
-                mMenu.setGroupVisible(R.id.group_pages_and_more, false);
-                if(dB_folder.getPagesCount(true)>0)
-                {
-                    Export_toSDCardFragment exportFragment = new Export_toSDCardFragment();
-                    transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-                    transaction.replace(R.id.content_frame, exportFragment,"export").addToBackStack(null).commit();
-                }
-                else
-                {
-                    Toast.makeText(this, R.string.no_page_yet, Toast.LENGTH_SHORT).show();
-                }
+	            //hide the menu
+	            mMenu.setGroupVisible(R.id.group_notes, false);
+	            mMenu.setGroupVisible(R.id.group_pages_and_more, false);
+	            if (dB_folder.getPagesCount(true) > 0) {
+		            Export_toSDCardFragment exportFragment = new Export_toSDCardFragment();
+		            transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+		            transaction.replace(R.id.content_frame, exportFragment, "export").addToBackStack(null).commit();
+	            } else {
+		            Toast.makeText(this, R.string.no_page_yet, Toast.LENGTH_SHORT).show();
+	            }
                 return true;
 
             case MenuId.EXPORT_TO_SD_CARD_JSON:
@@ -1844,7 +1856,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                     ActivityCompat.requestPermissions(this,
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                     Manifest.permission.READ_EXTERNAL_STORAGE},
-                            Util.PERMISSIONS_REQUEST_STORAGE1);
+                            Util.PERMISSIONS_REQUEST_STORAGE_EXPORT_ONE);
                 }
                 else {
                     //hide the menu
@@ -1872,7 +1884,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                     ActivityCompat.requestPermissions(this,
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                     Manifest.permission.READ_EXTERNAL_STORAGE},
-                            Util.PERMISSIONS_REQUEST_STORAGE2);
+                            Util.PERMISSIONS_REQUEST_STORAGE_EXPORT_ALL);
                 }
                 else {
                     //hide the menu

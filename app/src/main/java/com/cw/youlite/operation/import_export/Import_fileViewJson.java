@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 CW Chiu
+ * Copyright (C) 2019 CW Chiu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package com.cw.youlite.operation.import_export;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -29,13 +28,10 @@ import android.widget.TextView;
 
 import com.cw.youlite.R;
 import com.cw.youlite.main.MainAct;
-import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.ColorSet;
 import com.cw.youlite.util.Util;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 import androidx.fragment.app.Fragment;
 
@@ -48,6 +44,15 @@ public class Import_fileViewJson extends Fragment
     File mFile;
     View rootView;
 
+    @Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+
+		Bundle arguments = getArguments();
+		filePath = arguments.getString("KEY_FILE_PATH");
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		rootView = inflater.inflate(R.layout.import_sd_file_view,container, false);
@@ -55,9 +60,6 @@ public class Import_fileViewJson extends Fragment
 
 		mTitleViewText = (TextView) rootView.findViewById(R.id.view_title);
 		mBodyViewText = (TextView) rootView.findViewById(R.id.view_body);
-
-//		getActivity().getActionBar().setDisplayShowHomeEnabled(false);
-
 
         Import_fileViewJson_asyncTask task = null;
 		if(savedInstanceState == null) {
@@ -165,39 +167,6 @@ public class Import_fileViewJson extends Fragment
         view2.setVisibility(View.VISIBLE);
     }
 
-	@Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        
-        Bundle arguments = getArguments();
-        filePath = arguments.getString("KEY_FILE_PATH");
-    }
-
-    // Import default content by XML file
-    public static void importDefaultContentByXml(Activity act, File xmlFile)
-    {
-		System.out.println("Import_fileView / _importDefaultContentByXml / xmlFileName = " + xmlFile.getName());
-
-		TabsHost.setLastPageTableId(0);
-
-        FileInputStream fileInputStream = null;
-
-        try
-        {
-            fileInputStream = new FileInputStream(xmlFile);
-        }
-        catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-
-        // import data by HandleXmlByFile class
-		ParseXmlToDB importObject = new ParseXmlToDB(fileInputStream,act);
-        importObject.enableInsertDB(true);
-        importObject.handleXML();
-        while(importObject.isParsing);
-	}
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

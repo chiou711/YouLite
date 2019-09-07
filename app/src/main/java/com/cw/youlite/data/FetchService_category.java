@@ -17,15 +17,14 @@
 package com.cw.youlite.data;
 
 import android.app.IntentService;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.util.Log;
 
-import org.json.JSONException;
+import com.cw.youlite.operation.import_export.ParseJsonToDB;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.io.IOException;
-import java.util.List;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -42,6 +41,7 @@ public class FetchService_category extends IntentService {
      */
     public FetchService_category() {
         super(TAG);
+        System.out.println("FetchService_category / constructor / serviceUrl = " + serviceUrl);
     }
 
     @Override
@@ -51,15 +51,11 @@ public class FetchService_category extends IntentService {
 	    DbBuilder_category builder = new DbBuilder_category(getApplicationContext());
 
         try {
-	        List<ContentValues> contentValuesList = builder.fetch(serviceUrl);
+            JSONObject jsonObj = builder.fetchJasonObject(serviceUrl);
 
-			ContentValues[] downloadedVideoContentValues =
-					contentValuesList.toArray(new ContentValues[contentValuesList.size()]);
-
-			ContentResolver contentResolver = getApplicationContext().getContentResolver();
-			System.out.println("FetchService_category / _onHandleIntent / contentResolver = " + contentResolver.toString());
-
-			contentResolver.bulkInsert(Contract.CategoryEntry.CONTENT_URI, downloadedVideoContentValues);//The key is the column name for the field.
+	        ParseJsonToDB importObject = new ParseJsonToDB(this);
+	        importObject.parseJsonAndInsertDB(jsonObj);
+	        while (importObject.isParsing) ;
 
         } catch (IOException | JSONException e) {
             Log.e(TAG, "Error occurred in downloading videos");
