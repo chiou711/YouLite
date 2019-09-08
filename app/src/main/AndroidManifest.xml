@@ -87,7 +87,9 @@
         <activity android:name="com.cw.youlite.operation.youtube.YouTubePlayerAct"
                   android:configChanges="orientation|screenSize|keyboardHidden"/>
         <activity android:name="com.cw.youlite.operation.import_export.Import_webAct"
-                  android:theme="@style/MyTheme"/>
+            android:theme="@style/MyTheme"/>
+        <activity android:name="com.cw.youlite.operation.import_export.Import_webJsonAct"
+            android:theme="@style/MyTheme"/>
         <activity android:name="com.cw.youlite.operation.import_export.GDriveBaseAct"
             android:theme="@style/MyTheme"/>
         <activity android:name="com.cw.youlite.operation.import_export.GDriveRewriteAct"

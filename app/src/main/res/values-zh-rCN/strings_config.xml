@@ -37,6 +37,7 @@
     <string name="config_import_SDCard_title">选择要汇入的档案：</string>
     <string name="config_import">汇入</string>
     <string name="config_import_Web">汇入XML:从Web</string>
+    <string name="config_import_Json_Web">汇入JSON:from Web</string>
     <string name="config_import_renew">更新</string>
     <string name="config_import_SDCard_confirm_title">确认要汇入所选：</string>
     <string name="config_select_pages_title">选择页面:</string>

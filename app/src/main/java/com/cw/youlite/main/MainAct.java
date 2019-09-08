@@ -48,6 +48,7 @@ import com.cw.youlite.operation.import_export.GDriveRewriteAct;
 import com.cw.youlite.operation.import_export.Import_fileView;
 import com.cw.youlite.operation.import_export.Import_filesListJson;
 import com.cw.youlite.operation.import_export.Import_webAct;
+import com.cw.youlite.operation.import_export.Import_webJsonAct;
 import com.cw.youlite.page.Checked_notes_option;
 import com.cw.youlite.page.PageUi;
 import com.cw.youlite.page.Page_recycler;
@@ -1800,6 +1801,11 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             case MenuId.IMPORT_FROM_WEB:
                 Intent import_web = new Intent(this,Import_webAct.class);
                 startActivityForResult(import_web,8000);
+                return true;
+
+            case MenuId.IMPORT_JSON_FROM_WEB:
+                Intent importJson_web = new Intent(this, Import_webJsonAct.class);
+                startActivityForResult(importJson_web,8000);
                 return true;
 
             case MenuId.IMPORT_FROM_SD_CARD:

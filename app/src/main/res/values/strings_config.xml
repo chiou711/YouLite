@@ -37,6 +37,7 @@
     <string name="config_import_SDCard_title">Select file to import:</string>
     <string name="config_import">Import</string>
     <string name="config_import_Web">Import XML:from Web</string>
+    <string name="config_import_Json_Web">Import JSON:from Web</string>
     <string name="config_import_renew">Renew</string>
     <string name="config_import_SDCard_confirm_title">Confirm to import selected:</string>
     <string name="config_select_pages_title">Select pages:</string>
