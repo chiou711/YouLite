@@ -49,6 +49,7 @@ import com.cw.youlite.operation.import_export.Import_fileView;
 import com.cw.youlite.operation.import_export.Import_filesListJson;
 import com.cw.youlite.operation.import_export.Import_webAct;
 import com.cw.youlite.operation.import_export.Import_webJsonAct;
+import com.cw.youlite.operation.mail.MailJsonFragment;
 import com.cw.youlite.page.Checked_notes_option;
 import com.cw.youlite.page.PageUi;
 import com.cw.youlite.page.Page_recycler;
@@ -395,7 +396,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         //Add note with the link which got from other App
         String intentLink = mMainUi.addNote_IntentLink(getIntent(), mAct);
         if (!Util.isEmptyString(intentLink)) {
-            finish(); // LiteNote not running at first, keep closing
+            finish(); // YouLite not running at first, keep closing
             return;
         } else {
             // check DB
@@ -686,10 +687,10 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     {
 
         /**
-         * LiteNote_default_content.xml
+         * YouLite_default_content.xml
          * Unit: folder
          */
-        // LiteNotes_default_content.xml
+        // YouLite_default_content.xml
 //        String srcUrl = "https://drive.google.com/uc?authuser=0&id=1qAfMUJ9DMsciVkb7hEQAwLrmcyfN95sF&export=download";
 
         // JSON file at Google Drive
@@ -856,7 +857,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
      *********************************************************************************/
 
     boolean isAddedOnNewIntent;
-    // if one LiteNote Intent is already running, call it again in YouTube or Browser will run into this
+    // if one YouLite Intent is already running, call it again in YouTube or Browser will run into this
     @Override
     protected void onNewIntent(Intent intent)
     {
@@ -1192,14 +1193,18 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         String stringFileName[] = null;
 
         // mail
-        if((requestCode== MailNotes.EMAIL) || (requestCode== MailPagesFragment.EMAIL_PAGES)) {
+        if((requestCode== MailNotes.EMAIL) ||
+           (requestCode== MailPagesFragment.EMAIL_PAGES) ||
+           (requestCode== MailJsonFragment.EMAIL_JSON)) {
             if (requestCode == MailNotes.EMAIL)
                 stringFileName = MailNotes.mAttachmentFileName;
             else if (requestCode == MailPagesFragment.EMAIL_PAGES)
                 stringFileName = MailPagesFragment.mAttachmentFileName;
+            else if (requestCode == MailJsonFragment.EMAIL_JSON)
+                stringFileName = MailJsonFragment.mAttachmentFileName;
 
             Toast.makeText(mAct, R.string.mail_exit, Toast.LENGTH_SHORT).show();
-
+	        System.out.println("MainAct / _onActivityResult / stringFileName = " + stringFileName);
             // note: result code is always 0 (cancel), so it is not used
             new DeleteFileAlarmReceiver(mAct,
                     System.currentTimeMillis() + 1000 * 60 * 5, // formal: 300 seconds
@@ -1916,6 +1921,22 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 if(dB_folder.getPagesCount(true)>0)
                 {
                     MailPagesFragment mailFragment = new MailPagesFragment();
+                    transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+                    transaction.replace(R.id.content_frame, mailFragment,"mail").addToBackStack(null).commit();
+                }
+                else
+                {
+                    Toast.makeText(this, R.string.no_page_yet, Toast.LENGTH_SHORT).show();
+                }
+                return true;
+
+
+            case MenuId.SEND_JSON:
+                mMenu.setGroupVisible(R.id.group_notes, false); //hide the menu
+
+                if(dB_folder.getPagesCount(true)>0)
+                {
+                    MailJsonFragment mailFragment = new MailJsonFragment();
                     transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
                     transaction.replace(R.id.content_frame, mailFragment,"mail").addToBackStack(null).commit();
                 }

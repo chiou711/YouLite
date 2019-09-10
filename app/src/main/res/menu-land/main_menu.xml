@@ -199,8 +199,14 @@
                             android:title="@string/mail_notes_title"
                             android:icon="@android:drawable/ic_menu_send"/>
                         <item
-                            android:id="@+id/IMPORT_RENEW"
+                            android:id="@+id/SEND_JSON"
                             android:orderInCategory="10"
+                            app:showAsAction="never"
+                            android:title="@string/mail_json_title"
+                            android:icon="@android:drawable/ic_menu_send"/>
+                        <item
+                            android:id="@+id/IMPORT_RENEW"
+                            android:orderInCategory="11"
                             app:showAsAction="never"
                             android:title="@string/config_import_renew"
                             android:icon="@drawable/perm_group_sync_settings"/>

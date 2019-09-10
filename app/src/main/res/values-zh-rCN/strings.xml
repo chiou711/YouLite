@@ -14,7 +14,7 @@
     <string name="btn_Select">选择</string>
     <string name="btn_None">无</string>
     <string name="app_name">YouLite</string>
-    <string name="app_name_dir">LiteNote</string>
+    <string name="app_name_dir">YouLite</string>
     <string name="mark_handler">mark_handler</string>
     <string name="drag_handler">drag_handler</string>
     <string name="confirm_dialog_title">确认</string>
@@ -28,6 +28,7 @@
     <string name="footer_checked">勾选</string>
     <string name="footer_total">总计</string>
     <string name="mail_notes_title">发送笔记页(文字)</string>
+    <string name="mail_json_title">发送JSON</string>
     <string name="mail_notes_btn">发送</string>
     <string name="mail_notes_dlg_title">发送笔记</string>
     <string name="mail_notes_dlg_message">收件人的电子邮件地址:</string>

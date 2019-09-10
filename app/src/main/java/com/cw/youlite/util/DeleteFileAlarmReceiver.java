@@ -49,7 +49,7 @@ public class DeleteFileAlarmReceiver extends BroadcastReceiver
    {
 	   System.out.println("DeleteFileAlarmReceiver / _onReceive");
 		// Note: if launch Send mail twice, file name founded is the first one, not the second one
-	    // so, delete any file starts with LiteNote_SEND and ends with txt
+	    // so, delete any file starts with YouLite_SEND and ends with txt
 		
 	    // SD card path + "/" + directory path
 	    String folderString = Environment.getExternalStorageDirectory().toString() + 
@@ -62,9 +62,9 @@ public class DeleteFileAlarmReceiver extends BroadcastReceiver
 		    @Override
 		    public boolean accept( final File dir,
 		                           final String name ) {
-//		        return name.matches( "LiteNote_SEND.*\\.txt" ); // starts with LiteNote_SEND, ends with txt
+//		        return name.matches( "YouLite_SEND.*\\.txt" ); // starts with YouLite_SEND, ends with txt
 //		        return name.matches( ".*\\.txt" ); // end with txt
-//		        return name.matches("(LiteNote_SEND.+(\\.(?i)(txt))$)" );
+//		        return name.matches("(YouLite_SEND.+(\\.(?i)(txt))$)" );
 				boolean isMatch = false;
 				if(name.matches("("+ Util.getStorageDirName(context)+"_SEND.+(\\.(?i)(xml))$)" ) ||
 				   name.matches("("+ Util.getStorageDirName(context)+"_SEND.+(\\.(?i)(txt))$)" )    )

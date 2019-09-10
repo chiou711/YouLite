@@ -170,7 +170,7 @@ public class Import_webAct extends AppCompatActivity
         });
 
         // show toast
-        webView.addJavascriptInterface(import_interface, "LiteNote");
+        webView.addJavascriptInterface(import_interface, "YouLite");
 
         // load content to web view
         webView.loadUrl(homeUrl);

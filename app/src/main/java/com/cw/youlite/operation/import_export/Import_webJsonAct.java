@@ -47,7 +47,7 @@ public class Import_webJsonAct extends AppCompatActivity
     WebView webView;
     Button btn_import;
     // TODO Website path customization: input path, website rule for Import
-    String homeUrl = "https://litenoteapp.blogspot.com/2019/09/json-links.html";
+    String homeUrl = "https://youlite-app.blogspot.com/2019/09/json.html";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -171,7 +171,7 @@ public class Import_webJsonAct extends AppCompatActivity
         });
 
         // show toast
-        webView.addJavascriptInterface(import_interface, "LiteNote");
+        webView.addJavascriptInterface(import_interface, "YouLite");
 
         // load content to web view
         webView.loadUrl(homeUrl);

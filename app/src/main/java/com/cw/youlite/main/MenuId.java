@@ -41,6 +41,7 @@ public class MenuId {
 //        static final int CLICK_LAUNCH_YOUTUBE = R.id.CLICK_LAUNCH_YOUTUBE;
         static final int ENABLE_NOTE_DRAG_AND_DROP = R.id.ENABLE_NOTE_DRAG_AND_DROP;
         static final int SEND_PAGES = R.id.SEND_PAGES;
+        static final int SEND_JSON = R.id.SEND_JSON;
         static final int IMPORT_RENEW = R.id.IMPORT_RENEW;
 		static final int EXPORT_TO_SD_CARD = R.id.EXPORT_TO_SD_CARD;
         static final int EXPORT_TO_SD_CARD_JSON = R.id.EXPORT_TO_SD_CARD_JSON;

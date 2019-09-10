@@ -14,7 +14,7 @@
     <string name="btn_Select">Select</string>
     <string name="btn_None">None</string>
     <string name="app_name">YouLite</string>
-    <string name="app_name_dir">LiteNote</string>
+    <string name="app_name_dir">YouLite</string>
     <string name="mark_handler">mark_handler</string>
     <string name="drag_handler">drag_handler</string>
     <string name="confirm_dialog_title">Confirmation</string>
@@ -28,6 +28,7 @@
     <string name="footer_checked">Selected</string>
     <string name="footer_total">Total</string>
     <string name="mail_notes_title">Mail note pages (text))</string>
+    <string name="mail_json_title">Mail JSON</string>
     <string name="mail_notes_btn">Send</string>
     <string name="mail_notes_dlg_title">Mail notes</string>
     <string name="mail_notes_dlg_message">Receiver e-Mail address:</string>

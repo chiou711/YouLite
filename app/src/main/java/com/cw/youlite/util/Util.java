@@ -192,7 +192,7 @@ public class Util
 	}
 
 	// export to SD card Json: for checked pages
-	public void exportToSdCardJson(String filename, List<Boolean> checkedTabs) throws JSONException
+	public String exportToSdCardJson(String filename, List<Boolean> checkedTabs) throws JSONException
 	{
 		//first row text
 		String data ="";
@@ -202,6 +202,7 @@ public class Util
 		//get data from DB
 		data = queryJsonDB(filename.replace(".json",""),data,checkedTabs);
 		exportToSdCardFile(filename,data);
+		return data;
 	}
 
 	// export to SD card all Json
