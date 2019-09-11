@@ -50,7 +50,7 @@ public class ParseJsonToDB {
 
     private Context mContext;
     public static boolean isParsing;
-    String fileBody = "";
+    public String fileBody = "";
     String filePath;
 
     ParseJsonToDB(String filePath, Context context)

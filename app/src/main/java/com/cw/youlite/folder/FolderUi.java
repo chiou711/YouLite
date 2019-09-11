@@ -174,23 +174,6 @@ public class FolderUi
                 // insert folder table
                 db_drawer.insertFolderTable(newTableId, true);
 
-                // insert initial page table after Add new folder
-                if(Define.INITIAL_PAGES_COUNT > 0)
-                {
-                    for(int i = 1; i<= Define.INITIAL_PAGES_COUNT; i++)
-                    {
-                        DB_folder dB_folder = new DB_folder(act,newTableId);
-                        int style = Util.getNewPageStyle(act);
-                        dB_folder.insertPage(DB_folder.getFocusFolder_tableName(),
-                                             Define.getTabTitle(act,1),
-                                             i,
-                                             style,
-                                             true );
-
-                        dB_folder.insertPageTable(dB_folder,newTableId, i, true);
-                    }
-                }
-
                 // add new folder to the top
                 if(mAddFolderAt == 0)
                 {

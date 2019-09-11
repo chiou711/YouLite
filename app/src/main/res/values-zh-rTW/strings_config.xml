@@ -35,11 +35,13 @@
     <string name="config_import_SDCard_entry">匯入XML:從SD卡</string>
     <string name="config_import_SDCard_Json_entry">匯入JSON:從SD卡</string>
     <string name="config_import_SDCard_title">選擇要匯入的檔案：</string>
+    <string name="config_mail_Json_SDCard_title">選擇要寄送的JSON檔案:</string>
     <string name="config_import">匯入</string>
     <string name="config_import_Web">匯入XML:從Web</string>
     <string name="config_import_Json_Web">匯入JSON:from Web</string>
     <string name="config_import_renew">更新</string>
     <string name="config_import_SDCard_confirm_title">確認要匯入所選：</string>
+    <string name="config_mail_SDCard_confirm_title">確認要寄送所選:</string>
     <string name="config_select_pages_title">選擇頁面:</string>
     <string name="config_select_pages_delete_title">選擇要刪除的頁面:</string>
     <string name="config_select_pages_export_title">選擇要匯出的頁面:</string>

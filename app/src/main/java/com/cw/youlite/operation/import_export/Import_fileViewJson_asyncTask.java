@@ -33,7 +33,7 @@ import androidx.appcompat.app.AppCompatActivity;
  * Created by cw on 2019/9/7
  */
 // Show progress progressBar
-class Import_fileViewJson_asyncTask extends AsyncTask<Void, Integer, Void> {
+public class Import_fileViewJson_asyncTask extends AsyncTask<Void, Integer, Void> {
 
     private ProgressBar progressBar;
     private boolean enableSaveDB;
@@ -45,7 +45,7 @@ class Import_fileViewJson_asyncTask extends AsyncTask<Void, Integer, Void> {
     private File file;
     private String filePath;
 
-    Import_fileViewJson_asyncTask(AppCompatActivity _act, View _rootView, String _filePath)
+    public Import_fileViewJson_asyncTask(AppCompatActivity _act, View _rootView, String _filePath)
     {
         act = _act;
         rootView = _rootView;
@@ -64,7 +64,7 @@ class Import_fileViewJson_asyncTask extends AsyncTask<Void, Integer, Void> {
         filePath = _filePath;
     }
 
-    void enableSaveDB(boolean enable)
+    public void enableSaveDB(boolean enable)
     {
         enableSaveDB = enable;
     }
@@ -77,7 +77,7 @@ class Import_fileViewJson_asyncTask extends AsyncTask<Void, Integer, Void> {
         }
     }
 
-    ParseJsonToDB importObject;
+    public ParseJsonToDB importObject;
     @Override
     protected Void doInBackground(Void... params)
     {

@@ -22,7 +22,7 @@ import com.cw.youlite.R;
 
 /**
  * Created by CW on 2016/6/16.
- * Modified by CW on 2018/11/07
+ * Modified by CW on 2019/9/11
  *
  * build apk file size:
  * 1) prefer w/ assets files: 15,483 KB
@@ -40,11 +40,7 @@ public class Define {
     }
 
     //
-    public final static int DEBUG_DEFAULT_BY_INITIAL = 0;
-    public final static int DEBUG_DEFAULT_BY_ASSETS = 1;
     public final static int DEBUG_DEFAULT_BY_DOWNLOAD = 2;
-    public final static int RELEASE_DEFAULT_BY_INITIAL = 3;
-    public final static int RELEASE_DEFAULT_BY_ASSETS = 4;
     public final static int RELEASE_DEFAULT_BY_DOWNLOAD = 5;
 
 
@@ -53,33 +49,9 @@ public class Define {
 
         switch (appBuildMode)
         {
-            case DEBUG_DEFAULT_BY_INITIAL:
-                CODE_MODE = DEBUG_MODE;
-                DEFAULT_CONTENT = BY_INITIAL_TABLES;
-                INITIAL_FOLDERS_COUNT = 2;  // Folder1, Folder2
-                INITIAL_PAGES_COUNT = 1;// Page1_1
-                break;
-
-            case DEBUG_DEFAULT_BY_ASSETS:
-                CODE_MODE = DEBUG_MODE;
-                DEFAULT_CONTENT = BY_ASSETS;
-                break;
-
             case DEBUG_DEFAULT_BY_DOWNLOAD:
                 CODE_MODE = DEBUG_MODE;
                 DEFAULT_CONTENT = BY_DOWNLOAD;
-                break;
-
-            case RELEASE_DEFAULT_BY_INITIAL:
-                CODE_MODE = RELEASE_MODE;
-                DEFAULT_CONTENT = BY_INITIAL_TABLES;
-                INITIAL_FOLDERS_COUNT = 2;  // Folder1, Folder2
-                INITIAL_PAGES_COUNT = 1;// Page1_1
-                break;
-
-            case RELEASE_DEFAULT_BY_ASSETS:
-                CODE_MODE = RELEASE_MODE;
-                DEFAULT_CONTENT = BY_ASSETS;
                 break;
 
             case RELEASE_DEFAULT_BY_DOWNLOAD:
@@ -135,21 +107,9 @@ public class Define {
      *  With default content by XML file
      */
     public static int DEFAULT_CONTENT;
-    // by none
-    public static int BY_INITIAL_TABLES = 0;
-    // by assets XML file
-    public static int BY_ASSETS = 1;
-    // by downloaded XML file
+    // by downloaded JSON file
     public static int BY_DOWNLOAD = 2;
 
-    /**
-     * With initial tables: table count
-     * - folder count: 2
-     * - page count: 1
-     */
-    // initial table count
-    public static int INITIAL_FOLDERS_COUNT;
-    public static int INITIAL_PAGES_COUNT;
 
     /***************************************************************************
      * Enable AdMob at page bottom
@@ -169,13 +129,7 @@ public class Define {
     public static String getTabTitle(Context context, Integer Id)
     {
         String title;
-
-        if(Define.DEFAULT_CONTENT != Define.BY_INITIAL_TABLES) {
-            title = context.getResources().getString(R.string.prefer_page_name).concat(String.valueOf(Id));
-        }
-        else {
             title = context.getResources().getString(R.string.default_page_name).concat(String.valueOf(Id));
-        }
         return title;
     }
 

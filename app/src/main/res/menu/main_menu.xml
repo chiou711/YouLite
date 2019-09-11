@@ -144,22 +144,10 @@
             >
         <menu android:background ="#4f004f">
             <item
-                android:id="@+id/IMPORT_FROM_WEB"
-                android:orderInCategory="1"
-                app:showAsAction="never"
-                android:title="@string/config_import_Web"
-                android:icon="@android:drawable/ic_input_add"/>
-            <item
                 android:id="@+id/IMPORT_JSON_FROM_WEB"
                 android:orderInCategory="2"
                 app:showAsAction="never"
                 android:title="@string/config_import_Json_Web"
-                android:icon="@android:drawable/ic_input_add"/>
-            <item
-                android:id="@+id/IMPORT_FROM_SD_CARD"
-                android:orderInCategory="3"
-                app:showAsAction="never"
-                android:title="@string/config_import_SDCard_entry"
                 android:icon="@android:drawable/ic_input_add"/>
             <item
                 android:id="@+id/IMPORT_FROM_SD_CARD_JSON"
@@ -167,12 +155,6 @@
                 app:showAsAction="never"
                 android:title="@string/config_import_SDCard_Json_entry"
                 android:icon="@android:drawable/ic_input_add"/>
-            <item
-                android:id="@+id/EXPORT_TO_SD_CARD"
-                android:orderInCategory="5"
-                app:showAsAction="never"
-                android:title="@string/config_export_SDCard_title"
-                android:icon="@android:drawable/ic_menu_save"/>
             <item
                 android:id="@+id/EXPORT_TO_SD_CARD_JSON"
                 android:orderInCategory="6"
@@ -191,12 +173,6 @@
                 app:showAsAction="never"
                 android:title="@string/config_export_GDrive_all_JSON_title"
                 android:icon="@drawable/google_drive"/>
-            <item
-                android:id="@+id/SEND_PAGES"
-                android:orderInCategory="9"
-                app:showAsAction="never"
-                android:title="@string/mail_notes_title"
-                android:icon="@android:drawable/ic_menu_send"/>
             <item
                 android:id="@+id/SEND_JSON"
                 android:orderInCategory="10"
