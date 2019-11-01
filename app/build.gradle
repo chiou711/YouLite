@@ -4,6 +4,12 @@ android {
     signingConfigs {
         gdrive {
 
+        storeFile file('/home/cwc/doc/AndroidStudio_keyStore/LiteNote_keystore.jks')
+            keyAlias = var
+        }
+        debug {
+            storeFile file('/home/cwc/doc/AndroidStudio_keyStore/LiteNote_keystore.jks')
+            keyAlias = var
         }
     }
     compileSdkVersion 28
@@ -19,7 +25,7 @@ android {
     defaultConfig {
         applicationId "com.cw.youlite"
         minSdkVersion 14
-        targetSdkVersion 27
+        targetSdkVersion 28
         multiDexEnabled true
         signingConfig signingConfigs.debug
     }
@@ -30,6 +36,7 @@ android {
 //            shrinkResources true
 //            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.gdrive
         }
         debug {
             signingConfig signingConfigs.gdrive
