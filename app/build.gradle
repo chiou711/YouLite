@@ -6,13 +6,15 @@ android {
 
         storeFile file('/home/cwc/doc/AndroidStudio_keyStore/LiteNote_keystore.jks')
             keyAlias = var
+            storePassword ''
+            keyPassword ''
         }
         debug {
             storeFile file('/home/cwc/doc/AndroidStudio_keyStore/LiteNote_keystore.jks')
             keyAlias = var
         }
     }
-    compileSdkVersion 28
+    compileSdkVersion 29
     buildToolsVersion '28.0.3'
 
 //    lintOptions {
@@ -25,7 +27,7 @@ android {
     defaultConfig {
         applicationId "com.cw.youlite"
         minSdkVersion 14
-        targetSdkVersion 28
+        targetSdkVersion 29
         multiDexEnabled true
         signingConfig signingConfigs.debug
     }
@@ -79,7 +81,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
 
     // if ENABLE_ADMOB = true, enable the following
@@ -97,7 +99,5 @@ dependencies {
     implementation('com.google.apis:google-api-services-youtube:v3-rev20180511-1.27.0') {
         exclude group: 'org.apache.httpcomponents'
     }
-
-
 
 }
