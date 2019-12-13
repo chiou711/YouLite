@@ -4,13 +4,13 @@ android {
     signingConfigs {
         gdrive {
 
-        storeFile file('/home/cwc/doc/AndroidStudio_keyStore/LiteNote_keystore.jks')
+        storeFile file('C:\\Users\\cwchi\\Google 雲端硬碟\\Android\\AndroidStudio_keyStore\\new PKCS12\\LiteNote_keystore.jks')
             keyAlias = var
             storePassword ''
             keyPassword ''
         }
         debug {
-            storeFile file('/home/cwc/doc/AndroidStudio_keyStore/LiteNote_keystore.jks')
+            storeFile file('C:\\Users\\cwchi\\Google 雲端硬碟\\Android\\AndroidStudio_keyStore\\new PKCS12\\LiteNote_keystore.jks')
             keyAlias = var
         }
     }

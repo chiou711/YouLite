@@ -822,6 +822,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        super.onActivityResult(requestCode,resultCode,data);
         System.out.println("MainAct / _onActivityResult ");
         String stringFileName[] = null;
 
