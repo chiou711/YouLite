@@ -97,25 +97,6 @@ class Import_webJsonAct_asyncTask extends AsyncTask<Void, Integer, Void> {
     ParseXmlToDB importObject;
     private void insertSelectedFileContentToDB(boolean enableInsertDB)
     {
-//        FileInputStream fileInputStream = null;
-//        try
-//        {
-//            fileInputStream = new FileInputStream(file);
-//        }
-//        catch (FileNotFoundException e)
-//        {
-//            e.printStackTrace();
-//        }
-//
-//        // import data by HandleXmlByFile class
-//        if(fileInputStream != null) {
-//            importObject = new ParseXmlToDB(fileInputStream, act);
-//            importObject.enableInsertDB(enableInsertDB);
-//            importObject.handleXML();
-//            while (importObject.isParsing) ;
-//        }
-
-        ///
         ParseJsonToDB importObject = new ParseJsonToDB(filePath, act);
 
         if(enableInsertDB)
@@ -123,10 +104,9 @@ class Import_webJsonAct_asyncTask extends AsyncTask<Void, Integer, Void> {
         else
             importObject.handleViewJson();
 
-        while (ParseJsonToDB.isParsing) {}
-        ///
-
-
+        while (ParseJsonToDB.isParsing) {
+            try { Thread.sleep(100); } catch (InterruptedException e) {}
+        }
     }
 }
 

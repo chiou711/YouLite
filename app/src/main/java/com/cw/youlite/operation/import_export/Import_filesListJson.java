@@ -204,7 +204,7 @@ public class Import_filesListJson extends ListFragment
         if(files == null)
         {
         	Toast.makeText(getActivity(),R.string.toast_import_SDCard_no_file,Toast.LENGTH_SHORT).show();
-        	getActivity().finish();
+            getActivity().getSupportFragmentManager().popBackStack();
         }
         else
         {

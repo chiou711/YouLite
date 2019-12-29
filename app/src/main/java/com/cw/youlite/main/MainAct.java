@@ -203,6 +203,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         UtilImage.getDefaultScaleInPercent(MainAct.this);
 
         if(Pref.getPref_DB_ready(this)) {
+            System.out.println("MainAct / DB is ready");
             bEULA_accepted = true; //todo temp force setting
             doCreate(savedInstanceState);
         }

@@ -19,12 +19,14 @@ package com.cw.youlite.operation.import_export;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -48,6 +50,7 @@ public class Import_webJsonAct extends AppCompatActivity
     Button btn_import;
     // TODO Website path customization: input path, website rule for Import
     String homeUrl = "https://youlite-app.blogspot.com/2019/09/json.html";
+    String downloadUrl ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -145,6 +148,7 @@ public class Import_webJsonAct extends AppCompatActivity
         });
 
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setCacheMode( WebSettings.LOAD_NO_CACHE);
 
         // create instance
         final ImportInterface import_interface = new ImportInterface(webView);
@@ -163,9 +167,12 @@ public class Import_webJsonAct extends AppCompatActivity
             public void onPageFinished(WebView view, String url)
             {
                 System.out.println("Import_webAct / _setWebViewClient / url = " + url);
+                String homeHost = Uri.parse(homeUrl).getHost();
                 view.loadUrl("javascript:window.INTERFACE.processContent(document.getElementsByTagName('body')[0].innerText);");
-                if(!url.contains(homeUrl))
-                    btn_import.setVisibility(View.VISIBLE);
+                if(!url.contains(homeHost))
+                    downloadUrl = url;
+                else
+                    downloadUrl = "";
             }
 
         });
@@ -207,29 +214,45 @@ public class Import_webJsonAct extends AppCompatActivity
         }
         else
             super.onBackPressed();
+
+        ParseXmlToDB.isParsing = false;
     }
 
     /* An instance of this class will be registered as a JavaScript interface */
     class ImportInterface {
 
-        WebView webView;
-        public ImportInterface(WebView _webView)
+        ImportInterface(WebView _webView)
         {
             webView = _webView;
         }
 
+        Runnable run;
         @SuppressWarnings("unused")
         @android.webkit.JavascriptInterface
         public void processContent(final String _content)
         {
-            webView.post(new Runnable()
-            {
-                public void run()
-                {
+            run = new Runnable() {
+                @Override
+                public void run() {
                     content = _content;
-                    System.out.println("Import_webAct.content = "+ content );
+                    int size = content.length();
+                    System.out.println("Import_webAct / content size = "+ size);
+
+                    // workaround: test result is 15
+                    if(size < 20) {
+                        webView.loadUrl("javascript:window.INTERFACE.processContent(document.getElementsByTagName('body')[0].innerText);");
+                    }
+                    else
+                    {
+                        String homeHost = Uri.parse(homeUrl).getHost();
+                        if(!Util.isEmptyString(downloadUrl) && !downloadUrl.contains(homeHost)  )
+                            btn_import.setVisibility(View.VISIBLE);
+                    }
                 }
-            });
+            };
+
+//            webView.postDelayed(run,1000);
+            webView.post(run);
         }
 
         // note: this is used by home URL web page
@@ -237,7 +260,6 @@ public class Import_webJsonAct extends AppCompatActivity
         public void showToast(String toastText) {
             Toast.makeText(Import_webJsonAct.this, toastText, Toast.LENGTH_LONG).show();
         }
-
 
     }
 }

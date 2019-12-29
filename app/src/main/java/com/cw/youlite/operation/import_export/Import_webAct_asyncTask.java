@@ -17,7 +17,6 @@
 package com.cw.youlite.operation.import_export;
 
 import android.os.AsyncTask;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -28,6 +27,8 @@ import com.cw.youlite.util.Util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by cw on 2017/9/16.
@@ -108,7 +109,10 @@ class Import_webAct_asyncTask extends AsyncTask<Void, Integer, Void> {
             importObject = new ParseXmlToDB(fileInputStream, act);
             importObject.enableInsertDB(enableInsertDB);
             importObject.handleXML();
-            while (importObject.isParsing) ;
+            while (ParseXmlToDB.isParsing)
+            {
+                try { Thread.sleep(100); } catch (InterruptedException e) {}
+            }
         }
     }
 }

@@ -89,7 +89,9 @@ public class Import_fileViewJson_asyncTask extends AsyncTask<Void, Integer, Void
         else
             importObject.handleViewJson();
 
-        while (ParseJsonToDB.isParsing) {}
+        while (ParseJsonToDB.isParsing) {
+            try { Thread.sleep(100); } catch (InterruptedException e) {}
+        }
 
         return null;
     }
