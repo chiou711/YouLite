@@ -136,7 +136,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     public final static int STATE_PLAYING = 1;
     public boolean bEULA_accepted;
 
-    private final int INIT_NUMBER = 1;
+    final int INIT_NUMBER = 1;
 
 	// Main Act onCreate
     @Override
@@ -150,10 +150,10 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
          *  1. for AdMob: it works after Google Play store release
          *  2. for assets mode: need to enable build.gradle assets.srcDirs = ['preferred/assets/']
          */
-        /** 3 debug, download */
+        /** 1 debug, download */
         Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_DOWNLOAD);
 
-        /** 6 release, download */
+        /** 2 release, download */
 //        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_DOWNLOAD);
 
         // Release mode: no debug message
@@ -218,7 +218,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         String urlName = "catalog_url_".concat(String.valueOf(INIT_NUMBER));
         int id = getResources().getIdentifier(urlName,"string",getPackageName());
         return getString(id);
-
     }
 
     // Do major create operation
@@ -244,25 +243,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 DB_folder.setFocusFolder_tableId(Pref.getPref_focusView_folder_tableId(this));
                 DB_page.setFocusPage_tableId(Pref.getPref_focusView_page_tableId(this));
             }//if(ENABLE_DB_CHECK)
-
-            // get focus folder table Id, default folder table Id: 1
-//            DB_drawer dB_drawer = new DB_drawer(this);
-//            dB_drawer.open();
-//            if (savedInstanceState == null) {
-//                for (int i = 0; i < dB_drawer.getFoldersCount(false); i++) {
-//                    if (dB_drawer.getFolderTableId(i, false) == Pref.getPref_focusView_folder_tableId(this)) {
-//                        FolderUi.setFocus_folderPos(i);
-//                        System.out.println("MainAct / _mainAction / FolderUi.getFocus_folderPos() = " + FolderUi.getFocus_folderPos());
-//                    }
-//                }
-//                Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_STOP);
-//            }
-//            dB_drawer.close();
-
-            // enable ActionBar app icon to behave as action to toggle nav drawer
-//	        getActionBar().setDisplayHomeAsUpEnabled(true);
-//	        getActionBar().setHomeButtonEnabled(true);
-//			getActionBar().setBackgroundDrawable(new ColorDrawable(ColorSet.getBarColor(mAct)));
 
             mContext = getBaseContext();
 
@@ -388,6 +368,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                     if(Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) {
                         // start Fetch category service
                         System.out.println("MainAct / _onRequestPermissionsResult / start Fetch category service =================================");
+                        Toast.makeText(mAct, R.string.toast_update_database,Toast.LENGTH_LONG).show();
                         Intent serviceIntent = new Intent(MainAct.this, FetchService_category.class);
                         serviceIntent.putExtra("FetchUrl", getDefaultUrl());
                         startService(serviceIntent);
@@ -1451,6 +1432,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
                 // start Fetch category service
                 System.out.println("MainAct / _onOptionsItemSelected / start Fetch category service =================================");
+                Toast.makeText(mAct,R.string.toast_update_database,Toast.LENGTH_LONG).show();
                 Intent serviceIntent = new Intent(MainAct.this, FetchService_category.class);
                 serviceIntent.putExtra("FetchUrl", getDefaultUrl());
                 startService(serviceIntent);
@@ -1517,6 +1499,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
         // start Fetch category service
         System.out.println("MainAct / _onOptionsItemSelected / start Fetch category service =================================");
+        Toast.makeText(mAct,R.string.toast_update_database,Toast.LENGTH_LONG).show();
         Intent serviceIntent = new Intent(MainAct.this, FetchService_category.class);
         serviceIntent.putExtra("FetchUrl", getDefaultUrl());
         startService(serviceIntent);
