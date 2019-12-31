@@ -55,6 +55,7 @@ import com.cw.youlite.tabs.AudioUi_page;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.DeleteFileAlarmReceiver;
 import com.cw.youlite.db.DB_drawer;
+import com.cw.youlite.util.Dialog_EULA;
 import com.cw.youlite.util.audio.UtilAudio;
 import com.cw.youlite.operation.slideshow.SlideshowInfo;
 import com.cw.youlite.util.image.UtilImage;
@@ -202,13 +203,34 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
         UtilImage.getDefaultScaleInPercent(MainAct.this);
 
-        if(Pref.getPref_DB_ready(this)) {
-            System.out.println("MainAct / DB is ready");
-            bEULA_accepted = true; //todo temp force setting
-            doCreate(savedInstanceState);
+        // EULA
+        Dialog_EULA dialog_EULA = new Dialog_EULA(this);
+        bEULA_accepted = dialog_EULA.isEulaAlreadyAccepted();
+
+        // Show dialog of EULA
+        if (!bEULA_accepted)
+        {
+            // Ok button listener
+            dialog_EULA.clickListener_Ok = (DialogInterface dialog, int i) -> {
+                dialog_EULA.applyPreference();
+                renewDB();
+            };
+
+            // No button listener
+            dialog_EULA.clickListener_No = (DialogInterface dialog, int which) -> {
+                // Close the activity as they have declined
+                // the EULA
+                dialog.dismiss();
+                mAct.finish();
+            };
+
+            dialog_EULA.show();
         }
-        else
-            renewDB();
+        else {
+            if(Pref.getPref_DB_ready(this))
+                doCreate(savedInstanceState);
+        }
+
     }
 
     // get default URL
@@ -639,7 +661,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         else {
 
             if (bEULA_accepted) {
-                mFragmentManager.popBackStack();
+                if(mFragmentManager != null)
+                    mFragmentManager.popBackStack();
 
                 if (!mAct.isDestroyed()) {
                     System.out.println("MainAct / _onResumeFragments / mAct is not Destroyed()");

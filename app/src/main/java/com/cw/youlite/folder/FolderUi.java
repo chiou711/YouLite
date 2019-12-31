@@ -167,7 +167,9 @@ public class FolderUi
                 else
                     folderTitle = act.getResources().getString(R.string.default_folder_name).concat(String.valueOf(newTableId));
 
-                MainAct.mFolderTitles.add(folderTitle);
+                if(MainAct.mFolderTitles != null)
+                    MainAct.mFolderTitles.add(folderTitle);
+
                 // insert new drawer Id and Title
                 db_drawer.insertFolder(newTableId, folderTitle,true );
 
