@@ -167,9 +167,11 @@ public class ParseJsonToDB {
 
                     String linkUrl = (String) link.opt("note_link_uri"); // Get the first link only.
 
+                    String imageUri = (String) link.opt("note_image_uri"); // Get the first link only.
+
                     ContentValues videoValues = new ContentValues();
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_TITLE, linkTitle);
-                    videoValues.put(Contract.VideoEntry.COLUMN_NOTE_PICTURE_URI, "");
+                    videoValues.put(Contract.VideoEntry.COLUMN_NOTE_PICTURE_URI, imageUri);
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_AUDIO_URI, "");
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_DRAWING_URI, "");
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_LINK_URI, linkUrl);

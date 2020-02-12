@@ -127,6 +127,7 @@ public class Provider extends ContentProvider {
         map.put(Contract.VideoEntry._ID, Contract.VideoEntry._ID);
         map.put(Contract.VideoEntry.COLUMN_NOTE_TITLE, Contract.VideoEntry.COLUMN_NOTE_TITLE);
         map.put(Contract.VideoEntry.COLUMN_NOTE_LINK_URI,Contract.VideoEntry.COLUMN_NOTE_LINK_URI);
+        map.put(Contract.VideoEntry.COLUMN_NOTE_PICTURE_URI,Contract.VideoEntry.COLUMN_NOTE_PICTURE_URI);
         //todo add more for search?
         map.put(SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID, Contract.VideoEntry._ID + " AS " +
                 SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID);
