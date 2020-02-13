@@ -28,7 +28,6 @@ import com.cw.youlite.config.Config;
 import com.cw.youlite.data.Contract;
 import com.cw.youlite.data.DbHelper;
 import com.cw.youlite.data.FetchService_category;
-import com.cw.youlite.data.FetchService_video;
 import com.cw.youlite.data.Provider;
 import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.db.DB_page;
@@ -571,8 +570,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         if(bEULA_accepted)
             drawer.drawerToggle.syncState();
 
-        // receiver for fetch video service
-        IntentFilter statusIntentFilter = new IntentFilter(FetchService_video.Constants.BROADCAST_ACTION);
+        // receiver for fetch category service
+        IntentFilter statusIntentFilter = new IntentFilter(FetchService_category.Constants.BROADCAST_ACTION);
         responseReceiver = new FetchServiceResponseReceiver();
 
         // Registers the FetchServiceResponseReceiver and its intent filters

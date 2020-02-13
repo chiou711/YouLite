@@ -74,10 +74,8 @@ public class FetchService_category extends IntentService {
 
     public final class Constants {
         // Defines a custom Intent action
-        public static final String BROADCAST_ACTION =
-                "com.cw.youlite.BROADCAST";
+        public static final String BROADCAST_ACTION = "com.cw.youlite.BROADCAST";
         // Defines the key for the status "extra" in an Intent
-        public static final String EXTENDED_DATA_STATUS =
-                "com.cw.youlite.STATUS";
+        public static final String EXTENDED_DATA_STATUS = "com.cw.youlite.STATUS";
     }
 }

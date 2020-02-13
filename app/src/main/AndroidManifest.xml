@@ -140,9 +140,6 @@
 
         <!-- fetch Json -->
         <service
-            android:name="com.cw.youlite.data.FetchService_video"
-            android:exported="false" />
-        <service
             android:name="com.cw.youlite.data.FetchService_category"
             android:exported="false" />
         <provider
