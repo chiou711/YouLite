@@ -27,6 +27,6 @@ public class YouTubeDeveloperKey {
    * <a href="https://console.developers.google.com/">Google Developers Console</a>
    * to register a new developer key.
    */
-  public static final String DEVELOPER_KEY = "AIzaSyCfuWj3r1tZGBB2m5qUBKprIMQhqgsrBkA";//null;
+  public static final String DEVELOPER_KEY = "";
 
 }
