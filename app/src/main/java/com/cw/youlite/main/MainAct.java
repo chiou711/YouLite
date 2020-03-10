@@ -603,6 +603,12 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                     Intent new_intent = new Intent(context, MainAct.class);
                     new_intent.addFlags(FLAG_ACTIVITY_CLEAR_TASK);
                     new_intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+
+                    // reset focus view to default
+                    Pref.setPref_focusView_folder_tableId(MainAct.this, 1);
+                    FolderUi.setFocus_folderPos(0);
+                    Pref.setPref_focusView_page_tableId(MainAct.this, 1);
+
                     context.startActivity(new_intent);
                 }
             }
@@ -1458,11 +1464,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 Intent serviceIntent = new Intent(MainAct.this, FetchService_category.class);
                 serviceIntent.putExtra("FetchUrl", getDefaultUrl());
                 startService(serviceIntent);
-
-                // reset focus view position
-                Pref.setPref_focusView_folder_tableId(this, 1);
-                Pref.setPref_focusView_page_tableId(this, 1);
-
                 return true;
 
             case MenuId.CONFIG:
@@ -1597,7 +1598,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
         // new folder
         mFolder = new Folder(this);
-
         openFolder();
     }
 

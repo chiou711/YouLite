@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.cw.youlite"
-    android:versionCode="10202"
-    android:versionName="1.02.02">
+    android:versionCode="10203"
+    android:versionName="1.02.03">
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -25,7 +25,7 @@
                   android:required="false"/>
     <application
         android:name="com.cw.youlite.util.uil.UilApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
 		android:largeHeap="true"        
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -108,7 +108,7 @@
         <!--Add_recording-->
         <activity
             android:name="com.cw.youlite.note_add.add_recording.Add_recording_act"
-            android:screenOrientation="portrait"
+            android:screenOrientation="unspecified"
             android:label="@string/app_name"
             android:theme="@style/MyTheme" >
         </activity>

@@ -439,7 +439,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
                 holder.thumbWeb.setVisibility(View.GONE);
             }
 		}
-		// case 3: set web title and web view thumb nail of link if no title content
+		// case 3: set web title and web view thumb nail for general HTTP link
 		else if(!Util.isEmptyString(linkUri) &&
                 linkUri.startsWith("http")   &&
 				!Util.isYouTubeLink(linkUri)   )
@@ -452,7 +452,12 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 			holder.thumbWeb.setInitialScale(50);
 			holder.thumbWeb.getSettings().setJavaScriptEnabled(true);//Using setJavaScriptEnabled can introduce XSS vulnerabilities
 			holder.thumbWeb.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT );
-			holder.thumbWeb.loadUrl(linkUri);
+
+			if(!Util.isEmptyString(pictureUri))
+				holder.thumbWeb.loadUrl(pictureUri);
+			else
+				holder.thumbWeb.loadUrl(linkUri);
+
 			holder.thumbWeb.setVisibility(View.VISIBLE);
 
 			holder.thumbPicture.setVisibility(View.GONE);
@@ -468,9 +473,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 			    }
 			});
 
-
 			if (Util.isEmptyString(strTitle)) {
-
 				holder.thumbWeb.setWebChromeClient(new WebChromeClient() {
 					@Override
 					public void onReceivedTitle(WebView view, String title) {

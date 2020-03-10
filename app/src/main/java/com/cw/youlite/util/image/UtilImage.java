@@ -697,7 +697,7 @@ public class UtilImage
     	if(!Util.isEmptyString(string))
     	{
 	    	String fn = string.toLowerCase(Locale.getDefault());
-	    	if(	fn.endsWith("jpg") || fn.endsWith("gif") ||
+	    	if(	fn.endsWith("jpg") || fn.endsWith("jpeg") || fn.endsWith("gif") ||
 	    		fn.endsWith("png") || fn.endsWith("bmp") || fn.endsWith("webp") ) 
 		    	has = true;
     	}
