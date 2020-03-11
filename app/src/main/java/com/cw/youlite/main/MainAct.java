@@ -514,38 +514,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         }
     }
 
-    // for Rotate screen
-    @Override
-    protected void onSaveInstanceState(Bundle outState)
-    {
-       super.onSaveInstanceState(outState);
-        System.out.println("MainAct / onSaveInstanceState / getFocus_folderPos() = " + FolderUi.getFocus_folderPos());
-        outState.putInt("NowFolderPosition", FolderUi.getFocus_folderPos());
-        outState.putInt("Playing_pageId", mPlaying_pagePos);
-        outState.putInt("Playing_folderPos", mPlaying_folderPos);
-        outState.putInt("SeekBarProgress", AudioUi_page.mProgress);
-        outState.putInt("AudioInfo_state", Audio_manager.getPlayerState());
-        if(FolderUi.mHandler != null)
-            FolderUi.mHandler.removeCallbacks(FolderUi.mTabsHostRun);
-        FolderUi.mHandler = null;
-    }
-
-    // for After Rotate
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState)
-    {
-        super.onRestoreInstanceState(savedInstanceState);
-        System.out.println("MainAct / _onRestoreInstanceState ");
-        if(savedInstanceState != null)
-        {
-            FolderUi.setFocus_folderPos(savedInstanceState.getInt("NowFolderPosition"));
-            mPlaying_pagePos = savedInstanceState.getInt("Playing_pageId");
-            mPlaying_folderPos = savedInstanceState.getInt("Playing_folderPos");
-            Audio_manager.setPlayerState(savedInstanceState.getInt("AudioInfo_state"));
-            AudioUi_page.mProgress = savedInstanceState.getInt("SeekBarProgress");
-        }
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -577,6 +545,18 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         // Registers the FetchServiceResponseReceiver and its intent filters
         localBroadcastMgr = LocalBroadcastManager.getInstance(this);
         localBroadcastMgr.registerReceiver(responseReceiver, statusIntentFilter );
+
+        //   get folder table id by preference
+        DB_drawer dbDrawer = new DB_drawer(mAct);
+        int foldersCnt = new DB_drawer(mAct).getFoldersCount(true);
+        int focus_folder_tableId =  Pref.getPref_focusView_folder_tableId(mAct);
+
+        // select focus folder view by preference
+        for (int pos=0;pos< foldersCnt;pos++)
+        {
+            if(focus_folder_tableId == dbDrawer.getFolderTableId(pos,true))
+                FolderUi.setFocus_folderPos(pos);
+        }
     }
 
     // Broadcast receiver for receiving status updates from the IntentService
