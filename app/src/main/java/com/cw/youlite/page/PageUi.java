@@ -145,18 +145,25 @@ public class PageUi
 	           .setIcon(R.drawable.ic_dragger_horizontal);
 	    final AlertDialog dlg = builder.create();
 
-        // set center for negative button
+        // set center position for negative button
         dlg.setOnShowListener( (DialogInterface dialog) -> {
-            Button negativeButton = dlg.getButton(AlertDialog.BUTTON_NEUTRAL);
-            LinearLayout layoutView = (LinearLayout) negativeButton.getParent();
-            Space space= (Space) layoutView.getChildAt(1);
-            space.setVisibility(View.GONE);
+            try {
+	            Button negativeButton = dlg.getButton(AlertDialog.BUTTON_NEUTRAL);
+	            LinearLayout layoutView = (LinearLayout) negativeButton.getParent();
+
+	            // java.lang.ClassCastException: androidx.appcompat.widget.AppCompatButton cannot be cast to android.widget.Space
+	            Space space = (Space) layoutView.getChildAt(1);
+	            space.setVisibility(View.GONE);
+            }
+            catch (Exception e)
+            {
+            	e.printStackTrace();
+            }
         });
 
 	    // disable dim background
 		dlg.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		dlg.show();
-
 
 //        inal int dividerWidth = act.getResources().getDrawable(R.drawable.ic_tab_divider).getMinimumWidth();
 //        final int screenWidth = UtilImage.getScreenWidth(act);
@@ -196,11 +203,8 @@ public class PageUi
 	    // Shift to right
 	    dlg.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener((View v)-> {
 			// middle button text: change to OK
-//			    dlg.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
-//			    Button mButton=(Button)dlg.findViewById(android.R.id.button3);
 			dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(false);
 			Button mButton=(Button)dlg.findViewById(android.R.id.button2);
-
 			mButton.setText(R.string.btn_Finish);
 			mButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_finish , 0, 0, 0);
 
@@ -250,42 +254,41 @@ public class PageUi
 
 	private static void updateButtonState(AlertDialog dlg)
     {
+	    ((Button)dlg.findViewById(android.R.id.button1))
+			    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_forward, 0, 0, 0);
+	    ((Button)dlg.findViewById(android.R.id.button3))
+			    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_back, 0, 0, 0);
+
         if(getTabPositionState() == LEFTMOST )
         {
             // android.R.id.button1 for positive: next
             dlg.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-            ((Button)dlg.findViewById(android.R.id.button1))
-                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_forward, 0, 0, 0);
+	        dlg.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
 
             // android.R.id.button3 for neutral: previous
 			dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(false);
-            ((Button)dlg.findViewById(android.R.id.button3))
-                    .setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+	        dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setVisibility(View.INVISIBLE);
         }
         else if(getTabPositionState() == RIGHTMOST)
         {
             // android.R.id.button1 for positive: next
             dlg.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-            ((Button)dlg.findViewById(android.R.id.button1))
-                    .setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+	        dlg.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.INVISIBLE);
 
             // android.R.id.button3 for neutral: previous
 			dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(true);//avoid long time toast
-            ((Button)dlg.findViewById(android.R.id.button3))
-                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_back, 0, 0, 0);
+	        dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setVisibility(View.VISIBLE);
 
         }
         else if(getTabPositionState() == MIDDLE)
         {
             // android.R.id.button1 for positive: next
             dlg.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-            ((Button)dlg.findViewById(android.R.id.button1))
-                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_forward, 0, 0, 0);
+	        dlg.getButton(AlertDialog.BUTTON_POSITIVE).setVisibility(View.VISIBLE);
 
             // android.R.id.button3 for neutral: previous
 			dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(true);
-			((Button)dlg.findViewById(android.R.id.button3))
-                    .setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_back, 0, 0, 0);
+	        dlg.getButton(AlertDialog.BUTTON_NEUTRAL).setVisibility(View.VISIBLE);
         }
     }
 

@@ -678,7 +678,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     @Override
     protected void onDestroy()
     {
-        System.out.println("MainAct / onDestroy");
+        System.out.println("MainAct / _onDestroy");
 
         if(bluetooth_device_receiver != null)
         {
