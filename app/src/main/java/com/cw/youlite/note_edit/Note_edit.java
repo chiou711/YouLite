@@ -376,9 +376,9 @@ public class Note_edit extends Activity
     }
     
     static final int CHANGE_LINK = R.id.ADD_LINK;
-    static final int CHANGE_AUDIO = R.id.ADD_AUDIO;
-    static final int CAPTURE_IMAGE = R.id.ADD_NEW_IMAGE;
-    static final int CAPTURE_VIDEO = R.id.ADD_NEW_VIDEO;
+//    static final int CHANGE_AUDIO = R.id.ADD_AUDIO;
+//    static final int CAPTURE_IMAGE = R.id.ADD_NEW_IMAGE;
+//    static final int CAPTURE_VIDEO = R.id.ADD_NEW_VIDEO;
 	private Uri picUri;
 	
 	@Override
@@ -430,39 +430,39 @@ public class Note_edit extends Activity
             	setLinkUri();
 			    return true;
 			    
-            case CHANGE_AUDIO:
-				note_edit_ui.bRemoveAudioUri = false; // reset
-            	setAudioSource();
-			    return true;
-			    
-            case CAPTURE_IMAGE:
-            	Intent intentImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            	// new picture Uri with current time stamp
-            	picUri = UtilImage.getPictureUri("IMG_" + Util.getCurrentTimeString() + ".jpg",
-						   						   Note_edit.this); 
-            	picUriStr = picUri.toString();
-			    intentImage.putExtra(MediaStore.EXTRA_OUTPUT, picUri);
-			    startActivityForResult(intentImage, Util.ACTIVITY_TAKE_PICTURE); 
-			    enSaveDb = true;
-				note_edit_ui.bRemovePictureUri = false; // reset
-			    
-			    if(UtilImage.mExpandedImageView != null)
-			    	UtilImage.closeExpandedImage();
-		        
-			    return true;
-            
-            case CAPTURE_VIDEO:
-            	Intent intentVideo = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-            	// new picture Uri with current time stamp
-            	picUri = UtilImage.getPictureUri("VID_" + Util.getCurrentTimeString() + ".mp4",
-						   						   Note_edit.this); 
-            	picUriStr = picUri.toString();
-			    intentVideo.putExtra(MediaStore.EXTRA_OUTPUT, picUri);
-			    startActivityForResult(intentVideo, Util.ACTIVITY_TAKE_PICTURE); 
-			    enSaveDb = true;
-				note_edit_ui.bRemovePictureUri = false; // reset
-			    
-			    return true;			    
+//            case CHANGE_AUDIO:
+//				note_edit_ui.bRemoveAudioUri = false; // reset
+//            	setAudioSource();
+//			    return true;
+//
+//            case CAPTURE_IMAGE:
+//            	Intent intentImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//            	// new picture Uri with current time stamp
+//            	picUri = UtilImage.getPictureUri("IMG_" + Util.getCurrentTimeString() + ".jpg",
+//						   						   Note_edit.this);
+//            	picUriStr = picUri.toString();
+//			    intentImage.putExtra(MediaStore.EXTRA_OUTPUT, picUri);
+//			    startActivityForResult(intentImage, Util.ACTIVITY_TAKE_PICTURE);
+//			    enSaveDb = true;
+//				note_edit_ui.bRemovePictureUri = false; // reset
+//
+//			    if(UtilImage.mExpandedImageView != null)
+//			    	UtilImage.closeExpandedImage();
+//
+//			    return true;
+//
+//            case CAPTURE_VIDEO:
+//            	Intent intentVideo = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+//            	// new picture Uri with current time stamp
+//            	picUri = UtilImage.getPictureUri("VID_" + Util.getCurrentTimeString() + ".mp4",
+//						   						   Note_edit.this);
+//            	picUriStr = picUri.toString();
+//			    intentVideo.putExtra(MediaStore.EXTRA_OUTPUT, picUri);
+//			    startActivityForResult(intentVideo, Util.ACTIVITY_TAKE_PICTURE);
+//			    enSaveDb = true;
+//				note_edit_ui.bRemovePictureUri = false; // reset
+//
+//			    return true;
 			    
             default:
                 return super.onOptionsItemSelected(item);

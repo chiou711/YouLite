@@ -119,7 +119,7 @@ public class Note_edit_ui {
 
 		UI_init_text();
 
-    	audioTextView = (TextView) act.findViewById(R.id.edit_audio);
+//    	audioTextView = (TextView) act.findViewById(R.id.edit_audio);
     	linkEditText = (EditText) act.findViewById(R.id.edit_link);
         picImageView = (ImageView) act.findViewById(R.id.edit_picture);
 
@@ -424,10 +424,26 @@ public class Note_edit_ui {
     		// for picture block
 			pictureUriInDB = dB_page.getNotePictureUri_byId(rowId);
 			drawingUriInDB = dB_page.getNoteDrawingUri_byId(rowId);
-			System.out.println("populateFields_all / mPictureFileNameInDB = " + pictureUriInDB);
+			System.out.println("Note_edit_ui /  _populateFields_all / pictureUriInDB = " + pictureUriInDB);
     		
 			// load bitmap to image view
-			if( (!Util.isEmptyString(pictureUriInDB)) || (!Util.isEmptyString(drawingUriInDB)) )
+		    if(pictureUriInDB == null)
+		    {
+			    String thumbUri ="";
+			    System.out.println("populateFields_all / oriLinkUri = " + oriLinkUri);
+			    if(!Util.isEmptyString(oriLinkUri) && Util.isYouTubeLink(oriLinkUri)      )
+			    {
+				    thumbUri = "https://img.youtube.com/vi/"+Util.getYoutubeId(oriLinkUri)+"/0.jpg";
+				    System.out.println("populateFields_all / thumbUri = " + thumbUri);
+
+				    new UtilImage_bitmapLoader(picImageView,
+						    thumbUri,
+						    progressBar,
+						    UilCommon.optionsForFadeIn,
+						    act);
+			    }
+		    }
+			else if( (!Util.isEmptyString(pictureUriInDB)) || (!Util.isEmptyString(drawingUriInDB)) )
 			{
 				int style =  Util.getCurrentPageStyle(TabsHost.getFocus_tabPos());
 
@@ -438,7 +454,8 @@ public class Note_edit_ui {
 					thumbUri = drawingUriInDB;
 
 				new UtilImage_bitmapLoader(picImageView,
-						                   thumbUri, progressBar,
+						                   thumbUri,
+										   progressBar,
 //    					                   (style % 2 == 1 ?
 //                                            UilCommon.optionsForRounded_light:
 //                                            UilCommon.optionsForRounded_dark),
@@ -461,15 +478,15 @@ public class Note_edit_ui {
 	    	}			
 	    	
     		// audio
-			audioUriInDB = dB_page.getNoteAudioUri_byId(rowId);
-        	if(!Util.isEmptyString(audioUriInDB))
-    		{
-    			String audio_name = audioUriInDB;
-				System.out.println("populateFields_all / set audio name / audio_name = " + audio_name);
-				audioTextView.setText(act.getResources().getText(R.string.note_audio) + ": " + audio_name);
-    		}
-        	else
-				audioTextView.setText("");
+//			audioUriInDB = dB_page.getNoteAudioUri_byId(rowId);
+//        	if(!Util.isEmptyString(audioUriInDB))
+//    		{
+//    			String audio_name = audioUriInDB;
+//				System.out.println("populateFields_all / set audio name / audio_name = " + audio_name);
+//				audioTextView.setText(act.getResources().getText(R.string.note_audio) + ": " + audio_name);
+//    		}
+//        	else
+//				audioTextView.setText("");
         		
     		// link
 			String strLinkEdit = dB_page.getNoteLink_byId(rowId);
@@ -537,16 +554,19 @@ public class Note_edit_ui {
 
 	private boolean isPictureModified()
     {
-    	return !oriPictureUri.equals(pictureUriInDB);
+	    if ( (oriPictureUri == null) && (pictureUriInDB == null) )
+	        return  false;
+		else
+    	    return !oriPictureUri.equals(pictureUriInDB);
     }
 
-	private boolean isAudioModified()
-    {
-    	if(oriAudioUri == null)
-    		return false;
-    	else
-    		return !oriAudioUri.equals(audioUriInDB);
-    }
+//	private boolean isAudioModified()
+//    {
+//    	if(oriAudioUri == null)
+//    		return false;
+//    	else
+//    		return !oriAudioUri.equals(audioUriInDB);
+//    }
 
 	private boolean isBodyModified()
     {
@@ -564,7 +584,7 @@ public class Note_edit_ui {
 //		System.out.println("Note_edit_ui / _isNoteModified / bRemoveAudioUri = " + bRemoveAudioUri);
     	if( isTitleModified() ||
     		isPictureModified() ||
-    		isAudioModified() ||
+//    		isAudioModified() ||
     		isBodyModified() ||
     		isLinkUriModified() ||
     		bRemovePictureUri ||

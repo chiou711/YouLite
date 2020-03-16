@@ -399,9 +399,8 @@ public class Note_adapter extends FragmentStatePagerAdapter
 					}
 				}
 
-				// set current link web view in case no picture Uri
-				if (  Util.isEmptyString(pictureStr) &&
-					 !Util.isYouTubeLink(linkUri) &&
+				// set current link web view
+				if ( !Util.isYouTubeLink(linkUri) &&
 					  linkUri.startsWith("http") &&
 					 !Note.isTextMode()      )
 				{
@@ -412,7 +411,12 @@ public class Note_adapter extends FragmentStatePagerAdapter
 						linkWebView.setVisibility(View.VISIBLE);
                         setWebView(linkWebView,object,CustomWebView.LINK_VIEW);
 						System.out.println("Note_adapter / _setPrimaryItem / load linkUri = " + linkUri);
-						linkWebView.loadUrl(linkUri);
+
+						// apply non-empty picture Uri
+						if(!Util.isEmptyString(pictureStr))
+							linkWebView.loadUrl(pictureStr);
+						else
+							linkWebView.loadUrl(linkUri);;
 
 						//Add for non-stop showing of full screen web view
 						linkWebView.setWebViewClient(new WebViewClient() {

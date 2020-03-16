@@ -142,10 +142,10 @@ public class Add_note_option {
                 R.string.note_youtube_link));
 
 
-//        // Web link
-//        addNoteList.add(new Add_note_option(ID_NEW_WEB_LINK,
-//                android.R.drawable.ic_menu_share,
-//                R.string.note_web_link));
+        // Web link
+        addNoteList.add(new Add_note_option(ID_NEW_WEB_LINK,
+                android.R.drawable.ic_menu_share,
+                R.string.note_web_link));
 
             // Back
         addNoteList.add(new Add_note_option(ID_NEW_BACK,
