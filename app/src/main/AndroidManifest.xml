@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.cw.youlite"
-    android:versionCode="10204"
-    android:versionName="1.02.04">
+    android:versionCode="10207"
+    android:versionName="1.02.07">
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -141,7 +141,8 @@
             android:name="com.cw.youlite.data.Provider"
             android:authorities="${packageName}"
             android:permission="${applicationId}.ACCESS_VIDEO_DATA"
-            android:exported="true">
+            android:protectionLevel="signature"
+            android:exported="false">
             <path-permission
                 android:pathPrefix="/search"
                 android:readPermission="android.permission.GLOBAL_SEARCH" />

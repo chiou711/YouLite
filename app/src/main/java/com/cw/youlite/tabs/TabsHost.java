@@ -587,7 +587,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
         mDbFolder.open();
         // check if only one page left
         int pagesCount = mDbFolder.getPagesCount(false);
-        int mFirstPos_PageId = 0;
+        int mFirstPos_PageId = 1;
         Cursor mPageCursor = mDbFolder.getPageCursor();
         if(mPageCursor.isFirst())
             mFirstPos_PageId = pageId;

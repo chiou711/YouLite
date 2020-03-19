@@ -151,10 +151,10 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
          *  2. for assets mode: need to enable build.gradle assets.srcDirs = ['preferred/assets/']
          */
         /** 1 debug, download */
-        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_DOWNLOAD);
+//        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_DOWNLOAD);
 
         /** 2 release, download */
-//        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_DOWNLOAD);
+        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_DOWNLOAD);
 
         // Release mode: no debug message
         if (Define.CODE_MODE == Define.RELEASE_MODE) {
@@ -706,8 +706,10 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         mMediaBrowserCompat = null;
 
         // unregister receiver
-        localBroadcastMgr.unregisterReceiver(responseReceiver);
-        responseReceiver = null;
+        if(localBroadcastMgr != null) {
+            localBroadcastMgr.unregisterReceiver(responseReceiver);
+            responseReceiver = null;
+        }
 
         super.onDestroy();
     }
@@ -1043,6 +1045,12 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                  *  Note group
                  */
                 mMenu.setGroupVisible(R.id.group_notes, false);
+
+                // disable page operation sub menu entry
+                mMenu.findItem(R.id.page_operation).setVisible(false);
+
+                // disable note operation sub menu entry
+                mMenu.findItem(R.id.note_operation).setVisible(false);
             }
         }
         return super.onPrepareOptionsMenu(menu);

@@ -721,7 +721,8 @@ public class Util
 				body = replaceEscapeCharacter(body);
 
 				String picUrl = cursorNote.getString(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_PICTURE_URI));
-				picUrl = replaceEscapeCharacter(picUrl);
+				if(picUrl != null)
+					picUrl = replaceEscapeCharacter(picUrl);
 
 				String audioUrl = cursorNote.getString(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_AUDIO_URI));
 				audioUrl = replaceEscapeCharacter(audioUrl);
@@ -1412,12 +1413,14 @@ public class Util
 	    int currentOrientation = act.getResources().getConfiguration().orientation;
 	    if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
 //		       act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-		       act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
+//		    act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
+		    act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 	    }
 	    else {
 //		       act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-		       act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
-	    }	    
+//		    act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
+		    act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+	    }
 	}
 
 	static public void unlockOrientation(Activity act) {
