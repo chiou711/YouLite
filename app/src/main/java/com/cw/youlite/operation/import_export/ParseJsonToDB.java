@@ -130,6 +130,7 @@ public class ParseJsonToDB {
                     DB_folder.KEY_PAGE_STYLE + " INTEGER," +
                     DB_folder.KEY_PAGE_CREATED + " INTEGER);";
             sqlDb.execSQL(DB_CREATE_FOLDER_TABLE);
+            mOpenHelper.close();
 
             //----------------------------
             // level 2
@@ -150,6 +151,7 @@ public class ParseJsonToDB {
                         pageTitle,
                         i+1,
                         Define.STYLE_DEFAULT,true);//Define.STYLE_PREFER
+                db_folder.close();
 
                 //----------------------------
                 // level 3
@@ -172,10 +174,7 @@ public class ParseJsonToDB {
                     ContentValues videoValues = new ContentValues();
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_TITLE, linkTitle);
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_PICTURE_URI, imageUri);
-                    videoValues.put(Contract.VideoEntry.COLUMN_NOTE_AUDIO_URI, "");
-                    videoValues.put(Contract.VideoEntry.COLUMN_NOTE_DRAWING_URI, "");
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_LINK_URI, linkUrl);
-                    videoValues.put(Contract.VideoEntry.COLUMN_NOTE_BODY, "");
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_MARKING, 1);
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_CREATED, 1); //todo temp
 
@@ -189,13 +188,11 @@ public class ParseJsonToDB {
                         Contract.VideoEntry._ID + " INTEGER PRIMARY KEY," +
                         Contract.VideoEntry.COLUMN_NOTE_TITLE + " TEXT," +
                         Contract.VideoEntry.COLUMN_NOTE_PICTURE_URI + " TEXT," +
-                        Contract.VideoEntry.COLUMN_NOTE_AUDIO_URI + " TEXT," +
-                        Contract.VideoEntry.COLUMN_NOTE_DRAWING_URI + " TEXT," +
                         Contract.VideoEntry.COLUMN_NOTE_LINK_URI + " TEXT NOT NULL," + // TEXT UNIQUE NOT NULL will make the URL unique.
-                        Contract.VideoEntry.COLUMN_NOTE_BODY + " TEXT," +
                         Contract.VideoEntry.COLUMN_NOTE_MARKING + " INTEGER," +
                         Contract.VideoEntry.COLUMN_NOTE_CREATED + " INTEGER);";
                 sqlDb.execSQL(SQL_CREATE_PAGE_TABLE);
+                sqlDb.close();
 
                 listL2.add(listL3);
             }

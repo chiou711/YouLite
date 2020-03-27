@@ -72,10 +72,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	    DB_page.KEY_NOTE_ID + " INTEGER PRIMARY KEY," +
 	    DB_page.KEY_NOTE_TITLE + " TEXT," +
 	    DB_page.KEY_NOTE_PICTURE_URI + " TEXT," +
-	    DB_page.KEY_NOTE_AUDIO_URI + " TEXT," +
-	    DB_page.KEY_NOTE_DRAWING_URI + " TEXT," +
 	    DB_page.KEY_NOTE_LINK_URI + " TEXT NOT NULL," + // TEXT UNIQUE NOT NULL will make the URL unique.
-	    DB_page.KEY_NOTE_BODY + " TEXT," +
 	    DB_page.KEY_NOTE_MARKING + " INTEGER," +
 	    DB_page.KEY_NOTE_CREATED + " INTEGER);";
 

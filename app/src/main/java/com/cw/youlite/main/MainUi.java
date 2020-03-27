@@ -89,7 +89,7 @@ public class MainUi {
             System.out.println("MainUi / _addNote_IntentLink / path = " + path);
             DB_page dB_page = new DB_page(act,Pref.getPref_focusView_page_tableId(MainAct.mAct));
             dB_page.open();
-            dB_page.insertNote("", "", "", "", path, "", 0, (long) 0);// add new note, get return row Id
+            dB_page.insertNote("", "",  path,  0, (long) 0);// add new note, get return row Id
             dB_page.close();
 
             // save to top or to bottom
@@ -121,7 +121,7 @@ public class MainUi {
                     else
                         row_id = dB_page.getNoteId(count-1,true);
 
-                    dB_page.updateNote(row_id, title, "", "", "", path, "", 0, now.getTime(), true); // update note
+                    dB_page.updateNote(row_id, title, "",  path, 0, now.getTime(), true); // update note
                 }
 
                 Toast.makeText(act,
@@ -161,7 +161,7 @@ public class MainUi {
                                 else
                                     row_id = dB_page.getNoteId(count-1,true);
 
-                                dB_page.updateNote(row_id, titleReceived, "", "", "", link, "", 0, now.getTime(), true); // update note
+                                dB_page.updateNote(row_id, titleReceived, "",  link,  0, now.getTime(), true); // update note
                             }
 
                             Toast.makeText(act,

@@ -48,7 +48,6 @@ public class Note_addText extends AppCompatActivity {
     boolean enSaveDb = true;
 	static final int ADD_TEXT_NOTE = R.id.ADD_TEXT_NOTE;
 	EditText titleEditText;
-	EditText bodyEditText;
 	EditText linkEditText;
 	Menu mMenu;
 
@@ -93,7 +92,7 @@ public class Note_addText extends AppCompatActivity {
 	protected void onPause() {
 		System.out.println("Note_addText / _onPause");
 		super.onPause();
-		rowId = saveStateInDB(rowId, enSaveDb,"", "", "");
+		rowId = saveStateInDB(rowId, enSaveDb,"");
 		System.out.println("Note_addText / _onPause / rowId = " + rowId);
 	}
 
@@ -124,7 +123,6 @@ public class Note_addText extends AppCompatActivity {
 		mMenu.findItem(R.id.ADD_TEXT_NOTE).setIcon(R.drawable.ic_input_add);
 
 		titleEditText.addTextChangedListener(setTextWatcher());
-		bodyEditText.addTextChangedListener(setTextWatcher());
 		linkEditText.addTextChangedListener(setTextWatcher());
 
 		return super.onCreateOptionsMenu(menu);
@@ -153,7 +151,7 @@ public class Note_addText extends AppCompatActivity {
 				if(isTextAdded())
 				{
 					enSaveDb = true;
-					rowId = saveStateInDB(rowId, enSaveDb,"", "", "");
+					rowId = saveStateInDB(rowId, enSaveDb,"" );
 
 					if( getIntent().getExtras().getString("extra_ADD_NEW_TO_TOP", "false").equalsIgnoreCase("true") &&
 							(Page_recycler.mDb_page.getNotesCount(true) > 0) )
@@ -224,11 +222,9 @@ public class Note_addText extends AppCompatActivity {
 	{
 		boolean bEdit = false;
 		String curTitle = titleEditText.getText().toString();
-		String curBody = bodyEditText.getText().toString();
 		String curLink = linkEditText.getText().toString();
 
 		if(!Util.isEmptyString(curTitle)||
-				!Util.isEmptyString(curBody) ||
 				!Util.isEmptyString(curLink)   )
 		{
 			bEdit = true;
@@ -240,7 +236,6 @@ public class Note_addText extends AppCompatActivity {
 	void UI_init_text()
 	{
 		titleEditText = (EditText) findViewById(R.id.edit_title);
-		bodyEditText = (EditText) findViewById(R.id.edit_body);
 		linkEditText = (EditText) findViewById(R.id.edit_link);
 
 		int focusFolder_tableId = Pref.getPref_focusView_folder_tableId(this);
@@ -254,10 +249,6 @@ public class Note_addText extends AppCompatActivity {
 		//set title color
 		titleEditText.setTextColor(ColorSet.mText_ColorArray[style]);
 		titleEditText.setBackgroundColor(ColorSet.mBG_ColorArray[style]);
-
-		//set body color
-		bodyEditText.setTextColor(ColorSet.mText_ColorArray[style]);
-		bodyEditText.setBackgroundColor(ColorSet.mBG_ColorArray[style]);
 
 		//set link color
 		linkEditText.setTextColor(ColorSet.mText_ColorArray[style]);
@@ -273,11 +264,6 @@ public class Note_addText extends AppCompatActivity {
 			titleEditText.setText(strTitleEdit);
 			titleEditText.setSelection(strTitleEdit.length());
 
-			// body
-			String strBodyEdit = dB_page.getNoteBody_byId(rowId);
-			bodyEditText.setText(strBodyEdit);
-			bodyEditText.setSelection(strBodyEdit.length());
-
 			// link
 			String strLinkEdit = dB_page.getNoteLinkUri_byId(rowId);
 			linkEditText.setText(strLinkEdit);
@@ -290,10 +276,6 @@ public class Note_addText extends AppCompatActivity {
 			titleEditText.setText(strBlank);
 			titleEditText.setSelection(strBlank.length());
 			titleEditText.requestFocus();
-
-			// renew body
-			bodyEditText.setText(strBlank);
-			bodyEditText.setSelection(strBlank.length());
 
 			// renew link
 			linkEditText.setText(strBlank);
@@ -322,34 +304,28 @@ public class Note_addText extends AppCompatActivity {
 	}
 
 
-	Long saveStateInDB(Long rowId,boolean enSaveDb, String pictureUri, String audioUri, String drawingUri)
+	Long saveStateInDB(Long rowId,boolean enSaveDb, String pictureUri)
 	{
 		String linkUri = "";
 		if(linkEditText != null)
 			linkUri = linkEditText.getText().toString();
 		String title = titleEditText.getText().toString();
-		String body = bodyEditText.getText().toString();
 
 		if(enSaveDb)
 		{
 			if (rowId == null) // for Add new
 			{
 				if( (!Util.isEmptyString(title)) ||
-						(!Util.isEmptyString(body)) ||
 						(!Util.isEmptyString(pictureUri)) ||
-						(!Util.isEmptyString(audioUri)) ||
 						(!Util.isEmptyString(linkUri))            )
 				{
 					// insert
 					System.out.println("Note_addText / _saveStateInDB / insert");
-					rowId = dB_page.insertNote(title, pictureUri, audioUri, drawingUri, linkUri, body, 0, (long) 0);// add new note, get return row Id
+					rowId = dB_page.insertNote(title, pictureUri,  linkUri,  0, (long) 0);// add new note, get return row Id
 				}
 			}
 			else if ( Util.isEmptyString(title) &&
-					Util.isEmptyString(body) &&
 					Util.isEmptyString(pictureUri) &&
-					Util.isEmptyString(drawingUri) &&
-					Util.isEmptyString(audioUri) &&
 					Util.isEmptyString(linkUri)         )
 			{
 				// delete

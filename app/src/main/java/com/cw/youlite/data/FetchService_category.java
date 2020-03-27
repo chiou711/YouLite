@@ -54,7 +54,7 @@ public class FetchService_category extends IntentService {
             JSONObject jsonObj = builder.fetchJasonObject(serviceUrl);
 
 	        ParseJsonToDB importObject = new ParseJsonToDB(this);
-	        importObject.parseJsonAndInsertDB(jsonObj);
+	        importObject.parseJsonAndInsertDB(jsonObj);//??? how to avoid DB exception
 	        while (importObject.isParsing) ;
 
         } catch (IOException | JSONException e) {

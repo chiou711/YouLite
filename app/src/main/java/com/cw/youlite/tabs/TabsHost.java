@@ -46,13 +46,9 @@ import com.cw.youlite.define.Define;
 import com.cw.youlite.drawer.Drawer;
 import com.cw.youlite.folder.FolderUi;
 import com.cw.youlite.main.MainAct;
-import com.cw.youlite.operation.audio.Audio_manager;
-import com.cw.youlite.operation.audio.AudioPlayer_page;
-import com.cw.youlite.operation.audio.BackgroundAudioService;
 import com.cw.youlite.page.Page_recycler;
 import com.cw.youlite.util.ColorSet;
 import com.cw.youlite.util.Util;
-import com.cw.youlite.util.audio.UtilAudio;
 import com.cw.youlite.util.preferences.Pref;
 //if(Define.ENABLE_ADMOB)
 //import com.google.android.gms.ads.AdRequest;
@@ -71,12 +67,9 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
     public static int mFocusTabPos;
 
     public static int lastPageTableId;
-    public static int audioPlayTabPos;
 
     public static int firstPos_pageId;
 
-    public static AudioUi_page audioUi_page;
-    public static AudioPlayer_page audioPlayer_page;
     public static boolean isDoingMarking;
 
     public TabsHost()
@@ -250,48 +243,6 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
         // current page table Id
         mFocusPageTableId = pageTableId;
 
-        // refresh list view of selected page
-        Page_recycler page = mTabsPagerAdapter.fragmentList.get(getFocus_tabPos());
-        if( (tab.getPosition() == audioPlayTabPos) &&
-            (page != null) &&
-            (page.itemAdapter != null) )
-        {
-            RecyclerView listView = page.recyclerView;
-            if( (audioPlayer_page != null) &&
-                !isDoingMarking &&
-                (listView != null) &&
-                (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP)  )
-            {
-                audioPlayer_page.scrollHighlightAudioItemToVisible(listView);
-            }
-        }
-
-        // add for update page item view
-        if((page != null) && (page.itemAdapter != null))
-        {
-            page.itemAdapter.notifyDataSetChanged();
-            System.out.println("TabsHost / _onTabSelected / notifyDataSetChanged ");
-        }
-        else
-            System.out.println("TabsHost / _onTabSelected / not notifyDataSetChanged ");
-
-        // set tab audio icon when audio playing
-        if ( (MainAct.mPlaying_folderPos == FolderUi.getFocus_folderPos()) &&
-             (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP) &&
-             (tab.getPosition() == audioPlayTabPos)                              )
-        {
-            if(tab.getCustomView() == null) {
-                LinearLayout tabLinearLayout = (LinearLayout) MainAct.mAct.getLayoutInflater().inflate(R.layout.tab_custom, null);
-                TextView title = (TextView) tabLinearLayout.findViewById(R.id.tabTitle);
-                title.setText(mTabsPagerAdapter.dbFolder.getPageTitle(tab.getPosition(), true));
-                title.setTextColor(MainAct.mAct.getResources().getColor(R.color.colorWhite));
-                title.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_audio, 0, 0, 0);
-                tab.setCustomView(title);
-            }
-        }
-        else
-            tab.setCustomView(null);
-
         // call onCreateOptionsMenu
         MainAct.mAct.invalidateOptionsMenu();
 
@@ -348,41 +299,6 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
                             mTabLayout.getTabAt(getFocus_tabPos()).select();
                     }
                 }, 100);
-
-        // set audio icon after Key Protect
-        TabLayout.Tab tab =  mTabLayout.getTabAt(audioPlayTabPos);
-        if(tab != null) {
-            if( (MainAct.mPlaying_folderPos == FolderUi.getFocus_folderPos()) &&
-                (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP)  &&
-                (tab.getPosition() == audioPlayTabPos)                               )
-            {
-                if(tab.getCustomView() == null)
-                {
-                    LinearLayout tabLinearLayout = (LinearLayout) MainAct.mAct.getLayoutInflater().inflate(R.layout.tab_custom, null);
-                    TextView title = (TextView) tabLinearLayout.findViewById(R.id.tabTitle);
-                    title.setText(mTabsPagerAdapter.dbFolder.getPageTitle(tab.getPosition(), true));
-                    title.setTextColor(MainAct.mAct.getResources().getColor(R.color.colorWhite));
-                    title.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_audio, 0, 0, 0);
-                    tab.setCustomView(title);
-                }
-            }
-            else
-                tab.setCustomView(null);
-        }
-
-        // for incoming phone call case or after Key Protect
-        if( (audioUi_page != null) &&
-            (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP) &&
-            (Audio_manager.getAudioPlayMode() == Audio_manager.PAGE_PLAY_MODE)   )
-        {
-            audioUi_page.initAudioBlock(MainAct.mAct);
-
-            audioPlayer_page.page_runnable.run();//todo Why exception when adding new text?
-
-            //todo Why dose this panel disappear?
-            UtilAudio.updateAudioPanel(audioUi_page.audioPanel_play_button,
-                                       audioUi_page.audio_panel_title_textView);
-        }
 
         // set long click listener
         setLongClickListener();
@@ -640,22 +556,6 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
         mDbFolder.deletePage(DB_folder.getFocusFolder_tableName(),pageId,true);
 //        mPagesCount--;
 
-        // After Delete page, update highlight tab
-        if(getFocus_tabPos() < MainAct.mPlaying_pagePos)
-        {
-            MainAct.mPlaying_pagePos--;
-        }
-        else if((getFocus_tabPos() == MainAct.mPlaying_pagePos) &&
-                (MainAct.mPlaying_folderPos == FolderUi.getFocus_folderPos()))
-        {
-            if(BackgroundAudioService.mMediaPlayer != null)
-            {
-                Audio_manager.stopAudioPlayer();
-                Audio_manager.mAudioPos = 0;
-                Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_STOP);
-            }
-        }
-
         // update change after deleting tab
         FolderUi.startTabsHostRun();
     }
@@ -671,7 +571,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
         mFooterMessage.setTextColor(ColorSet.color_white);
         if(mFooterMessage != null) //add this for avoiding null exception when after e-Mail action
         {
-            mFooterMessage.setText(getFooterMessage(mAct));
+            mFooterMessage.setText(getFooterMessage(mAct));//??? page table id = 0
             mFooterMessage.setBackgroundColor(ColorSet.getBarColor(mAct));
         }
     }
@@ -679,7 +579,9 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
     // get footer message of list view
     static String getFooterMessage(AppCompatActivity mAct)
     {
-        DB_page mDb_page = new DB_page(mAct, mTabsPagerAdapter.getItem(getFocus_tabPos()).page_tableId);
+        int pageTableId = Pref.getPref_focusView_page_tableId(mAct);
+        DB_page mDb_page = new DB_page(mAct, pageTableId);
+
         return mAct.getResources().getText(R.string.footer_checked).toString() +
                 "/" +
                 mAct.getResources().getText(R.string.footer_total).toString() +

@@ -26,11 +26,6 @@ public class MenuId {
         // Menu identifiers
         static final int ADD_NEW_NOTE = R.id.ADD_NEW_NOTE;
 
-//        static final int OPEN_PLAY_SUBMENU = R.id.PLAY;
-//        static final int PLAY_OR_STOP_AUDIO = R.id.PLAY_OR_STOP_MUSIC;
-//        static final int SLIDE_SHOW = R.id.SLIDE_SHOW;
-//        static final int GALLERY = R.id.GALLERY;
-
         static final int CHECKED_OPERATION = R.id.HANDLE_CHECKED_NOTES;
 
         static final int ADD_NEW_PAGE = R.id.ADD_NEW_PAGE;

@@ -20,8 +20,6 @@ package com.cw.youlite.config;
 import java.io.File;
 
 import com.cw.youlite.folder.FolderUi;
-import com.cw.youlite.operation.audio.Audio_manager;
-import com.cw.youlite.operation.audio.BackgroundAudioService;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.BaseBackPressedListener;
 import com.cw.youlite.main.MainAct;
@@ -501,10 +499,6 @@ public class Config extends Fragment
 			DB_drawer db_drawer = new DB_drawer(getActivity());
 			db_drawer.deleteDB();
 
-			// stop audio player
-			if(BackgroundAudioService.mMediaPlayer != null)
-				Audio_manager.stopAudioPlayer();
-
 			//set last tab Id to 0, otherwise TabId will not start from 0 when deleting all
 			//reset tab Index to 0
 			//fix: select tab over next import amount => clean all => import => export => error
@@ -552,10 +546,6 @@ public class Config extends Fragment
 	DialogInterface.OnClickListener listener_recover_default = new DialogInterface.OnClickListener(){
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
-
-			// stop audio player
-			if(BackgroundAudioService.mMediaPlayer != null)
-				Audio_manager.stopAudioPlayer();
 
 			//remove preference
 			clearSharedPreferencesForSettings(getActivity());

@@ -27,8 +27,6 @@ import android.widget.TextView;
 import com.cw.youlite.R;
 import com.cw.youlite.db.DB_drawer;
 import com.cw.youlite.main.MainAct;
-import com.cw.youlite.operation.audio.Audio_manager;
-import com.cw.youlite.operation.audio.BackgroundAudioService;
 import com.mobeta.android.dslv.SimpleDragSortCursorAdapter;
 
 /**
@@ -73,21 +71,12 @@ public class Folder_adapter extends SimpleDragSortCursorAdapter
 
             // set up ViewHolder for this ListView item
             viewHolder = new ViewHolder();
-            viewHolder.audioPlayingIcon = (ImageView) convertView.findViewById(R.id.folder_audio);
             viewHolder.folderTitle = (TextView) convertView.findViewById(R.id.folderText);
             viewHolder.dragIcon = (ImageView) convertView.findViewById(R.id.folder_drag);
             convertView.setTag(viewHolder); // store as View's tag
         }
         else // get the ViewHolder from the convertView's tag
             viewHolder = (ViewHolder) convertView.getTag();
-
-        // set highlight of selected drawer
-        if( (BackgroundAudioService.mMediaPlayer != null) &&
-            (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP) &&
-            (MainAct.mPlaying_folderPos == position)        )
-            viewHolder.audioPlayingIcon.setVisibility(View.VISIBLE);
-        else
-            viewHolder.audioPlayingIcon.setVisibility(View.GONE);
 
         DB_drawer db_drawer = new DB_drawer(MainAct.mAct);
         viewHolder.folderTitle.setText(db_drawer.getFolderTitle(position,true));
@@ -105,7 +94,6 @@ public class Folder_adapter extends SimpleDragSortCursorAdapter
 
     private static class ViewHolder
     {
-        ImageView audioPlayingIcon;
         TextView folderTitle; // refers to ListView item's ImageView
         ImageView dragIcon;
     }

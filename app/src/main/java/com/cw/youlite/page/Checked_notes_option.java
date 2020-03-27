@@ -36,12 +36,9 @@ import com.cw.youlite.R;
 import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.db.DB_page;
 import com.cw.youlite.main.MainAct;
-import com.cw.youlite.operation.audio.Audio_manager;
-import com.cw.youlite.operation.audio.AudioPlayer_page;
 import com.cw.youlite.operation.mail.MailNotes;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.Util;
-import com.cw.youlite.util.audio.UtilAudio;
 import com.cw.youlite.util.preferences.Pref;
 
 import java.util.ArrayList;
@@ -204,10 +201,7 @@ public class Checked_notes_option {
                     int count = mDb_page.getCheckedNotesCount();
                     String copyItemsTitle[] = new String[count];
                     String copyItemsPicture[] = new String[count];
-                    String copyItemsAudio[] = new String[count];
-                    String copyItemsDrawing[] = new String[count];
                     String copyItemsLink[] = new String[count];
-                    String copyItemsBody[] = new String[count];
                     Long copyItemsTime[] = new Long[count];
                     int cCopy = 0;
 
@@ -219,10 +213,7 @@ public class Checked_notes_option {
                         {
                             copyItemsTitle[cCopy] = mDb_page.getNoteTitle(i,false);
                             copyItemsPicture[cCopy] = mDb_page.getNotePictureUri(i,false);
-                            copyItemsAudio[cCopy] = mDb_page.getNoteAudioUri(i,false);
-                            copyItemsDrawing[cCopy] = mDb_page.getNoteDrawingUri(i,false);
                             copyItemsLink[cCopy] = mDb_page.getNoteLinkUri(i,false);
-                            copyItemsBody[cCopy] = mDb_page.getNoteBody(i,false);
                             copyItemsTime[cCopy] = mDb_page.getNoteCreatedTime(i,false);
                             cCopy++;
                         }
@@ -230,9 +221,9 @@ public class Checked_notes_option {
                     mDb_page.close();
 
                     if(option == MOVE_CHECKED_NOTE)
-                        operateCheckedTo(mAct,copyItemsTitle, copyItemsPicture, copyItemsAudio, copyItemsDrawing, copyItemsLink, copyItemsBody, copyItemsTime, MOVE_TO); // move to
+                        operateCheckedTo(mAct,copyItemsTitle, copyItemsPicture,   copyItemsLink,  copyItemsTime, MOVE_TO); // move to
                     else if(option == COPY_CHECKED_NOTE)
-                        operateCheckedTo(mAct,copyItemsTitle, copyItemsPicture, copyItemsAudio, copyItemsDrawing, copyItemsLink, copyItemsBody, copyItemsTime, COPY_TO);// copy to
+                        operateCheckedTo(mAct,copyItemsTitle, copyItemsPicture,   copyItemsLink,  copyItemsTime, COPY_TO);// copy to
 
                 }
                 else
@@ -309,7 +300,6 @@ public class Checked_notes_option {
     private void checkAll(int action)
     {
         System.out.println("Checked_notes_option / _checkAll / action = " + action);
-        boolean bStopAudio = false;
 
         mDb_page.open();
         int count = mDb_page.getNotesCount(false);
@@ -318,23 +308,11 @@ public class Checked_notes_option {
             Long rowId = mDb_page.getNoteId(i,false);
             String noteTitle = mDb_page.getNoteTitle(i,false);
             String pictureUri = mDb_page.getNotePictureUri(i,false);
-            String audioUri = mDb_page.getNoteAudioUri(i,false);
-            String drawingUri = mDb_page.getNoteDrawingUri(i,false);
             String linkUri = mDb_page.getNoteLinkUri(i,false);
-            String noteBody = mDb_page.getNoteBody(i,false);
-            mDb_page.updateNote(rowId, noteTitle, pictureUri, audioUri, drawingUri, linkUri, noteBody , action, 0,false);// action 1:check all, 0:uncheck all
+            mDb_page.updateNote(rowId, noteTitle, pictureUri, linkUri,  action, 0,false);// action 1:check all, 0:uncheck all
             // Stop if unmarked item is at playing state
-            if((Audio_manager.mAudioPos == i) && (action == 0) )
-                bStopAudio = true;
         }
         mDb_page.close();
-
-        if(bStopAudio)
-            UtilAudio.stopAudioIfNeeded();
-
-        // update audio play list
-        if(PageUi.isAudioPlayingPage())
-            AudioPlayer_page.prepareAudioInfo();
 
         TabsHost.reloadCurrentPage();
 
@@ -346,7 +324,6 @@ public class Checked_notes_option {
      */
     private void invertSelected()
     {
-        boolean bStopAudio = false;
         mDb_page.open();
         int count = mDb_page.getNotesCount(false);
         for(int i=0; i<count; i++)
@@ -354,24 +331,12 @@ public class Checked_notes_option {
             Long rowId = mDb_page.getNoteId(i,false);
             String noteTitle = mDb_page.getNoteTitle(i,false);
             String pictureUri = mDb_page.getNotePictureUri(i,false);
-            String audioUri = mDb_page.getNoteAudioUri(i,false);
-            String drawingUri = mDb_page.getNoteDrawingUri(i,false);
             String linkUri = mDb_page.getNoteLinkUri(i,false);
-            String noteBody = mDb_page.getNoteBody(i,false);
             long marking = (mDb_page.getNoteMarking(i,false)==1)?0:1;
-            mDb_page.updateNote(rowId, noteTitle, pictureUri, audioUri, drawingUri, linkUri, noteBody , marking, 0,false);// action 1:check all, 0:uncheck all
-            // Stop if unmarked item is at playing state
-            if((Audio_manager.mAudioPos == i) && (marking == 0) )
-                bStopAudio = true;
+            mDb_page.updateNote(rowId, noteTitle, pictureUri,  linkUri,  marking, 0,false);// action 1:check all, 0:uncheck all
         }
         mDb_page.close();
 
-        if(bStopAudio)
-            UtilAudio.stopAudioIfNeeded();
-
-        // update audio play list
-        if(PageUi.isAudioPlayingPage())
-            AudioPlayer_page.prepareAudioInfo();
 
         TabsHost.reloadCurrentPage();
         TabsHost.showFooter(MainAct.mAct);
@@ -383,8 +348,7 @@ public class Checked_notes_option {
      *
      */
     private void operateCheckedTo(final AppCompatActivity act,final String[] copyItemsTitle, final String[] copyItemsPicture,
-                                  final String[] copyItemsAudio, final String[] copyItemsDrawing,final String[] copyItemsLink,
-                                  final String[] copyItemsBody, final Long[] copyItemsTime, final int action)
+                                  final String[] copyItemsLink, final Long[] copyItemsTime, final int action)
     {
         //list all pages
         int focusFolder_tableId = Pref.getPref_focusView_folder_tableId(act);
@@ -419,7 +383,7 @@ public class Checked_notes_option {
                 {
                     // move to same page is not allowed
                     if(!((action == MOVE_TO) && (srcPageTableId == destPageTableId)))
-                        mDb_page.insertNote(copyItemsTitle[i],copyItemsPicture[i], copyItemsAudio[i], copyItemsDrawing[i], copyItemsLink[i], copyItemsBody[i],1, copyItemsTime[i]);
+                        mDb_page.insertNote(copyItemsTitle[i],copyItemsPicture[i],  copyItemsLink[i], 1, copyItemsTime[i]);
                 }
 
                 //recover table Id of original page
@@ -435,8 +399,6 @@ public class Checked_notes_option {
                         if(mDb_page.getNoteMarking(i,false) == 1)
                         {
                             mDb_page.deleteNote(mDb_page.getNoteId(i,false),false);
-                            // update playing highlight
-                            UtilAudio.stopAudioIfNeeded();
                         }
                     }
                     mDb_page.close();
@@ -509,10 +471,6 @@ public class Checked_notes_option {
                                         mDb_page.deleteNote(mDb_page.getNoteId(i,false),false);
                                 }
                                 mDb_page.close();
-
-                                // Stop Play/Pause if current tab's item is played and is not at Stop state
-                                if(Audio_manager.mAudioPos == Page_recycler.mHighlightPosition)
-                                    UtilAudio.stopAudioIfNeeded();
 
                                 TabsHost.reloadCurrentPage();
                                 TabsHost.showFooter(MainAct.mAct);

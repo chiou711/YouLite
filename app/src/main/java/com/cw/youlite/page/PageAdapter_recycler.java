@@ -40,36 +40,25 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cw.youlite.R;
-import com.cw.youlite.db.DB_drawer;
 import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.db.DB_page;
-import com.cw.youlite.folder.FolderUi;
 import com.cw.youlite.main.MainAct;
 import com.cw.youlite.note.Note;
 import com.cw.youlite.note_edit.Note_edit;
-import com.cw.youlite.operation.audio.Audio_manager;
-import com.cw.youlite.operation.audio.AudioPlayer_page;
-import com.cw.youlite.operation.audio.BackgroundAudioService;
 import com.cw.youlite.page.item_touch_helper.ItemTouchHelperAdapter;
 import com.cw.youlite.page.item_touch_helper.ItemTouchHelperViewHolder;
 import com.cw.youlite.page.item_touch_helper.OnStartDragListener;
-import com.cw.youlite.tabs.AudioUi_page;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.ColorSet;
 import com.cw.youlite.util.CustomWebView;
 import com.cw.youlite.util.Util;
-import com.cw.youlite.util.audio.UtilAudio;
-import com.cw.youlite.util.image.AsyncTaskAudioBitmap;
 import com.cw.youlite.util.image.UtilImage;
 import com.cw.youlite.util.image.UtilImage_bitmapLoader;
 import com.cw.youlite.util.preferences.Pref;
 import com.cw.youlite.util.uil.UilCommon;
 import com.cw.youlite.util.video.UtilVideo;
 
-import static com.cw.youlite.db.DB_page.KEY_NOTE_AUDIO_URI;
-import static com.cw.youlite.db.DB_page.KEY_NOTE_BODY;
 import static com.cw.youlite.db.DB_page.KEY_NOTE_CREATED;
-import static com.cw.youlite.db.DB_page.KEY_NOTE_DRAWING_URI;
 import static com.cw.youlite.db.DB_page.KEY_NOTE_LINK_URI;
 import static com.cw.youlite.db.DB_page.KEY_NOTE_MARKING;
 import static com.cw.youlite.db.DB_page.KEY_NOTE_PICTURE_URI;
@@ -120,20 +109,14 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         ImageView btnMarking;
         ImageView btnViewNote;
         ImageView btnEditNote;
-        ImageView btnPlayAudio;
         ImageView btnPlayYouTube;
         ImageView btnPlayWeb;
 		TextView rowId;
-		View audioBlock;
-		ImageView iconAudio;
-		TextView audioName;
 		TextView textTitle;
-		TextView textBody;
 		TextView textTime;
         ImageViewCustom btnDrag;
 		View thumbBlock;
 		ImageView thumbPicture;
-		ImageView thumbAudio;
 		CustomWebView thumbWeb;
 		ProgressBar progressBar;
 
@@ -149,23 +132,17 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
             textTitle = (TextView) v.findViewById(R.id.row_title);
             rowId= (TextView) v.findViewById(R.id.row_id);
-            audioBlock = v.findViewById(R.id.audio_block);
-            iconAudio = (ImageView) v.findViewById(R.id.img_audio);
-            audioName = (TextView) v.findViewById(R.id.row_audio_name);
             btnMarking = (ImageView) v.findViewById(R.id.btn_marking);
             btnViewNote = (ImageView) v.findViewById(R.id.btn_view_note);
             btnEditNote = (ImageView) v.findViewById(R.id.btn_edit_note);
-            btnPlayAudio = (ImageView) v.findViewById(R.id.btn_play_audio);
             btnPlayYouTube = (ImageView) v.findViewById(R.id.btn_play_youtube);
             btnPlayWeb = (ImageView) v.findViewById(R.id.btn_play_web);
             thumbBlock = v.findViewById(R.id.row_thumb_nail);
             thumbPicture = (ImageView) v.findViewById(R.id.thumb_picture);
-            thumbAudio = (ImageView) v.findViewById(R.id.thumb_audio);
             thumbWeb = (CustomWebView) v.findViewById(R.id.thumb_web);
             btnDrag = (ImageViewCustom) v.findViewById(R.id.btn_drag);
             progressBar = (ProgressBar) v.findViewById(R.id.thumb_progress);
             textTitle = (TextView) v.findViewById(R.id.row_title);
-            textBody = (TextView) v.findViewById(R.id.row_body);
             textTime = (TextView) v.findViewById(R.id.row_time);
         }
 
@@ -209,10 +186,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
         // get DB data
         String strTitle = null;
-        String strBody = null;
         String pictureUri = null;
-        String audioUri = null;
-        String drawingUri = null;
         Long timeCreated = null;
         linkUri = null;
         int marking = 0;
@@ -221,11 +195,8 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
         if(cursor.moveToPosition(position)) {
             strTitle = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_TITLE));
-            strBody = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_BODY));
             pictureUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_PICTURE_URI));
-            audioUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_AUDIO_URI));
             linkUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_LINK_URI));
-            drawingUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_DRAWING_URI));
             marking = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_NOTE_MARKING));
             timeCreated = cursor.getLong(cursor.getColumnIndex(KEY_NOTE_CREATED));
         }
@@ -258,12 +229,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         else
             holder.btnDrag.setVisibility(View.GONE);
 
-        // show audio button
-        if( !Util.isEmptyString(audioUri) && (marking == 1) && Util.isUriExisted(audioUri,mAct))
-            holder.btnPlayAudio.setVisibility(View.VISIBLE);
-        else
-            holder.btnPlayAudio.setVisibility(View.GONE);
-
         // show/hide play YouTube button, on play Web button
         if(!Util.isEmptyString(linkUri) &&
            linkUri.startsWith("http")      )
@@ -285,71 +250,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         {
             holder.btnPlayYouTube.setVisibility(View.GONE);
             holder.btnPlayWeb.setVisibility(View.GONE);
-        }
-
-        // set audio name
-        String audio_name = null;
-        if(!Util.isEmptyString(audioUri))
-            audio_name = Util.getDisplayNameByUriString(audioUri, mAct);
-
-        // show audio name
-        if(Util.isUriExisted(audioUri, mAct))
-            holder.audioName.setText(audio_name);
-        else
-            holder.audioName.setText(R.string.file_not_found);
-
-//			holder.audioName.setTextSize(12.0f);
-
-        if(!Util.isEmptyString(audioUri))
-            holder.audioName.setTextColor(ColorSet.mText_ColorArray[style]);
-
-        // show audio highlight if audio is not at Stop
-        if( PageUi.isAudioPlayingPage() &&
-            (marking !=0) &&
-            (position == Audio_manager.mAudioPos)  &&
-            (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP) &&
-            (Audio_manager.getAudioPlayMode() == Audio_manager.PAGE_PLAY_MODE) 	)
-        {
-//            System.out.println("PageAdapter / _getView / show highlight / position = " + position);
-            TabsHost.getCurrentPage().mHighlightPosition = position;
-            holder.audioBlock.setBackgroundResource(R.drawable.bg_highlight_border);
-            holder.audioBlock.setVisibility(View.VISIBLE);
-
-            // set type face
-//			holder.audioName.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-            holder.audioName.setTextColor(ColorSet.getHighlightColor(mAct));
-
-            // set icon
-            holder.iconAudio.setVisibility(View.VISIBLE);
-            holder.iconAudio.setImageResource(R.drawable.ic_audio);
-
-            // set animation
-//			Animation animation = AnimationUtils.loadAnimation(mContext , R.anim.right_in);
-//			holder.audioBlock.startAnimation(animation);
-        }
-        else
-        {
-
-//			System.out.println("PageAdapter / _getView / not show highlight ");
-            holder.audioBlock.setBackgroundResource(R.drawable.bg_gray_border);
-            holder.audioBlock.setVisibility(View.VISIBLE);
-
-            // set type face
-//			holder.audioName.setTypeface(Typeface.DEFAULT, Typeface.NORMAL);
-
-            // set icon
-            holder.iconAudio.setVisibility(View.VISIBLE);
-            if(style % 2 == 0)
-                holder.iconAudio.setImageResource(R.drawable.ic_audio_off_white);
-            else
-                holder.iconAudio.setImageResource(R.drawable.ic_audio_off_black);
-        }
-
-        // show audio icon and block
-        if(Util.isEmptyString(audioUri))
-        {
-            holder.iconAudio.setVisibility(View.GONE);
-            holder.audioBlock.setVisibility(View.GONE);
         }
 
 		// show text title
@@ -386,8 +286,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 		{
 			pictureUri = "http://img.youtube.com/vi/"+Util.getYoutubeId(linkUri)+"/0.jpg";
 		}
-		else if(UtilImage.hasImageExtension(drawingUri, mAct ))
-            pictureUri = drawingUri;
 
 		// case 1: show thumb nail if picture Uri exists
 		if(UtilImage.hasImageExtension(pictureUri, mAct ) ||
@@ -395,7 +293,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 		{
 			holder.thumbBlock.setVisibility(View.VISIBLE);
 			holder.thumbPicture.setVisibility(View.VISIBLE);
-			holder.thumbAudio.setVisibility(View.GONE);
 			holder.thumbWeb.setVisibility(View.GONE);
 			// load bitmap to image view
 			try
@@ -411,35 +308,10 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 				Log.e("PageAdapter_recycler", "UtilImage_bitmapLoader error");
 				holder.thumbBlock.setVisibility(View.GONE);
 				holder.thumbPicture.setVisibility(View.GONE);
-				holder.thumbAudio.setVisibility(View.GONE);
 				holder.thumbWeb.setVisibility(View.GONE);
 			}
 		}
-		// case 2: show audio thumb nail if picture Uri is none and audio Uri exists
-		else if((Util.isEmptyString(pictureUri) && UtilAudio.hasAudioExtension(audioUri) ) )
-		{
-			holder.thumbBlock.setVisibility(View.VISIBLE);
-			holder.thumbPicture.setVisibility(View.GONE);
-			holder.thumbAudio.setVisibility(View.VISIBLE);
-			holder.thumbWeb.setVisibility(View.GONE);
-
-            try {
-                AsyncTaskAudioBitmap audioAsyncTask;
-                audioAsyncTask = new AsyncTaskAudioBitmap(mAct,
-                        audioUri,
-                        holder.thumbAudio,
-                        holder.progressBar,
-                        false);
-                audioAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "Searching media ...");
-            } catch (Exception e) {
-                Log.e("PageAdapter", "AsyncTaskAudioBitmap error");
-                holder.thumbBlock.setVisibility(View.GONE);
-                holder.thumbPicture.setVisibility(View.GONE);
-                holder.thumbAudio.setVisibility(View.GONE);
-                holder.thumbWeb.setVisibility(View.GONE);
-            }
-		}
-		// case 3: set web title and web view thumb nail for general HTTP link
+		// case 2: set web title and web view thumb nail for general HTTP link
 		else if(!Util.isEmptyString(linkUri) &&
                 linkUri.startsWith("http")   &&
 				!Util.isYouTubeLink(linkUri)   )
@@ -461,7 +333,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 			holder.thumbWeb.setVisibility(View.VISIBLE);
 
 			holder.thumbPicture.setVisibility(View.GONE);
-			holder.thumbAudio.setVisibility(View.GONE);
 
 			//Add for non-stop showing of full screen web view
 			holder.thumbWeb.setWebViewClient(new WebViewClient() {
@@ -493,37 +364,19 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 		{
 			holder.thumbBlock.setVisibility(View.GONE);
 			holder.thumbPicture.setVisibility(View.GONE);
-			holder.thumbAudio.setVisibility(View.GONE);
 			holder.thumbWeb.setVisibility(View.GONE);
 		}
 
 		// Show text body
 	  	if(pref_show_note_attribute.getString("KEY_SHOW_BODY", "yes").equalsIgnoreCase("yes"))
 	  	{
-	  		// test only: enabled for showing picture path
-//            String strBody = cursor.getString(cursor.getColumnIndex(KEY_NOTE_BODY));
-	  		if(!Util.isEmptyString(strBody)){
-				//normal: do nothing
-			}
-	  		else if(!Util.isEmptyString(pictureUri)) {
-//				strBody = pictureUri;//show picture Uri
-			}
-	  		else if(!Util.isEmptyString(linkUri)) {
-//				strBody = linkUri; //show link Uri
-			}
-
-			holder.textBody.setText(strBody);
-//			holder.textBody.setTextSize(12);
-
 //			holder.rowDivider.setVisibility(View.VISIBLE);
-			holder.textBody.setTextColor(ColorSet.mText_ColorArray[style]);
 			// time stamp
             holder.textTime.setText(Util.getTimeString(timeCreated));
 			holder.textTime.setTextColor(ColorSet.mText_ColorArray[style]);
 	  	}
 	  	else
 	  	{
-            holder.textBody.setVisibility(View.GONE);
             holder.textTime.setVisibility(View.GONE);
 	  	}
 
@@ -553,11 +406,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
                 // toggle marking
                 toggleNoteMarking(mAct,position);
 
-                // Stop if unmarked item is at playing state
-                if(Audio_manager.mAudioPos == position) {
-                    UtilAudio.stopAudioIfNeeded();
-                }
-
                 //Toggle marking will resume page, so do Store v scroll
                 RecyclerView listView = TabsHost.mTabsPagerAdapter.fragmentList.get(TabsHost.getFocus_tabPos()).recyclerView;
                 TabsHost.store_listView_vScroll(listView);
@@ -566,11 +414,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
                 TabsHost.reloadCurrentPage();
                 TabsHost.showFooter(MainAct.mAct);
 
-                // update audio info
-                if(PageUi.isAudioPlayingPage()) {
-                    System.out.println("PageAdapter / _getView / btnMarking / is AudioPlayingPage");
-                    AudioPlayer_page.prepareAudioInfo();
-                }
             }
         });
 
@@ -604,88 +447,9 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
                 i.putExtra(DB_page.KEY_NOTE_ID, rowId);
                 i.putExtra(DB_page.KEY_NOTE_TITLE, db_page.getNoteTitle_byId(rowId));
                 i.putExtra(DB_page.KEY_NOTE_PICTURE_URI , db_page.getNotePictureUri_byId(rowId));
-                i.putExtra(DB_page.KEY_NOTE_DRAWING_URI , db_page.getNoteDrawingUri_byId(rowId));
-                i.putExtra(DB_page.KEY_NOTE_AUDIO_URI , db_page.getNoteAudioUri_byId(rowId));
                 i.putExtra(DB_page.KEY_NOTE_LINK_URI , db_page.getNoteLinkUri_byId(rowId));
-                i.putExtra(DB_page.KEY_NOTE_BODY, db_page.getNoteBody_byId(rowId));
                 i.putExtra(DB_page.KEY_NOTE_CREATED, db_page.getNoteCreatedTime_byId(rowId));
                 mAct.startActivity(i);
-            }
-        });
-
-        // on play audio
-        viewHolder.btnPlayAudio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TabsHost.reloadCurrentPage();// after Drag and drop: this is needed to update thumb nail and title
-
-                Audio_manager.setAudioPlayMode(Audio_manager.PAGE_PLAY_MODE);
-                DB_page db_page = new DB_page(mAct, TabsHost.getCurrentPageTableId());
-                int notesCount = db_page.getNotesCount(true);
-                if(position >= notesCount) //end of list
-                    return ;
-
-                int marking = db_page.getNoteMarking(position,true);
-                String uriString = db_page.getNoteAudioUri(position,true);
-
-                boolean isAudioUri = false;
-                if( !Util.isEmptyString(uriString) && (marking == 1))
-                    isAudioUri = true;
-
-                if(position < notesCount) // avoid footer error
-                {
-                    if(isAudioUri)
-                    {
-                        // cancel playing
-                        if(BackgroundAudioService.mMediaPlayer != null)
-                        {
-                            if(BackgroundAudioService.mMediaPlayer.isPlaying())
-                                BackgroundAudioService.mMediaPlayer.pause();
-
-                            if((AudioPlayer_page.mAudioHandler != null) &&
-                                    (TabsHost.audioPlayer_page != null)        ){
-                                AudioPlayer_page.mAudioHandler.removeCallbacks(TabsHost.audioPlayer_page.page_runnable);
-                            }
-                            BackgroundAudioService.mMediaPlayer.release();
-                            BackgroundAudioService.mMediaPlayer = null;
-                        }
-
-                        Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_PLAY);
-
-                        // create new Intent to play audio
-                        Audio_manager.mAudioPos = position;
-                        Audio_manager.setAudioPlayMode(Audio_manager.PAGE_PLAY_MODE);
-
-                        TabsHost.audioUi_page = new AudioUi_page(mAct, TabsHost.getCurrentPage().recyclerView);
-                        TabsHost.audioUi_page.initAudioBlock(MainAct.mAct);
-
-                        TabsHost.audioPlayer_page = new AudioPlayer_page(mAct,TabsHost.audioUi_page);
-                        AudioPlayer_page.prepareAudioInfo();
-                        TabsHost.audioPlayer_page.runAudioState();
-
-                        // update audio play position
-                        TabsHost.audioPlayTabPos = page_pos;
-
-                        // update audio panel
-                        UtilAudio.updateAudioPanel(TabsHost.audioUi_page.audioPanel_play_button,
-                                TabsHost.audioUi_page.audio_panel_title_textView);
-
-                        // update playing page position
-                        MainAct.mPlaying_pagePos = TabsHost.getFocus_tabPos();
-
-                        // update playing page table Id
-                        MainAct.mPlaying_pageTableId = TabsHost.getCurrentPageTableId();
-
-                        // update playing folder position
-                        MainAct.mPlaying_folderPos = FolderUi.getFocus_folderPos();
-
-                        // update playing folder table Id
-                        DB_drawer dB_drawer = new DB_drawer(mAct);
-                        MainAct.mPlaying_folderTableId = dB_drawer.getFolderTableId(MainAct.mPlaying_folderPos,true);
-
-                        TabsHost.mTabsPagerAdapter.notifyDataSetChanged();
-                    }
-                }
             }
         });
 
@@ -703,8 +467,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
                 if (position < count) {
                     if (Util.isYouTubeLink(linkStr)) {
-                        Audio_manager.stopAudioPlayer();
-
                         // apply native YouTube
                         Util.openLink_YouTube(mAct, linkStr);
                     }
@@ -769,21 +531,18 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
         String strNote = db_page.getNoteTitle(position,false);
         String strPictureUri = db_page.getNotePictureUri(position,false);
-        String strAudioUri = db_page.getNoteAudioUri(position,false);
-        String strDrawingUri = db_page.getNoteDrawingUri(position,false);
         String strLinkUri = db_page.getNoteLinkUri(position,false);
-        String strNoteBody = db_page.getNoteBody(position,false);
         Long idNote =  db_page.getNoteId(position,false);
 
         // toggle the marking
         if(db_page.getNoteMarking(position,false) == 0)
         {
-            db_page.updateNote(idNote, strNote, strPictureUri, strAudioUri, strDrawingUri, strLinkUri, strNoteBody, 1, 0, false);
+            db_page.updateNote(idNote, strNote, strPictureUri,  strLinkUri, 1, 0, false);
             marking = 1;
         }
         else
         {
-            db_page.updateNote(idNote, strNote, strPictureUri, strAudioUri, strDrawingUri, strLinkUri, strNoteBody, 0, 0, false);
+            db_page.updateNote(idNote, strNote, strPictureUri,  strLinkUri,  0, 0, false);
             marking = 0;
         }
         db_page.close();
@@ -820,40 +579,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
                 toPos++;
             else
                 toPos--;
-        }
-
-        if( PageUi.isAudioPlayingPage() &&
-                (BackgroundAudioService.mMediaPlayer != null)				   )
-        {
-            if( (Page_recycler.mHighlightPosition == oriEndPos)  && (oriStartPos > oriEndPos))
-            {
-                Page_recycler.mHighlightPosition = oriEndPos+1;
-            }
-            else if( (Page_recycler.mHighlightPosition == oriEndPos) && (oriStartPos < oriEndPos))
-            {
-                Page_recycler.mHighlightPosition = oriEndPos-1;
-            }
-            else if( (Page_recycler.mHighlightPosition == oriStartPos)  && (oriStartPos > oriEndPos))
-            {
-                Page_recycler.mHighlightPosition = oriEndPos;
-            }
-            else if( (Page_recycler.mHighlightPosition == oriStartPos) && (oriStartPos < oriEndPos))
-            {
-                Page_recycler.mHighlightPosition = oriEndPos;
-            }
-            else if(  (Page_recycler.mHighlightPosition < oriEndPos) &&
-                    (Page_recycler.mHighlightPosition > oriStartPos)   )
-            {
-                Page_recycler.mHighlightPosition--;
-            }
-            else if( (Page_recycler.mHighlightPosition > oriEndPos) &&
-                    (Page_recycler.mHighlightPosition < oriStartPos)  )
-            {
-                Page_recycler.mHighlightPosition++;
-            }
-
-            Audio_manager.mAudioPos = Page_recycler.mHighlightPosition;
-            AudioPlayer_page.prepareAudioInfo();
         }
 
         // update footer

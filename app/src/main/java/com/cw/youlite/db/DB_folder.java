@@ -82,7 +82,8 @@ public class DB_folder
         }
         catch (Exception e)
         {
-            System.out.println("DB_folder / open folder table NG! / table id = " + getFocusFolder_tableId());
+        	e.printStackTrace();
+	        System.out.println("DB_folder / open folder table NG! / table id = " + getFocusFolder_tableId());
         }
 
         return DB_folder.this;
@@ -112,10 +113,7 @@ public class DB_folder
         							DB_page.KEY_NOTE_ID + " INTEGER PRIMARY KEY," +
 									DB_page.KEY_NOTE_TITLE + " TEXT," +
 									DB_page.KEY_NOTE_PICTURE_URI + " TEXT," +
-									DB_page.KEY_NOTE_AUDIO_URI + " TEXT," +
-									DB_page.KEY_NOTE_DRAWING_URI + " TEXT," +
 									DB_page.KEY_NOTE_LINK_URI + " TEXT," +
-									DB_page.KEY_NOTE_BODY + " TEXT," +
 									DB_page.KEY_NOTE_MARKING + " INTEGER," +
 									DB_page.KEY_NOTE_CREATED + " INTEGER);";
         mSqlDb.execSQL(dB_insert_table);

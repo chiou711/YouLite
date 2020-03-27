@@ -15,37 +15,6 @@
 		android:icon="@drawable/ic_input_add">
 	</item>
 
-    <!-- Play -->
-    <!--<item-->
-        <!--android:id="@+id/PLAY"-->
-        <!--android:orderInCategory="1"-->
-        <!--app:showAsAction="ifRoom|withText"-->
-        <!--android:title="Play"-->
-        <!--android:icon="@drawable/ic_media_play">-->
-
-    <!--&lt;!&ndash; Play sub menu &ndash;&gt;-->
-    <!--<menu xmlns:android="http://schemas.android.com/apk/res/android" >-->
-        <!--<item-->
-            <!--android:id="@+id/PLAY_OR_STOP_MUSIC"-->
-            <!--android:orderInCategory="0"-->
-            <!--app:showAsAction="never"-->
-            <!--android:title="@string/menu_button_play_audio"-->
-            <!--android:icon="@drawable/ic_menu_play_clip"/>-->
-        <!--<item-->
-            <!--android:id="@+id/SLIDE_SHOW"-->
-            <!--android:orderInCategory="1"-->
-            <!--app:showAsAction="never"-->
-            <!--android:title="@string/menu_button_slide_show"-->
-            <!--android:icon="@android:drawable/ic_menu_slideshow"/>-->
-        <!--<item-->
-            <!--android:id="@+id/GALLERY"-->
-            <!--android:orderInCategory="2"-->
-            <!--app:showAsAction="never"-->
-            <!--android:title="@string/gallery"-->
-            <!--android:icon="@android:drawable/ic_menu_gallery"/>-->
-    <!--</menu>-->
-    <!--</item>-->
-
     <!-- checked operation -->
     <item
         android:id="@+id/HANDLE_CHECKED_NOTES"

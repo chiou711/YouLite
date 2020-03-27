@@ -6,23 +6,6 @@
         android:orderInCategory="0"
         android:title="@string/edit_note_link"
         app:showAsAction="always|withText" />
-<!--    <item-->
-<!--        android:id="@+id/ADD_AUDIO"-->
-<!--        android:orderInCategory="1"-->
-<!--        android:title="@string/note_audio"-->
-<!--        android:icon="@drawable/ic_audio_unselected"-->
-<!--        app:showAsAction="always|withText" />-->
-<!--    <item-->
-<!--        android:id="@+id/ADD_NEW_IMAGE"-->
-<!--        android:orderInCategory="2"-->
-<!--        android:title="@string/note_camera_image"-->
-<!--        android:icon="@android:drawable/ic_menu_camera"-->
-<!--        app:showAsAction="always|withText" />-->
-<!--    <item-->
-<!--        android:id="@+id/ADD_NEW_VIDEO"-->
-<!--        android:orderInCategory="3"-->
-<!--        android:title="@string/note_camera_video"-->
-<!--        android:icon="@android:drawable/presence_video_online"-->
-<!--        app:showAsAction="always|withText" />-->
+
 </menu>
 

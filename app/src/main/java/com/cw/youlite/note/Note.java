@@ -21,13 +21,10 @@ import com.cw.youlite.R;
 import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.db.DB_page;
 import com.cw.youlite.main.MainAct;
-import com.cw.youlite.operation.audio.Audio_manager;
-import com.cw.youlite.operation.audio.BackgroundAudioService;
 import com.cw.youlite.page.PageAdapter_recycler;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.CustomWebView;
 import com.cw.youlite.util.DeleteFileAlarmReceiver;
-import com.cw.youlite.util.audio.UtilAudio;
 import com.cw.youlite.util.image.UtilImage;
 import com.cw.youlite.util.preferences.Pref;
 import com.cw.youlite.util.video.AsyncTaskVideoBitmapPager;
@@ -40,7 +37,6 @@ import com.cw.youlite.util.Util;
 import android.R.color;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -50,7 +46,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.v4.media.MediaBrowserCompat;
+
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -94,11 +90,8 @@ public class Note extends AppCompatActivity
     Button optionButton;
     Button backButton;
 
-	public static String mAudioUriInDB;
-
     public AppCompatActivity act;
     public static int mPlayVideoPositionOfInstance;
-    public AudioUi_note audioUi_note;
 
 	public static int mCurrentState;
 	public final static int STATE_PAUSED = 0;
@@ -119,30 +112,11 @@ public class Note extends AppCompatActivity
 		mPlayVideoPositionOfInstance = 0;
 		AsyncTaskVideoBitmapPager.mRotationStr = null;
 
-		Audio_manager.isRunnableOn_note = false;
-
 		act = this;
 
         MainAct.mMediaBrowserCompat = null;
 
 	} //onCreate end
-
-//	// callback of granted permission
-//	@Override
-//	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
-//	{
-//		System.out.println("Note / _onRequestPermissionsResult / grantResults.length =" + grantResults.length);
-//		switch (requestCode)
-//		{
-//			case Util.PERMISSIONS_REQUEST_PHONE:
-//			{
-//				// If request is cancelled, the result arrays are empty.
-//				if ( (grantResults.length > 0) && ( (grantResults[0] == PackageManager.PERMISSION_GRANTED) ))
-//					UtilAudio.setPhoneListener(this);
-//			}
-//			break;
-//		}
-//	}
 
 	// Add to prevent resizing full screen picture,
 	// when popup menu shows up at picture mode
@@ -168,11 +142,6 @@ public class Note extends AppCompatActivity
 
 				NoteUi.setFocus_notePos(newPos);
 				viewPager.setCurrentItem(newPos);
-
-				BackgroundAudioService.mIsPrepared = false;
-				BackgroundAudioService.mMediaPlayer = null;
-				Audio_manager.isRunnableOn_page = false;
-				findViewById(R.id.pager_btn_audio_play).performClick();
 				return true;
 
 			case KeyEvent.KEYCODE_MEDIA_NEXT: //87
@@ -184,18 +153,12 @@ public class Note extends AppCompatActivity
 				NoteUi.setFocus_notePos(newPos);
 				viewPager.setCurrentItem(newPos);
 
-				BackgroundAudioService.mIsPrepared = false;
-				BackgroundAudioService.mMediaPlayer = null;
-				Audio_manager.isRunnableOn_page = false;
-				AudioUi_note.mPager_audio_play_button.performClick();
 				return true;
 
 			case KeyEvent.KEYCODE_MEDIA_PLAY: //126
-				AudioUi_note.mPager_audio_play_button.performClick();
 				return true;
 
 			case KeyEvent.KEYCODE_MEDIA_PAUSE: //127
-				AudioUi_note.mPager_audio_play_button.performClick();
 				return true;
 
 			case KeyEvent.KEYCODE_BACK:
@@ -257,15 +220,7 @@ public class Note extends AppCompatActivity
 
 		if(mDb_page != null) {
 			mNoteId = mDb_page.getNoteId(NoteUi.getFocus_notePos(), true);
-			mAudioUriInDB = mDb_page.getNoteAudioUri_byId(mNoteId);
 		}
-
-        if(UtilAudio.hasAudioExtension(mAudioUriInDB) ||
-		   UtilAudio.hasAudioExtension(Util.getDisplayNameByUriString(mAudioUriInDB, act))) {
-            audioUi_note = new AudioUi_note(this, mAudioUriInDB);
-            audioUi_note.init_audio_block();
-        }
-
 
 		// Note: if viewPager.getCurrentItem() is not equal to mEntryPosition, _onPageSelected will
 		//       be called again after rotation
@@ -281,11 +236,8 @@ public class Note extends AppCompatActivity
 				Intent intent = new Intent(Note.this, Note_edit.class);
 				intent.putExtra(DB_page.KEY_NOTE_ID, mNoteId);
 				intent.putExtra(DB_page.KEY_NOTE_TITLE, mDb_page.getNoteTitle_byId(mNoteId));
-				intent.putExtra(DB_page.KEY_NOTE_AUDIO_URI , mDb_page.getNoteAudioUri_byId(mNoteId));
 				intent.putExtra(DB_page.KEY_NOTE_PICTURE_URI , mDb_page.getNotePictureUri_byId(mNoteId));
-				intent.putExtra(DB_page.KEY_NOTE_DRAWING_URI , mDb_page.getNoteDrawingUri_byId(mNoteId));
 				intent.putExtra(DB_page.KEY_NOTE_LINK_URI , mDb_page.getNoteLinkUri_byId(mNoteId));
-				intent.putExtra(DB_page.KEY_NOTE_BODY, mDb_page.getNoteBody_byId(mNoteId));
 				intent.putExtra(DB_page.KEY_NOTE_CREATED, mDb_page.getNoteCreatedTime_byId(mNoteId));
 				startActivityForResult(intent, EDIT_CURRENT_VIEW);
 			}
@@ -329,8 +281,6 @@ public class Note extends AppCompatActivity
 		@Override
 		public void onPageSelected(int nextPosition)
 		{
-			if(Audio_manager.getAudioPlayMode()  == Audio_manager.NOTE_PLAY_MODE)
-                Audio_manager.stopAudioPlayer();
 
 			NoteUi.setFocus_notePos(viewPager.getCurrentItem());
 			System.out.println("Note / _onPageSelected");
@@ -339,17 +289,8 @@ public class Note extends AppCompatActivity
 
 			mIsViewModeChanged = false;
 
-			// show audio name
 			mNoteId = mDb_page.getNoteId(nextPosition,true);
 			System.out.println("Note / _onPageSelected / mNoteId = " + mNoteId);
-			mAudioUriInDB = mDb_page.getNoteAudioUri_byId(mNoteId);
-			System.out.println("Note / _onPageSelected / mAudioUriInDB = " + mAudioUriInDB);
-
-			if(UtilAudio.hasAudioExtension(mAudioUriInDB)) {
-                audioUi_note = new AudioUi_note(Note.this, mAudioUriInDB);
-                audioUi_note.init_audio_block();
-                audioUi_note.showAudioBlock();
-            }
 
 			// stop video when changing note
 			String pictureUriInDB = mDb_page.getNotePictureUri_byId(mNoteId);
@@ -357,7 +298,6 @@ public class Note extends AppCompatActivity
 				VideoPlayer.stopVideo();
 				NoteUi.cancel_UI_callbacks();
 			}
-
             setOutline(act);
 		}
 	};
@@ -371,29 +311,24 @@ public class Note extends AppCompatActivity
 	}
 
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
 		System.out.println("Note / _onActivityResult ");
-        if((requestCode==EDIT_CURRENT_VIEW) || (requestCode==MAIL_CURRENT_VIEW))
-        {
-			stopAV();
-        }
-		else if(requestCode == MailNotes.EMAIL)
-		{
-			Toast.makeText(act,R.string.mail_exit,Toast.LENGTH_SHORT).show();
+		if (requestCode == MailNotes.EMAIL) {
+			Toast.makeText(act, R.string.mail_exit, Toast.LENGTH_SHORT).show();
 			// note: result code is always 0 (cancel), so it is not used
 			new DeleteFileAlarmReceiver(act,
-					                    System.currentTimeMillis() + 1000 * 60 * 5, // formal: 300 seconds
+					System.currentTimeMillis() + 1000 * 60 * 5, // formal: 300 seconds
 //						    		    System.currentTimeMillis() + 1000 * 10, // test: 10 seconds
-					                    MailNotes.mAttachmentFileName);
+					MailNotes.mAttachmentFileName);
 		}
 
 		// show current item
-		if(requestCode == Util.YOUTUBE_LINK_INTENT)
-        	viewPager.setCurrentItem(viewPager.getCurrentItem());
+		if (requestCode == Util.YOUTUBE_LINK_INTENT)
+			viewPager.setCurrentItem(viewPager.getCurrentItem());
 
-	    // check if there is one note at least in the pager
-		if( viewPager.getAdapter().getCount() > 0 )
+		// check if there is one note at least in the pager
+		if (viewPager.getAdapter().getCount() > 0)
 			setOutline(act);
 		else
 			finish();
@@ -432,16 +367,6 @@ public class Note extends AppCompatActivity
             buttonGroup.setVisibility(View.GONE);
         else
             buttonGroup.setVisibility(View.VISIBLE);
-
-		TextView audioTitle = (TextView) act.findViewById(R.id.pager_audio_title);
-        // audio title
-        if(!Note.isPictureMode())
-        {
-            if(!Util.isEmptyString(audioTitle.getText().toString()) )
-                audioTitle.setVisibility(View.VISIBLE);
-            else
-                audioTitle.setVisibility(View.GONE);
-        }
 
         // renew options menu
         act.invalidateOptionsMenu();
@@ -509,30 +434,6 @@ public class Note extends AppCompatActivity
             Note.setViewAllMode();
 
 		setOutline(act);
-
-		// Register Bluetooth device receiver
-		if(Build.VERSION.SDK_INT < 21)
-		{
-			IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
-			this.registerReceiver(mReceiver, filter);
-		}
-		else // Build.VERSION.SDK_INT >= 21
-		{
-			// Media session: to receive media button event of bluetooth device
-			// new media browser instance and create BackgroundAudioService instance: support notification
-
-			if(MainAct.mMediaBrowserCompat == null) {
-				MainAct.mMediaBrowserCompat = new MediaBrowserCompat(act,
-						new ComponentName(act, BackgroundAudioService.class),
-						MainAct.mMediaBrowserCompatConnectionCallback,
-						act.getIntent().getExtras());
-			}
-
-			if(!MainAct.mMediaBrowserCompat.isConnected())
-				MainAct.mMediaBrowserCompat.connect();
-
-			MainAct.mCurrentState = MainAct.STATE_PAUSED;
-		}
 	}
 	
 	@Override
@@ -581,17 +482,6 @@ public class Note extends AppCompatActivity
 		super.onDestroy();
 		System.out.println("Note / _onDestroy");
 
-		if(Audio_manager.isRunnableOn_note) {
-			BackgroundAudioService.mIsPrepared = false;
-			BackgroundAudioService.mMediaPlayer = null;
-			Audio_manager.isRunnableOn_note = false;
-		}
-
-        // disconnect MediaBrowserCompat
-		if(Build.VERSION.SDK_INT >= 21) {
-			if (MainAct.mMediaBrowserCompat.isConnected())
-				MainAct.mMediaBrowserCompat.disconnect();
-		}
 	}
 
 	// avoid exception: has leaked window android.widget.ZoomButtonsController
@@ -743,7 +633,7 @@ public class Note extends AppCompatActivity
 //        // by YouTube App
 //        if(linkUri.contains("youtu.be"))
 //        {
-//            // stop audio and video if playing
+//            // stop video if playing
 //            stopAV();
 //
 //            String id = Util.getYoutubeId(linkUri);
@@ -981,9 +871,6 @@ public class Note extends AppCompatActivity
 
 	public static void stopAV()
 	{
-		if(Audio_manager.getAudioPlayMode() == Audio_manager.NOTE_PLAY_MODE)
-            Audio_manager.stopAudioPlayer();
-
 		VideoPlayer.stopVideo();
 	}
 

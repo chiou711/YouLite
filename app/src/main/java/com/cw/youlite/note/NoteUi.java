@@ -18,8 +18,6 @@ package com.cw.youlite.note;
 
 import com.cw.youlite.R;
 import com.cw.youlite.db.DB_page;
-import com.cw.youlite.operation.audio.Audio_manager;
-import com.cw.youlite.operation.audio.BackgroundAudioService;
 import com.cw.youlite.operation.youtube.YouTubePlayerAct;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.image.UtilImage;
@@ -229,48 +227,7 @@ public class NoteUi
         SeekBar videoView_seekBar = (SeekBar)(viewGroup.findViewById(R.id.video_seek_bar));
 
         // Set video play button listener
-        if(UtilVideo.hasVideoExtension(strPicture, act))
-        {
-            mVideoPlayButton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View view) {
-                    System.out.println("NoteUi / setPictureView_listeners / mVideoPlayButton / getVideoState() = " + UtilVideo.getVideoState());
-
-                    if( (BackgroundAudioService.mMediaPlayer != null) &&
-                        (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP) &&
-						(UtilVideo.getVideoState() != UtilVideo.VIDEO_AT_PLAY) )
-                    {
-                        // Dialog: confirm to disable audio or not
-                        AlertDialog.Builder builder = new AlertDialog.Builder(act);
-                        builder.setTitle(R.string.title_playing_audio)
-                               .setMessage(R.string.message_continue_or_stop)
-                               .setPositiveButton(R.string.btn_Stop,
-                                       new DialogInterface.OnClickListener(){
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                Audio_manager.stopAudioPlayer();
-
-                                                UtilVideo.changeVideoState();
-                                                UtilVideo.playOrPauseVideo(pager,strPicture);
-                                            }})
-                               .setNegativeButton(R.string.btn_Continue,
-                                       new DialogInterface.OnClickListener(){
-                                           @Override
-                                           public void onClick(DialogInterface dialog, int which) {
-                                               UtilVideo.changeVideoState();
-                                               UtilVideo.playOrPauseVideo(pager,strPicture);
-                                           }})
-                                .show();
-                    }
-                    else
-                    {
-                        UtilVideo.changeVideoState();
-                        UtilVideo.playOrPauseVideo(pager,strPicture);
-                        updateVideoPlayButtonState(pager, getFocus_notePos());
-                    }
-                }
-            });
-        }
-        else if(Util.isYouTubeLink(linkUri))
+        if(Util.isYouTubeLink(linkUri))
         {
             mVideoPlayButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_media_play, 0, 0, 0);
             mVideoPlayButton.setVisibility(View.VISIBLE);
@@ -349,9 +306,6 @@ public class NoteUi
 
 	            public void onClick(View view)
 	            {
-                    TextView audio_title_text_view = (TextView) act.findViewById(R.id.pager_audio_title);
-                    audio_title_text_view.setSelected(false);
-
 	            	//Creating the instance of PopupMenu
 	                popup = new PopupMenu(act, view);
 
@@ -387,16 +341,6 @@ public class NoteUi
 						@Override
 						public void onDismiss(PopupMenu menu)
 						{
-                            TextView audio_title_text_view = (TextView) act.findViewById(R.id.pager_audio_title);
-							if(BackgroundAudioService.mMediaPlayer != null)
-							{
-								if(BackgroundAudioService.mMediaPlayer.isPlaying()) {
-									AudioUi_note.showAudioName(act);
-									audio_title_text_view.setSelected(true);
-								}
-							}
-							else
-								audio_title_text_view.setSelected(false);
 						}
 					} );
                     popup.show();//showing pop up menu, will show status bar

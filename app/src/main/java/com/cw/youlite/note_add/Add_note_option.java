@@ -34,20 +34,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cw.youlite.R;
-import com.cw.youlite.note_add.add_recording.Add_recording_act;
 import com.cw.youlite.util.Util;
-import com.cw.youlite.util.drawing.Note_drawingAct;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by cw on 2017/10/7.
+ * Created by cw on 2020/3/26.
  */
 public class Add_note_option {
-    int option_id;
-    int option_drawable_id;
-    int option_string_id;
+    private int option_id;
+    private int option_drawable_id;
+    private int option_string_id;
 
     Add_note_option(int id, int draw_id, int string_id)
     {
@@ -64,13 +62,6 @@ public class Add_note_option {
     static List<Add_note_option> addNoteList;
 
     private final static int ID_NEW_TEXT = 1;
-    private final static int ID_NEW_DRAWING = 2;
-    private final static int ID_NEW_RECORDING = 3;
-    private final static int ID_NEW_AUDIO = 4;
-    private final static int ID_NEW_CAMERA_IMAGE = 5;
-    private final static int ID_NEW_READY_IMAGE = 6;
-    private final static int ID_NEW_CAMERA_VIDEO = 7;
-    private final static int ID_NEW_READY_VIDEO = 8;
     private final static int ID_NEW_YOUTUBE_LINK = 9;
     private final static int ID_NEW_WEB_LINK = 20;
     private final static int ID_NEW_BACK = 11;
@@ -90,52 +81,6 @@ public class Add_note_option {
 
         addNoteList = new ArrayList<>();
 
-        // text
-//        addNoteList.add(new Add_note_option(ID_NEW_TEXT,
-//                android.R.drawable.ic_menu_edit,
-//                R.string.note_text));
-
-//        if(permitted) {
-//            // drawing
-//            addNoteList.add(new Add_note_option(ID_NEW_DRAWING,
-//                    R.drawable.ic_menu_draw,
-//                    R.string.note_drawing));
-//
-//            // recording
-//            addNoteList.add(new Add_note_option(ID_NEW_RECORDING,
-////                    android.R.drawable.ic_btn_speak_now,
-//                    R.drawable.ic_mic,
-//                    R.string.note_recording));
-//
-//            // audio
-//            addNoteList.add(new Add_note_option(ID_NEW_AUDIO,
-//                    R.drawable.ic_audio_unselected,
-//                    R.string.note_ready_audio));
-//
-//            // camera image
-//            if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-//                addNoteList.add(new Add_note_option(ID_NEW_CAMERA_IMAGE,
-//                        android.R.drawable.ic_menu_camera,
-//                        R.string.note_camera_image));
-//            }
-//
-//            // ready image
-//            addNoteList.add(new Add_note_option(ID_NEW_READY_IMAGE,
-//                    android.R.drawable.ic_menu_gallery,
-//                    R.string.note_ready_image));
-//
-//            // camera video
-//            if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-//                addNoteList.add(new Add_note_option(ID_NEW_CAMERA_VIDEO,
-//                        android.R.drawable.presence_video_online,
-//                        R.string.note_camera_video));
-//            }
-//
-//            // ready video
-//            addNoteList.add(new Add_note_option(ID_NEW_READY_VIDEO,
-//                    R.drawable.ic_ready_video,
-//                    R.string.note_ready_video));
-//        }
         // YouTube link
         addNoteList.add(new Add_note_option(ID_NEW_YOUTUBE_LINK,
                 android.R.drawable.ic_menu_share,
@@ -209,94 +154,6 @@ public class Add_note_option {
             }
             break;
 
-            case ID_NEW_AUDIO:
-            {
-                Intent intent = new Intent(act, Note_addAudio.class);
-                if( bTop && !bDirectory )
-                    intent.putExtra("EXTRA_ADD_EXIST", "single_to_top");
-                else if(!bTop && !bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "single_to_bottom");
-                else if(bTop && bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "directory_to_top");
-                else if(!bTop && bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "directory_to_bottom");
-
-                act.startActivity(intent);
-            }
-            break;
-
-            case ID_NEW_RECORDING:
-            {
-                Intent intent = new Intent(act, Add_recording_act.class);
-                if( bTop && !bDirectory )
-                    intent.putExtra("EXTRA_ADD_EXIST", "single_to_top");
-                else if(!bTop && !bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "single_to_bottom");
-                else if(bTop && bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "directory_to_top");
-                else if(!bTop && bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "directory_to_bottom");
-
-                act.startActivity(intent);
-            }
-            break;
-
-            case ID_NEW_CAMERA_IMAGE:
-            {
-                Intent intent = new Intent(act, Note_addCameraImage.class);
-                if(bTop)
-                    intent.putExtra("extra_ADD_NEW_TO_TOP", "true");
-                else
-                    intent.putExtra("extra_ADD_NEW_TO_TOP", "false");
-
-                act.startActivity(intent);
-            }
-            break;
-
-            case ID_NEW_READY_IMAGE:
-            {
-                Intent intent = new Intent(act, Note_addReadyImage.class);
-                if( bTop && !bDirectory )
-                    intent.putExtra("EXTRA_ADD_EXIST", "single_to_top");
-                else if(!bTop && !bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "single_to_bottom");
-                else if(bTop && bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "directory_to_top");
-                else if(!bTop && bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "directory_to_bottom");
-
-                act.startActivity(intent);
-            }
-            break;
-
-            case ID_NEW_CAMERA_VIDEO:
-            {
-                Intent intent = new Intent(act, Note_addCameraVideo.class);
-                if(bTop)
-                    intent.putExtra("extra_ADD_NEW_TO_TOP", "true");
-                else
-                    intent.putExtra("extra_ADD_NEW_TO_TOP", "false");
-
-                act.startActivity(intent);
-            }
-            break;
-
-            case ID_NEW_READY_VIDEO:
-            {
-                Intent intent = new Intent(act, Note_addReadyVideo.class);
-                if( bTop && !bDirectory )
-                    intent.putExtra("EXTRA_ADD_EXIST", "single_to_top");
-                else if(!bTop && !bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "single_to_bottom");
-                else if(bTop && bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "directory_to_top");
-                else if(!bTop && bDirectory)
-                    intent.putExtra("EXTRA_ADD_EXIST", "directory_to_bottom");
-
-                act.startActivity(intent);
-            }
-            break;
-
             case ID_NEW_YOUTUBE_LINK:
             {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com"));
@@ -307,20 +164,6 @@ public class Add_note_option {
             case ID_NEW_WEB_LINK:
             {
                 Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.google.com"));
-                act.startActivity(intent);
-            }
-            break;
-
-            case ID_NEW_DRAWING:
-            {
-                Intent intent = new Intent(act, Note_drawingAct.class);
-                intent.putExtra("drawing_mode",Util.DRAWING_ADD);
-
-                if(bTop)
-                    intent.putExtra("extra_ADD_NEW_TO_TOP", "true");
-                else
-                    intent.putExtra("extra_ADD_NEW_TO_TOP", "false");
-
                 act.startActivity(intent);
             }
             break;

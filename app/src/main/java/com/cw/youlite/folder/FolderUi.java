@@ -38,8 +38,6 @@ import android.widget.TextView;
 import com.cw.youlite.R;
 import com.cw.youlite.db.DB_page;
 import com.cw.youlite.drawer.Drawer;
-import com.cw.youlite.operation.audio.Audio_manager;
-import com.cw.youlite.operation.audio.BackgroundAudioService;
 import com.cw.youlite.db.DB_drawer;
 import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.main.MainAct;
@@ -202,9 +200,6 @@ public class FolderUi
                     // update focus folder table Id for Add to top
                     Pref.setPref_focusView_folder_tableId(act,db_drawer.getFolderTableId(getFocus_folderPos(),true) );
 
-                    // update playing highlight if needed
-                    if(BackgroundAudioService.mMediaPlayer != null)
-                        MainAct.mPlaying_folderPos++;
                 }
 
                 // recover focus folder table Id
@@ -295,24 +290,6 @@ public class FolderUi
             Pref.setPref_focusView_folder_tableId(act, focusFolderTableId);
             // update folder table Id of new focus (error will cause first folder been deleted)
             DB_folder.setFocusFolder_tableId(focusFolderTableId);
-        }
-
-        // update audio playing highlight if needed
-        if(BackgroundAudioService.mMediaPlayer != null)
-        {
-            if (MainAct.mPlaying_folderPos > position)
-                MainAct.mPlaying_folderPos--;
-            else if (MainAct.mPlaying_folderPos == position)
-            {
-                // stop audio since the folder is deleted
-                if(BackgroundAudioService.mMediaPlayer != null)
-                    Audio_manager.stopAudioPlayer();
-
-                // update
-                if (foldersCount > 0)
-	                MainAct.openFolder();
-
-            }
         }
 
         // remove focus view Key for page table Id

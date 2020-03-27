@@ -35,9 +35,6 @@ import com.cw.youlite.drawer.Drawer;
 import com.cw.youlite.folder.Folder;
 import com.cw.youlite.folder.FolderUi;
 import com.cw.youlite.note_add.Add_note_option;
-import com.cw.youlite.operation.audio.Audio_manager;
-import com.cw.youlite.operation.audio.AudioPlayer_page;
-import com.cw.youlite.operation.audio.BackgroundAudioService;
 import com.cw.youlite.operation.delete.DeleteFolders;
 import com.cw.youlite.operation.delete.DeletePages;
 import com.cw.youlite.operation.import_export.Export_toSDCardAllJsonFragment;
@@ -50,12 +47,10 @@ import com.cw.youlite.operation.mail.Mail_fileViewJson;
 import com.cw.youlite.page.Checked_notes_option;
 import com.cw.youlite.page.PageUi;
 import com.cw.youlite.page.Page_recycler;
-import com.cw.youlite.tabs.AudioUi_page;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.DeleteFileAlarmReceiver;
 import com.cw.youlite.db.DB_drawer;
 import com.cw.youlite.util.Dialog_EULA;
-import com.cw.youlite.util.audio.UtilAudio;
 import com.cw.youlite.operation.slideshow.SlideshowInfo;
 import com.cw.youlite.util.image.UtilImage;
 import com.cw.youlite.define.Define;
@@ -69,7 +64,6 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
@@ -88,7 +82,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentManager.OnBackStackChangedListener;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.core.app.NotificationManagerCompat;
+
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -151,10 +145,10 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
          *  2. for assets mode: need to enable build.gradle assets.srcDirs = ['preferred/assets/']
          */
         /** 1 debug, download */
-//        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_DOWNLOAD);
+        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_DOWNLOAD);
 
         /** 2 release, download */
-        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_DOWNLOAD);
+//        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_DOWNLOAD);
 
         // Release mode: no debug message
         if (Define.CODE_MODE == Define.RELEASE_MODE) {
@@ -274,32 +268,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         }
 
         isAddedOnNewIntent = false;
-
-        // Register Bluetooth device receiver
-        if (Build.VERSION.SDK_INT < 21) {
-            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
-            this.registerReceiver(bluetooth_device_receiver, filter);
-        } else // if(Build.VERSION.SDK_INT >= 21)
-        {
-            // Media session: to receive media button event of bluetooth device
-            // new media browser instance and create BackgroundAudioService instance: support notification
-            if (mMediaBrowserCompat == null) {
-                mMediaBrowserCompat = new MediaBrowserCompat(mAct,
-                        new ComponentName(mAct, BackgroundAudioService.class),
-                        mMediaBrowserCompatConnectionCallback,
-                        mAct.getIntent().getExtras());
-
-                if (!mMediaBrowserCompat.isConnected())
-                    mMediaBrowserCompat.connect();//cf: https://stackoverflow.com/questions/43169875/mediabrowser-subscribe-doesnt-work-after-i-get-back-to-activity-1-from-activity
-
-                mCurrentState = STATE_PAUSED;
-            }
-        }
-
-        // init audio parameters
-        MainAct.mPlaying_folderPos = -1;
-        Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_STOP);
-        TabsHost.audioPlayTabPos = -1;
     }
 
 
@@ -331,26 +299,15 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 //        System.out.println("MainAct / _onKeyDown / keyCode = " + keyCode);
         switch (keyCode) {
             case KeyEvent.KEYCODE_MEDIA_PREVIOUS: //88
-                if(TabsHost.audioUi_page != null)
-                    TabsHost.audioUi_page.audioPanel_previous_btn.performClick();
                 return true;
 
             case KeyEvent.KEYCODE_MEDIA_NEXT: //87
-                if(TabsHost.audioUi_page != null)
-                    TabsHost.audioUi_page.audioPanel_next_btn.performClick();
-
                 return true;
 
             case KeyEvent.KEYCODE_MEDIA_PLAY: //126
-                if(TabsHost.audioUi_page != null)
-                    TabsHost.audioUi_page.audioPanel_play_button.performClick();
-                else
-                    playFirstAudio();
                 return true;
 
             case KeyEvent.KEYCODE_MEDIA_PAUSE: //127
-                if(TabsHost.audioUi_page != null)
-                    TabsHost.audioUi_page.audioPanel_play_button.performClick();
                 return true;
 
             case KeyEvent.KEYCODE_BACK:
@@ -692,18 +649,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             bluetooth_device_receiver = null;
         }
 
-        // stop audio player
-        if(BackgroundAudioService.mMediaPlayer != null)
-            Audio_manager.stopAudioPlayer();
-
-        // disconnect MediaBrowserCompat
-        if( (mMediaBrowserCompat != null) && mMediaBrowserCompat.isConnected())
-            mMediaBrowserCompat.disconnect();
-
-        //hide notification
-        NotificationManagerCompat.from(MainAct.mAct).cancel(BackgroundAudioService.id);
-
-        mMediaBrowserCompat = null;
 
         // unregister receiver
         if(localBroadcastMgr != null) {
@@ -1060,7 +1005,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
      * onCreate Options Menu
      *
      *************************/
-    public static MenuItem mSubMenuItemAudio;
     MenuItem playOrStopMusicButton;
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu)
@@ -1120,7 +1064,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         setMenuUiState(item.getItemId());
         DB_drawer dB_drawer = new DB_drawer(this);
         DB_folder dB_folder = new DB_folder(this, Pref.getPref_focusView_folder_tableId(this));
-        DB_page dB_page = new DB_page(this,Pref.getPref_focusView_page_tableId(this));
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -1452,6 +1395,11 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 Intent serviceIntent = new Intent(MainAct.this, FetchService_category.class);
                 serviceIntent.putExtra("FetchUrl", getDefaultUrl());
                 startService(serviceIntent);
+
+                // reset focus view position
+                Pref.setPref_focusView_folder_tableId(this, 1);
+                Pref.setPref_focusView_page_tableId(this, 1);
+
                 return true;
 
             case MenuId.CONFIG:
@@ -1471,9 +1419,11 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 setTitle(R.string.about_title);
 
                 mAboutFragment = new About();
-                mFragmentTransaction = mFragmentManager.beginTransaction();
-                mFragmentTransaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-                mFragmentTransaction.replace(R.id.content_frame, mAboutFragment).addToBackStack("about").commit();
+                if(mFragmentManager != null) {
+                    mFragmentTransaction = mFragmentManager.beginTransaction();
+                    mFragmentTransaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+                    mFragmentTransaction.replace(R.id.content_frame, mAboutFragment).addToBackStack("about").commit();
+                }
                 return true;
 
             default:
@@ -1520,57 +1470,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         Pref.setPref_focusView_page_tableId(this, 1);
     }
 
-    void playFirstAudio()
-    {
-        Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_PLAY);
-
-        Audio_manager.setAudioPlayMode(Audio_manager.PAGE_PLAY_MODE);
-        Audio_manager.mAudioPos = 0;
-
-        // cancel playing
-        if(BackgroundAudioService.mMediaPlayer != null)
-        {
-            if(BackgroundAudioService.mMediaPlayer.isPlaying())
-                BackgroundAudioService.mMediaPlayer.pause();
-
-            if((AudioPlayer_page.mAudioHandler != null) &&
-                    (TabsHost.audioPlayer_page != null)        ){
-                AudioPlayer_page.mAudioHandler.removeCallbacks(TabsHost.audioPlayer_page.page_runnable);
-            }
-            BackgroundAudioService.mMediaPlayer.release();
-            BackgroundAudioService.mMediaPlayer = null;
-        }
-
-        // initial
-        BackgroundAudioService.mMediaPlayer = null;//for first
-
-        Page_recycler page = TabsHost.getCurrentPage();
-        TabsHost.audioUi_page = new AudioUi_page(this,page.recyclerView);
-        TabsHost.audioUi_page.initAudioBlock(this);
-
-        TabsHost.audioPlayer_page = new AudioPlayer_page(this,TabsHost.audioUi_page);
-        TabsHost.audioPlayer_page.prepareAudioInfo();
-        TabsHost.audioPlayer_page.runAudioState();
-
-        // update audio play position
-        TabsHost.audioPlayTabPos = TabsHost.getFocus_tabPos();
-        TabsHost.mTabsPagerAdapter.notifyDataSetChanged();
-
-        UtilAudio.updateAudioPanel(TabsHost.audioUi_page.audioPanel_play_button,
-                TabsHost.audioUi_page.audio_panel_title_textView);
-
-        // update playing page position
-        mPlaying_pagePos = TabsHost.getFocus_tabPos();
-
-        // update playing page table Id
-        mPlaying_pageTableId = TabsHost.getCurrentPageTableId();
-
-        // update playing folder position
-        mPlaying_folderPos = FolderUi.getFocus_folderPos();
-
-        DB_drawer dB_drawer = new DB_drawer(this);
-        MainAct.mPlaying_folderTableId = dB_drawer.getFolderTableId(MainAct.mPlaying_folderPos,true);
-    }
 
     // configure layout view
     void configLayoutView()

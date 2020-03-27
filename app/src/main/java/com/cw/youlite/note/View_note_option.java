@@ -151,10 +151,6 @@ public class View_note_option {
                 // picture first priority
                 String picFile = dB_page.getNotePictureUri_byId(noteId);
 
-				// then drawing
-				if(Util.isEmptyString(picFile))
-                    picFile = dB_page.getNoteDrawingUri_byId(noteId);
-
                 System.out.println("-> picFile = " + picFile);
 
 				String[] picFileArray = null;

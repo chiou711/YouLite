@@ -10,14 +10,7 @@
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="com.google.android.apps.photos.permission.GOOGLE_PHOTOS"/>
 
-	<uses-feature android:name="android.hardware.camera"
-	    		  android:required="false"/>
-	<uses-feature android:name="android.hardware.camera.autofocus"
-                  android:required="false"/>
-    <uses-feature android:name="android.hardware.telephony"
-                  android:required="false"/>
     <application
         android:name="com.cw.youlite.util.uil.UilApplication"
         android:allowBackup="false"
@@ -59,14 +52,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.cw.youlite.main.MainAct" />
         </activity>
-        <activity android:name="com.cw.youlite.note_add.Note_addAudio"
-                  android:theme="@style/MyTheme"/>
-        <activity android:name="com.cw.youlite.note_add.Note_addCameraImage"/>
-        <activity android:name="com.cw.youlite.note_add.Note_addReadyImage"
-                  android:theme="@style/MyTheme"/>
-        <activity android:name="com.cw.youlite.note_add.Note_addCameraVideo"/>
-        <activity android:name="com.cw.youlite.note_add.Note_addReadyVideo"/>
-        <activity android:name="com.cw.youlite.util.drawing.Note_drawingAct" />
         <activity android:name="com.cw.youlite.note_edit.Note_edit"
                   android:windowSoftInputMode="adjustPan"/>
         <activity android:name="com.cw.youlite.note.Note"
@@ -92,43 +77,17 @@
             android:theme="@style/MyTheme"/>
         <activity android:name="com.cw.youlite.operation.gallery.GalleryGridAct"/>
         <activity android:name="com.cw.youlite.operation.gallery.GalleryPagerAct"/>
-      	<activity android:name="com.cw.youlite.operation.slideshow.SlideshowPlayer"
-                  android:theme="@android:style/Theme.NoTitleBar"/>
 
         <!--YouTube search -->
         <activity android:name="com.cw.youlite.operation.youtube.SearchYouTube"
                   android:windowSoftInputMode="adjustPan"
                   android:theme="@style/MyTheme"/>
 
-        <!--Add_recording-->
-        <activity
-            android:name="com.cw.youlite.note_add.add_recording.Add_recording_act"
-            android:screenOrientation="unspecified"
-            android:label="@string/app_name"
-            android:theme="@style/MyTheme" >
-        </activity>
-
-        <service android:name="com.cw.youlite.note_add.add_recording.RecordingService" />
-
         <!--receiver-->
         <receiver
             android:name="com.cw.youlite.util.DeleteFileAlarmReceiver"
             android:enabled="true" />
-        <receiver android:name="androidx.media.session.MediaButtonReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
-            </intent-filter>
-        </receiver>
 
-        <!-- will create BackgroundAudioService instance when notification button is pressed -->
-        <service android:name="com.cw.youlite.operation.audio.BackgroundAudioService">
-        <intent-filter>
-            <action android:name="android.intent.action.MEDIA_BUTTON" />
-            <action android:name="android.media.AUDIO_BECOMING_NOISY" />
-            <action android:name="android.media.browse.MediaBrowserService" />
-        </intent-filter>
-        </service>
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/ad_mob_app_id"/>

@@ -18,11 +18,8 @@ package com.cw.youlite.note;
 
 import com.cw.youlite.R;
 import com.cw.youlite.db.DB_page;
-import com.cw.youlite.operation.audio.Audio_manager;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.uil.UilCommon;
-import com.cw.youlite.util.audio.UtilAudio;
-import com.cw.youlite.util.image.AsyncTaskAudioBitmap;
 import com.cw.youlite.util.image.TouchImageView;
 import com.cw.youlite.util.image.UtilImage;
 import com.cw.youlite.util.image.UtilImage_bitmapLoader;
@@ -37,7 +34,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 
 import androidx.fragment.app.Fragment;
@@ -143,7 +139,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
 
         String linkUri = db_page.getNoteLinkUri(position,true);
         String strTitle = db_page.getNoteTitle(position,true);
-        String strBody = db_page.getNoteBody(position,true);
 
         // View mode
     	// picture only
@@ -167,7 +162,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
 
 	  	    if( Util.isYouTubeLink(linkUri) ||
 	 	  	   !Util.isEmptyString(strTitle)||
-	 	  	   !Util.isEmptyString(strBody) ||
 				linkUri.startsWith("http")      )
 	  	    {
 	  	    	showTextWebView(position,textWebView);
@@ -187,7 +181,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
 
 			// text
 	  	    if( !Util.isEmptyString(strTitle)||
-	  	       	!Util.isEmptyString(strBody) ||
 				Util.isYouTubeLink(linkUri)  ||
 				linkUri.startsWith("http")      )
 	  	    {
@@ -244,8 +237,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
     {
 		String linkUri = db_page.getNoteLinkUri(position,true);
 		String pictureUri = db_page.getNotePictureUri(position,true);
-		String audioUri = db_page.getNoteAudioUri(position,true);
-		String drawingUri = db_page.getNoteDrawingUri(position,true);
 
     	// Check if Uri is for YouTube
     	if(Util.isEmptyString(pictureUri) && Util.isYouTubeLink(linkUri) )
@@ -253,13 +244,10 @@ public class Note_adapter extends FragmentStatePagerAdapter
 			pictureUri = "http://img.youtube.com/vi/"+Util.getYoutubeId(linkUri)+"/0.jpg";//??? how to get this jpg for a playlist
 			System.out.println("Note_adapter / _showPictureView / YouTube pictureUri = " + pictureUri);
 		}
-		else if(UtilImage.hasImageExtension(drawingUri, act))
-			pictureUri = drawingUri;
 
         // show image view
   		if( UtilImage.hasImageExtension(pictureUri, act)||
   		    (Util.isEmptyString(pictureUri)&& 
-  		     Util.isEmptyString(audioUri)&& 
   		     Util.isEmptyString(linkUri)      )             ) // for wrong path icon
   		{
 			System.out.println("Note_adapter / _showPictureView / show image view");
@@ -277,33 +265,8 @@ public class Note_adapter extends FragmentStatePagerAdapter
   			imageView.setVisibility(View.GONE);
   			videoView.setVisibility(View.VISIBLE);
   		}
-  		// show audio thumb nail view
-  		else if(Util.isEmptyString(pictureUri)&& 
-  				!Util.isEmptyString(audioUri)    )
-  		{
-			System.out.println("Note_adapter / _showPictureView / show audio thumb nail view");
-  			videoView.setVisibility(View.GONE);
-  			UtilVideo.mVideoView = null;
-  			linkWebView.setVisibility(View.GONE);
-  			imageView.setVisibility(View.VISIBLE);
-  			try
-			{
-			    AsyncTaskAudioBitmap audioAsyncTask;
-			    audioAsyncTask = new AsyncTaskAudioBitmap(act,
-						    							  audioUri, 
-						    							  imageView,
-						    							  null,
-														  false);
-				audioAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"Searching media ...");
-			}
-			catch(Exception e)
-			{
-				System.out.println("Note_adapter / _AsyncTaskAudioBitmap / exception");
-			}
-  		}
   		// show link thumb view
   		else if(Util.isEmptyString(pictureUri)&&
-  				Util.isEmptyString(audioUri)  &&
   				!Util.isEmptyString(linkUri))
   		{
 			System.out.println("Note_adapter / _showPictureView / show link thumb view");
@@ -355,18 +318,15 @@ public class Note_adapter extends FragmentStatePagerAdapter
 
 			String lastPictureStr = null;
 			String lastLinkUri = null;
-			String lastAudioUri = null;
 
 			if(mLastPosition != -1)
 			{
 				lastPictureStr = db_page.getNotePictureUri(mLastPosition,true);
 				lastLinkUri = db_page.getNoteLinkUri(mLastPosition, true);
-				lastAudioUri = db_page.getNoteAudioUri(mLastPosition, true);
 			}
 
 			String pictureStr = db_page.getNotePictureUri(position,true);
 			String linkUri = db_page.getNoteLinkUri(position,true);
-			String audioUri = db_page.getNoteAudioUri(position,true);
 
 			// remove last text web view
 			if (!Note.isPictureMode())
@@ -386,7 +346,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
 				// remove last link web view
 				if(	!UtilImage.hasImageExtension(lastPictureStr, act) &&
 					!UtilVideo.hasVideoExtension(lastPictureStr, act) &&
-					!UtilAudio.hasAudioExtension(lastAudioUri)         &&
 					!Util.isYouTubeLink(lastLinkUri)                      )
 				{
 					String tag = "current" + mLastPosition + "linkWebView";
@@ -505,26 +464,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
 					UtilVideo.currentPicturePath = pictureStr;
 				}
 			}
-
-            ViewGroup audioBlock = (ViewGroup) act.findViewById(R.id.audioGroup);
-            audioBlock.setVisibility(View.VISIBLE);
-
-			// init audio block of pager
-			if(UtilAudio.hasAudioExtension(audioUri) ||
-               UtilAudio.hasAudioExtension(Util.getDisplayNameByUriString(audioUri, act)) )
-			{
-				AudioUi_note.initAudioProgress(act,audioUri,pager);
-
-				if(Audio_manager.getAudioPlayMode() == Audio_manager.NOTE_PLAY_MODE)
-				{
-					if (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP)
-						AudioUi_note.updateAudioProgress(act);
-				}
-
-				AudioUi_note.updateAudioPlayState(act);
-			}
-			else
-				audioBlock.setVisibility(View.GONE);
 		}
 	    mLastPosition = position;
 	    
@@ -660,14 +599,12 @@ public class Note_adapter extends FragmentStatePagerAdapter
     	
     	System.out.println("Note_adapter / _getHtmlStringWithViewPort");
     	String strTitle = db_page.getNoteTitle(position,true);
-    	String strBody = db_page.getNoteBody(position,true);
     	String linkUri = db_page.getNoteLinkUri(position,true);
 
     	// replace note title
 		//若沒有Title與Body,但有YouTube link或Web link則Title會使用link得到的title,且用Gray顏色
 		boolean bSetGray = false;
-		if( Util.isEmptyString(strTitle) &&
-			Util.isEmptyString(strBody)     )
+		if( Util.isEmptyString(strTitle)    )
 		{
 			if(Util.isYouTubeLink(linkUri))
 			{
@@ -706,7 +643,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
     	}
     		
        	String separatedLineTitle = (!Util.isEmptyString(strTitle))?"<hr size=2 color=blue width=99% >":"";
-       	String separatedLineBody = (!Util.isEmptyString(strBody))?"<hr size=1 color=black width=99% >":"";
 
        	// title
        	if(!Util.isEmptyString(strTitle))
@@ -729,16 +665,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
        	else
        		strTitle = "";
     	
-    	// body
-       	if(!Util.isEmptyString(strBody))
-       	{
-	    	Spannable spanBody = new SpannableString(strBody);
-	    	Linkify.addLinks(spanBody, Linkify.ALL);
-	    	strBody = Html.toHtml(spanBody);
-       	}
-       	else
-       		strBody = "";
-	    	
     	// set web view text color
     	String colorStr = Integer.toHexString(ColorSet.mText_ColorArray[mStyle]);
     	colorStr = colorStr.substring(2);
@@ -751,10 +677,7 @@ public class Note_adapter extends FragmentStatePagerAdapter
 		         "<p align=\"center\"><b>" +
 		         "<font color=\"" + colorStr + "\">" + strTitle + "</font>" +
          		 "</b></p>" + separatedLineTitle +
-		         "<p>" + 
-				 "<font color=\"" + colorStr + "\">" + strBody + "</font>" +
-				 "</p>" + separatedLineBody +
-		         "<p align=\"right\">" + 
+		         "<p align=\"right\">" +
 				 "<font color=\"" + colorStr + "\">"  + Util.getTimeString(createTime) + "</font>" +
 		         "</p>" + 
 		         "</body></html>";

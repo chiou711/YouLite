@@ -49,12 +49,9 @@ public final class Contract {
         // Column with the foreign key into the category table.
         public static final String COLUMN_NOTE_TITLE = "note_title";
         public static final String COLUMN_NOTE_PICTURE_URI = "note_picture_uri";
-        public static final String COLUMN_NOTE_AUDIO_URI = "note_audio_uri";
-        public static final String COLUMN_NOTE_DRAWING_URI = "note_drawing_uri";
 
         // The url to the video content.
         public static final String COLUMN_NOTE_LINK_URI = "note_link_uri";
-        public static final String COLUMN_NOTE_BODY = "note_body";
         public static final String COLUMN_NOTE_MARKING = "note_marking";
         public static final String COLUMN_NOTE_CREATED = "note_created";
 

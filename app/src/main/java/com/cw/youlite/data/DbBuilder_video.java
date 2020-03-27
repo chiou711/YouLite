@@ -151,10 +151,7 @@ public class DbBuilder_video {
                     ContentValues videoValues = new ContentValues();
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_TITLE, linkTitle);
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_PICTURE_URI, "");
-                    videoValues.put(Contract.VideoEntry.COLUMN_NOTE_AUDIO_URI, "");
-                    videoValues.put(Contract.VideoEntry.COLUMN_NOTE_DRAWING_URI, "");
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_LINK_URI, linkUrl);
-                    videoValues.put(Contract.VideoEntry.COLUMN_NOTE_BODY, "");
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_MARKING, 1);
                     videoValues.put(Contract.VideoEntry.COLUMN_NOTE_CREATED, 1); //todo temp
 
@@ -169,10 +166,7 @@ public class DbBuilder_video {
                         Contract.VideoEntry._ID + " INTEGER PRIMARY KEY," +
                         Contract.VideoEntry.COLUMN_NOTE_TITLE + " TEXT," +
                         Contract.VideoEntry.COLUMN_NOTE_PICTURE_URI + " TEXT," +
-                        Contract.VideoEntry.COLUMN_NOTE_AUDIO_URI + " TEXT," +
-                        Contract.VideoEntry.COLUMN_NOTE_DRAWING_URI + " TEXT," +
                         Contract.VideoEntry.COLUMN_NOTE_LINK_URI + " TEXT NOT NULL," + // TEXT UNIQUE NOT NULL will make the URL unique.
-                        Contract.VideoEntry.COLUMN_NOTE_BODY + " TEXT," +
                         Contract.VideoEntry.COLUMN_NOTE_MARKING + " INTEGER," +
                         Contract.VideoEntry.COLUMN_NOTE_CREATED + " INTEGER);";
 

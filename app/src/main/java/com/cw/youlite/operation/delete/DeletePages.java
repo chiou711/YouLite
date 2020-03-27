@@ -38,8 +38,6 @@ import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.folder.FolderUi;
 import com.cw.youlite.main.MainAct;
 import com.cw.youlite.operation.List_selectPage;
-import com.cw.youlite.operation.audio.Audio_manager;
-import com.cw.youlite.operation.audio.BackgroundAudioService;
 import com.cw.youlite.util.BaseBackPressedListener;
 import com.cw.youlite.util.Util;
 import com.cw.youlite.util.preferences.Pref;
@@ -207,13 +205,6 @@ public class DeletePages extends Fragment{
         // set scroll X
 //        int scrollX = 0; //over the last scroll X
 //        Pref.setPref_focusView_scrollX_byFolderTableId(act, scrollX );
-
-        if(BackgroundAudioService.mMediaPlayer != null)
-        {
-            Audio_manager.stopAudioPlayer();
-            Audio_manager.mAudioPos = 0;
-            Audio_manager.setPlayerState(Audio_manager.PLAYER_AT_STOP);
-        }
 
         list_selPage = new List_selectPage(act,rootView , mListView);
     }

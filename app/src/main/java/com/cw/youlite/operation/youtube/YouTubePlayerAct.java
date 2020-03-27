@@ -26,8 +26,6 @@ import com.cw.youlite.R;
 import com.cw.youlite.db.DB_page;
 import com.cw.youlite.note.Note;
 import com.cw.youlite.note.NoteUi;
-import com.cw.youlite.operation.audio.Audio_manager;
-import com.cw.youlite.operation.audio.BackgroundAudioService;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.Util;
 import com.cw.youlite.util.preferences.Pref;
@@ -46,11 +44,6 @@ public class YouTubePlayerAct extends YouTubeFailureRecoveryActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.youtube_player);
         act = this;
-
-        // stop audio in advance
-        if((BackgroundAudioService.mMediaPlayer != null) && (Audio_manager.getPlayerState() != Audio_manager.PLAYER_AT_STOP))
-            Audio_manager.stopAudioPlayer();
-
 
         // initial: control is seen
         bShow_landscape_prev_next_control = true;

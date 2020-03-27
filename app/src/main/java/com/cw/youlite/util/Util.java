@@ -50,7 +50,6 @@ import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.db.DB_page;
 import com.cw.youlite.note.Note;
 import com.cw.youlite.tabs.TabsHost;
-import com.cw.youlite.util.audio.UtilAudio;
 import com.cw.youlite.util.image.UtilImage;
 import com.cw.youlite.util.preferences.Pref;
 import com.cw.youlite.util.video.UtilVideo;
@@ -132,14 +131,10 @@ public class Util
     
     public static int ACTIVITY_TAKE_PICTURE = 3;
     public static int CHOOSER_SET_PICTURE = 4;
-	public static int CHOOSER_SET_AUDIO = 5;
-	public static int DRAWING_ADD = 6;
-	public static int DRAWING_EDIT = 7;
 
 	private int defaultBgClr;
 	private int defaultTextClr;
 
-	public static final int PERMISSIONS_REQUEST_CAMERA = 10;
 	public static final int PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES = 11;
 	public static final int PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO = 12;
 	public static final int PERMISSIONS_REQUEST_STORAGE_EXPORT_ONE = 13;
@@ -482,7 +477,6 @@ public class Util
 	    final ListAdapter originalAdapter = listView.getAdapter();
 	    final int style = Util.getCurrentPageStyle(TabsHost.getFocus_tabPos());
         CheckedTextView textViewDefault = new CheckedTextView(mAct) ;
-        defaultBgClr = textViewDefault.getDrawingCacheBackgroundColor();
         defaultTextClr = textViewDefault.getCurrentTextColor();
 
 	    listView.setAdapter(new ListAdapter()
@@ -649,12 +643,8 @@ public class Util
 		String NOTE_ITEM_TAG_E = "</note>";
 		String TITLE_TAG_B = "<title>";
 		String TITLE_TAG_E = "</title>";
-		String BODY_TAG_B = "<body>";
-		String BODY_TAG_E = "</body>";
 		String PICTURE_TAG_B = "<picture>";
 		String PICTURE_TAG_E = "</picture>";
-		String AUDIO_TAG_B = "<audio>";
-		String AUDIO_TAG_E = "</audio>";
 		String LINK_TAG_B = "<link>";
 		String LINK_TAG_E = "</link>";
 		String PAGE_TAG_E = "</page>";
@@ -700,9 +690,7 @@ public class Util
 			sentString = sentString.concat(NEW_LINE + PAGE_NAME_TAG_B + mDbFolder.getCurrentPageTitle() + PAGE_NAME_TAG_E);
 			sentString = sentString.concat(NEW_LINE + NOTE_ITEM_TAG_B);
 			sentString = sentString.concat(NEW_LINE + TITLE_TAG_B + TITLE_TAG_E);
-			sentString = sentString.concat(NEW_LINE + BODY_TAG_B +  BODY_TAG_E);
 			sentString = sentString.concat(NEW_LINE + PICTURE_TAG_B + PICTURE_TAG_E);
-			sentString = sentString.concat(NEW_LINE + AUDIO_TAG_B + AUDIO_TAG_E);
 			sentString = sentString.concat(NEW_LINE + LINK_TAG_B + LINK_TAG_E);
 			sentString = sentString.concat(NEW_LINE + NOTE_ITEM_TAG_E);
 			sentString = sentString.concat(NEW_LINE + PAGE_TAG_E );
@@ -717,15 +705,9 @@ public class Util
                 String title = cursorNote.getString(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_TITLE));
 				title = replaceEscapeCharacter(title);
 
-				String body = cursorNote.getString(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_BODY));
-				body = replaceEscapeCharacter(body);
-
 				String picUrl = cursorNote.getString(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_PICTURE_URI));
 				if(picUrl != null)
 					picUrl = replaceEscapeCharacter(picUrl);
-
-				String audioUrl = cursorNote.getString(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_AUDIO_URI));
-				audioUrl = replaceEscapeCharacter(audioUrl);
 
 				String linkUrl = cursorNote.getString(cursorNote.getColumnIndexOrThrow(DB_page.KEY_NOTE_LINK_URI));
 
@@ -744,9 +726,7 @@ public class Util
 
 				sentString = sentString.concat(NEW_LINE + NOTE_ITEM_TAG_B);
 				sentString = sentString.concat(NEW_LINE + TITLE_TAG_B + srtMark + title + TITLE_TAG_E);
-				sentString = sentString.concat(NEW_LINE + BODY_TAG_B + body + BODY_TAG_E);
 				sentString = sentString.concat(NEW_LINE + PICTURE_TAG_B + picUrl + PICTURE_TAG_E);
-				sentString = sentString.concat(NEW_LINE + AUDIO_TAG_B + audioUrl + AUDIO_TAG_E);
 				sentString = sentString.concat(NEW_LINE + LINK_TAG_B + linkUrl + LINK_TAG_E);
 				sentString = sentString.concat(NEW_LINE + NOTE_ITEM_TAG_E);
 				sentString = sentString.concat(NEW_LINE);
@@ -936,18 +916,12 @@ public class Util
 		string = string.replace("[s]","");
 		string = string.replace("[n]","");
 		string = string.replace("<title></title>"+NEW_LINE,"");
-        string = string.replace("<body></body>"+NEW_LINE,"");
         string = string.replace("<picture></picture>"+NEW_LINE,"");
-        string = string.replace("<audio></audio>"+NEW_LINE,"");
         string = string.replace("<link></link>"+NEW_LINE,"");
 		string = string.replace("<title>","Title: ");
 		string = string.replace("</title>","");
-		string = string.replace("<body>","Body: ");
-		string = string.replace("</body>","");
 		string = string.replace("<picture>","Picture: ");
 		string = string.replace("</picture>","");		
-		string = string.replace("<audio>","Audio: ");
-		string = string.replace("</audio>","");		
 		string = string.replace("<link>","Link: ");
 		string = string.replace("</link>","");		
 		string = string.replace("</note>","");
@@ -1022,37 +996,7 @@ public class Util
 		}
 		else if(scheme.equalsIgnoreCase("file")  )
 		{
-			if(UtilAudio.hasAudioExtension(uriString))
-			{
-				// Get MP3 title from MP3 file
-				String audio_artist = null;
-				String audio_title = null;
-				MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-//				System.out.println("Util / _getDisplayNameByUriString / uri = " + uri);
-				if(!Util.isEmptyString(uriString))
-				{
-					try
-					{
-						mmr.setDataSource(activity,uri);
-					}
-					catch(Exception e)
-					{
-
-					}
-					audio_title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-					audio_artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-					display_name = audio_title + " / " + audio_artist;
-				}
-
-				// add for video with mkv format
-				if(Util.isEmptyString(audio_title) &&
-				   Util.isEmptyString(audio_artist)   )
-				{
-					display_name = uri.getLastPathSegment();
-				}
-			}
-			else
-				display_name = uri.getLastPathSegment();
+			display_name = uri.getLastPathSegment();
 		}
 		//System.out.println("display_name = " + display_name);
                 	
@@ -1331,7 +1275,6 @@ public class Util
     
 
 	// get Url array of directory files
-    public final static int AUDIO = 0;
     public final static int IMAGE = 1;
     public final static int VIDEO = 2;
     public static String[] getUrlsByFiles(File[] files,int type)
@@ -1347,9 +1290,8 @@ public class Util
             
 	        for(File file : files)
 	        {
-		        if( ( (type == AUDIO) && (UtilAudio.hasAudioExtension(file)) ) ||
-		        	( (type == IMAGE) && (UtilImage.hasImageExtension(file)) ) ||
-		        	( (type == VIDEO) && (UtilVideo.hasVideoExtension(file)) )  )	
+		        if( ( (type == IMAGE) && (UtilImage.hasImageExtension(file)) ) ||
+		        	( (type == VIDEO) && (UtilVideo.hasVideoExtension(file)) )  )
 	            {
 		            if(i< files.length)
 		            {
@@ -1571,8 +1513,6 @@ public class Util
         	charSeq = act.getResources().getText(R.string.add_new_chooser_image);
         else if(type.startsWith("video"))
         	charSeq = act.getResources().getText(R.string.add_new_chooser_video);
-        else if(type.startsWith("audio"))
-        	charSeq = act.getResources().getText(R.string.add_new_chooser_audio);
 
 		openInChooser = Intent.createChooser(intentList.remove(intentList.size()-1), charSeq);//remove duplicated item
 		LabeledIntent[] extraIntentsFinal = intentList.toArray(new LabeledIntent[intentList.size()]);
@@ -2034,7 +1974,7 @@ public class Util
 		// by YouTube App
 		if(linkUri.contains("youtu.be") || linkUri.contains("youtube.com"))
         {
-            // stop audio and video if playing
+            // stop video if playing
             Note.stopAV();
 
 //            String id = Util.getYoutubeId(linkUri);
