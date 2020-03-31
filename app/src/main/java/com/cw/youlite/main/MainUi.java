@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 CW Chiu
+ * Copyright (C) 2020 CW Chiu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,7 +101,7 @@ public class MainUi {
             boolean isAddedToTop = pref_show_note_attribute.getString("KEY_ADD_NEW_NOTE_TO","bottom").equalsIgnoreCase("top");
             if( isAddedToTop && (count > 1) )
             {
-                Page_recycler.swap(dB_page);
+                TabsHost.getCurrentPage().swapTopBottom();
             }
 
             // update title: YouTube
@@ -181,7 +181,7 @@ public class MainUi {
                 title = pathOri;
                 if (pref_show_note_attribute.getString("KEY_ADD_NEW_NOTE_TO", "bottom").equalsIgnoreCase("top") &&
                         (count > 1)) {
-                    Page_recycler.swap(dB_page);
+                    TabsHost.getCurrentPage().swapTopBottom();
                 }
 
                 Toast.makeText(act,

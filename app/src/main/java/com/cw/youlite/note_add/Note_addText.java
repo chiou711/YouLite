@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 CW Chiu
+ * Copyright (C) 2020 CW Chiu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package com.cw.youlite.note_add;
 
 import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.main.MainAct;
-import com.cw.youlite.page.Page_recycler;
 import com.cw.youlite.R;
 import com.cw.youlite.db.DB_page;
 import com.cw.youlite.tabs.TabsHost;
@@ -153,9 +152,11 @@ public class Note_addText extends AppCompatActivity {
 					enSaveDb = true;
 					rowId = saveStateInDB(rowId, enSaveDb,"" );
 
+					int notes_count = TabsHost.getCurrentPage().getNotesCountInPage(this);
+
 					if( getIntent().getExtras().getString("extra_ADD_NEW_TO_TOP", "false").equalsIgnoreCase("true") &&
-							(Page_recycler.mDb_page.getNotesCount(true) > 0) )
-						Page_recycler.swap(Page_recycler.mDb_page);
+							(notes_count > 0) )
+						TabsHost.getCurrentPage().swapTopBottom();
 
 					Toast.makeText(Note_addText.this, getString(R.string.toast_saved) +" + 1", Toast.LENGTH_SHORT).show();
 

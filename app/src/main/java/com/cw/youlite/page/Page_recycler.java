@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 CW Chiu
+ * Copyright (C) 2020 CW Chiu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,10 +47,7 @@ import com.cw.youlite.util.uil.UilCommon;
  */
 public class Page_recycler extends Fragment implements OnStartDragListener {
 
-    public static DB_page mDb_page;
-    public int page_tableId;
-    Cursor cursor_note;
-
+    public static int page_tableId;
     public RecyclerView recyclerView;
     protected RecyclerView.LayoutManager layoutMgr;
     int page_pos;
@@ -61,12 +58,6 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
     private ItemTouchHelper itemTouchHelper;
 
     public Page_recycler(){
-    }
-
-    @SuppressLint("ValidFragment")
-    public Page_recycler(int pos, int id){
-        page_pos = pos;
-        page_tableId = id;
     }
 
     @Override
@@ -138,17 +129,10 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
         }
     }
 
-    public void fillData()
+    private void fillData()
     {
-        System.out.println("Page_recycler / _fillData / page_tableId = " + page_tableId);
-        mDb_page = new DB_page(getActivity(), page_tableId);
-        mDb_page.open();
-        cursor_note = mDb_page.mCursor_note;
-
-        itemAdapter = new PageAdapter_recycler(cursor_note,page_pos, this);
-
-        mDb_page.close();// set close here, if cursor is used in mTabsPagerAdapter
-
+//        System.out.println("Page_recycler / _fillData / page_tableId = " + page_tableId);
+        itemAdapter = new PageAdapter_recycler(page_pos,  page_tableId, this);
         // Set PageAdapter_recycler as the adapter for RecyclerView.
         recyclerView.setAdapter(itemAdapter);
     }
@@ -201,8 +185,9 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
         dB_page.close();
     }
 
-    static public void swap(DB_page dB_page)
+    public void swapTopBottom()
     {
+        DB_page dB_page = new DB_page(  MainAct.mAct ,DB_page.getFocusPage_tableId());
         int startCursor = dB_page.getNotesCount(true)-1;
         int endCursor = 0;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 CW Chiu
+ * Copyright (C) 2020 CW Chiu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,6 @@ import static com.cw.youlite.db.DB_page.KEY_NOTE_LINK_URI;
 import static com.cw.youlite.db.DB_page.KEY_NOTE_MARKING;
 import static com.cw.youlite.db.DB_page.KEY_NOTE_PICTURE_URI;
 import static com.cw.youlite.db.DB_page.KEY_NOTE_TITLE;
-import static com.cw.youlite.page.Page_recycler.mDb_page;
 import static com.cw.youlite.page.Page_recycler.swapRows;
 
 // Pager adapter
@@ -78,28 +77,16 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
     DB_folder dbFolder;
 	private int page_pos;
     private final OnStartDragListener mDragStartListener;
+	DB_page mDb_page;
+	int page_table_id;
 
-    PageAdapter_recycler(Cursor _cursor, int _page_pos, OnStartDragListener dragStartListener) {
-        cursor = _cursor;
-        page_pos = _page_pos;
+    PageAdapter_recycler(int pagePos,  int pageTableId, OnStartDragListener dragStartListener) {
+	    mAct = MainAct.mAct;
+	    mDragStartListener = dragStartListener;
 
-        if(_cursor != null)
-            count = _cursor.getCount();
-        else
-            count = 0;
-
-//        System.out.println("PageAdapter_recycler / _constructor / count = " + count);
-        System.out.println("PageAdapter_recycler / _constructor / page_pos = " + page_pos);
-
-        // add this for fixing java.lang.IllegalStateException: attempt to re-open an already-closed object
-        mDb_page.open();
-        mDb_page.close();
-
-        mAct = MainAct.mAct;
-
-        mDragStartListener = dragStartListener;
-
-        dbFolder = new DB_folder(mAct,Pref.getPref_focusView_folder_tableId(mAct));
+	    dbFolder = new DB_folder(mAct,Pref.getPref_focusView_folder_tableId(mAct));
+	    page_pos = pagePos;
+	    page_table_id = pageTableId;
     }
 
     /**
@@ -193,6 +180,9 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
 		SharedPreferences pref_show_note_attribute = MainAct.mAct.getSharedPreferences("show_note_attribute", 0);
 
+		mDb_page = new DB_page(mAct, page_table_id);
+		mDb_page.open();
+		cursor = mDb_page.mCursor_note;
         if(cursor.moveToPosition(position)) {
             strTitle = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_TITLE));
             pictureUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_PICTURE_URI));
@@ -200,6 +190,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
             marking = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_NOTE_MARKING));
             timeCreated = cursor.getLong(cursor.getColumnIndex(KEY_NOTE_CREATED));
         }
+	    mDb_page.close();
 
         /**
          *  control block
@@ -510,10 +501,8 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-	    if(cursor != null)
-            return cursor.getCount();//mDataSet.length; //todo bug: Attempt to invoke interface method 'int android.database.Cursor.getCount()' on a null object reference
-	    else
-	    	return 0;
+	    mDb_page = new DB_page(mAct, page_table_id);
+	    return  mDb_page.getNotesCount(true);
     }
 
     // toggle mark of note

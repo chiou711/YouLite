@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 CW Chiu
+ * Copyright (C) 2020 CW Chiu
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1046,10 +1046,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
      ******************************/
     public static SlideshowInfo slideshowInfo;
     public static FragmentTransaction mFragmentTransaction;
-    public static int mPlaying_pageTableId;
-    public static int mPlaying_pagePos;
-    public static int mPlaying_folderPos;
-    public static int mPlaying_folderTableId;
 
     static int mMenuUiState;
 
