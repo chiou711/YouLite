@@ -81,6 +81,11 @@ public class Add_note_option {
 
         addNoteList = new ArrayList<>();
 
+        // text
+        addNoteList.add(new Add_note_option(ID_NEW_TEXT,
+                android.R.drawable.ic_menu_edit,
+                R.string.note_text));
+
         // YouTube link
         addNoteList.add(new Add_note_option(ID_NEW_YOUTUBE_LINK,
                 android.R.drawable.ic_menu_share,
@@ -156,14 +161,14 @@ public class Add_note_option {
 
             case ID_NEW_YOUTUBE_LINK:
             {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com"));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com"));
                 act.startActivityForResult(intent, Util.YOUTUBE_ADD_NEW_LINK_INTENT);
             }
             break;
 
             case ID_NEW_WEB_LINK:
             {
-                Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.google.com"));
+                Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse("https://www.google.com"));
                 act.startActivity(intent);
             }
             break;

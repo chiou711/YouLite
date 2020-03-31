@@ -207,7 +207,6 @@ public class Note_edit_ui {
 			block.setBackgroundColor(ColorSet.mBG_ColorArray[style]);
 
 		titleEditText = (EditText) act.findViewById(R.id.edit_title);
-		bodyEditText = (EditText) act.findViewById(R.id.edit_body);
 		linkEditText = (EditText) act.findViewById(R.id.edit_link);
 
 		//set title color

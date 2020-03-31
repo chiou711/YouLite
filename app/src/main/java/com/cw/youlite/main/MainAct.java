@@ -245,6 +245,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         //Add note with the link which got from other App
         String intentLink = mMainUi.addNote_IntentLink(getIntent(), mAct);
         if (!Util.isEmptyString(intentLink)) {
+            System.out.println("MainAct / _doCreate / will do finish");
             finish(); // YouLite not running at first, keep closing
             return;
         } else {
