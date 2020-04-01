@@ -162,14 +162,14 @@ public class Add_note_option {
             case ID_NEW_YOUTUBE_LINK:
             {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com"));
-                act.startActivityForResult(intent, Util.YOUTUBE_ADD_NEW_LINK_INTENT);
+                act.startActivityForResult(intent, Util.ADD_NEW_YOUTUBE_LINK_INTENT);
             }
             break;
 
             case ID_NEW_WEB_LINK:
             {
                 Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse("https://www.google.com"));
-                act.startActivity(intent);
+                act.startActivityForResult(intent, Util.ADD_NEW_LINK_INTENT);
             }
             break;
 

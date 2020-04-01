@@ -79,18 +79,18 @@ public class MainUi {
             }
 
             DB_drawer db_drawer = new DB_drawer(act);
-            DB_folder db_folder = new DB_folder(act, Pref.getPref_focusView_folder_tableId(MainAct.mAct));
-            if((db_drawer.getFoldersCount(true) == 0) || (db_folder.getPagesCount(true) == 0))
+            DB_folder db_folder = new DB_folder(act, Pref.getPref_focusView_folder_tableId(act));
+            int folders_count = db_drawer.getFoldersCount(true);
+            int pages_count = db_folder.getPagesCount(true);
+            if((folders_count == 0) || (pages_count == 0))
             {
                 Toast.makeText(act,"No folder or no page yet, please add a new one in advance.",Toast.LENGTH_LONG).show();
                 return null;
             }
 
             System.out.println("MainUi / _addNote_IntentLink / path = " + path);
-            DB_page dB_page = new DB_page(act,Pref.getPref_focusView_page_tableId(MainAct.mAct));
-            dB_page.open();
+            DB_page dB_page = new DB_page(act,Pref.getPref_focusView_page_tableId(act));
             dB_page.insertNote("", "",  path,  0, (long) 0);// add new note, get return row Id
-            dB_page.close();
 
             // save to top or to bottom
             final String link =path;
@@ -100,9 +100,7 @@ public class MainUi {
             // swap if new position is top
             boolean isAddedToTop = pref_show_note_attribute.getString("KEY_ADD_NEW_NOTE_TO","bottom").equalsIgnoreCase("top");
             if( isAddedToTop && (count > 1) )
-            {
                 TabsHost.getCurrentPage().swapTopBottom();
-            }
 
             // update title: YouTube
             if( Util.isYouTubeLink(path))
@@ -207,11 +205,7 @@ public class MainUi {
     String getYouTubeLink(AppCompatActivity act,int pos)
     {
         DB_page dB_page = new DB_page(act, TabsHost.getCurrentPageTableId());
-
-        dB_page.open();
-        int count = dB_page.getNotesCount(false);
-        dB_page.close();
-
+        int count = dB_page.getNotesCount(true);
         if(pos >= count)
         {
             pos = 0;

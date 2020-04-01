@@ -838,10 +838,9 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         }
 
         // make sure main activity is still executing
-        if(requestCode == Util.YOUTUBE_ADD_NEW_LINK_INTENT)
+        if( (requestCode == Util.ADD_NEW_YOUTUBE_LINK_INTENT) ||
+            (requestCode == Util.ADD_NEW_LINK_INTENT)    )
         {
-            System.out.println("MainAct / _onActivityResult /YOUTUBE_ADD_NEW_LINK_INTENT");
-
             if(Build.VERSION.SDK_INT >= O)//API26
                 isAddedOnNewIntent = false;
         }
