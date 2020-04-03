@@ -78,7 +78,7 @@ public class Note_adapter extends FragmentStatePagerAdapter
 	    db_page = new DB_page(act, TabsHost.getCurrentPageTableId());
         System.out.println("Note_adapter / constructor / mLastPosition = " + mLastPosition);
     }
-    
+
 	@Override
 	public void destroyItem(ViewGroup container, int position, Object object) {
 		container.removeView((View) object);
@@ -602,7 +602,6 @@ public class Note_adapter extends FragmentStatePagerAdapter
     	String linkUri = db_page.getNoteLinkUri(position,true);
 
     	// replace note title
-		//若沒有Title與Body,但有YouTube link或Web link則Title會使用link得到的title,且用Gray顏色
 		boolean bSetGray = false;
 		if( Util.isEmptyString(strTitle)    )
 		{

@@ -81,7 +81,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.media.MediaMetadataRetriever;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -135,6 +134,7 @@ public class Util
 	private int defaultBgClr;
 	private int defaultTextClr;
 
+	public static final int PERMISSIONS_REQUEST_STORAGE = 10;
 	public static final int PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES = 11;
 	public static final int PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO = 12;
 	public static final int PERMISSIONS_REQUEST_STORAGE_EXPORT_ONE = 13;
@@ -1977,7 +1977,7 @@ public class Util
 		if(linkUri.contains("youtu.be") || linkUri.contains("youtube.com"))
         {
             // stop video if playing
-            Note.stopAV();
+            Note.stopVideo();
 
 //            String id = Util.getYoutubeId(linkUri);
 			// option 1

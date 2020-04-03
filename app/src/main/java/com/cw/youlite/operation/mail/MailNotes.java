@@ -122,7 +122,7 @@ public class MailNotes {
                 // save to SD card
                 attachmentFileName[0] = Util.getStorageDirName(mAct) + "_SEND_" + // file name
                                      Util.getCurrentTimeString() + // time
-                                     ".xml"; // extension name
+                                     ".json"; // extension name
 
                 attachmentFileName[1] = Util.getStorageDirName(mAct) + "_SEND_" + // file name
                         Util.getCurrentTimeString() + // time

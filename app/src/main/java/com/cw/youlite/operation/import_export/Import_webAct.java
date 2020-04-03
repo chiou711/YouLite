@@ -56,8 +56,6 @@ public class Import_webAct extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
-
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)//API23
         {
             // check permission

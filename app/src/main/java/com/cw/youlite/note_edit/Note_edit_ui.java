@@ -61,7 +61,6 @@ public class Note_edit_ui {
 
 	private EditText linkEditText;
 	private EditText titleEditText;
-	private EditText bodyEditText;
 	private String oriTitle;
 
 	private Long noteId;
@@ -353,10 +352,6 @@ public class Note_edit_ui {
             titleEditText.setSelection(strBlank.length());
             titleEditText.requestFocus();
 
-            // renew body
-            bodyEditText.setText(strBlank);
-            bodyEditText.setSelection(strBlank.length());
-
 			// renew link
 			linkEditText.setText(strBlank);
 			linkEditText.setSelection(strBlank.length());
@@ -577,8 +572,7 @@ public class Note_edit_ui {
 	private void removePictureStringFromCurrentEditNote(Long rowId) {
         String linkUri = linkEditText.getText().toString();
         String title = titleEditText.getText().toString();
-        String body = bodyEditText.getText().toString();
-        
+
     	dB_page.updateNote(rowId,
     				   title,
     				   "",
@@ -589,7 +583,6 @@ public class Note_edit_ui {
 
 	void removeLinkUriFromCurrentEditNote(Long rowId) {
         String title = titleEditText.getText().toString();
-        String body = bodyEditText.getText().toString();
         dB_page.updateNote(rowId,
     				   title,
 				oriPictureUri,

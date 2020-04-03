@@ -16,11 +16,16 @@
 
 package com.cw.youlite.note;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -45,12 +50,14 @@ import java.util.List;
 /**
  * Created by cw on 2017/10/7.
  */
-public class View_note_option {
-    int option_id;
-    int option_drawable_id;
-    int option_string_id;
+class View_note_option {
+    private int option_id;
+    private int option_drawable_id;
+    private int option_string_id;
 
-    View_note_option(int id, int draw_id, int string_id)
+    View_note_option(){};
+
+    private View_note_option(int id, int draw_id, int string_id)
     {
         this.option_id = id;
         this.option_drawable_id = draw_id;
@@ -68,10 +75,10 @@ public class View_note_option {
     private final static int ID_OPTION_AUTO_PLAY = 1;
     private final static int ID_OPTION_SEARCH_YOUTUBE = 2;
     private final static int ID_OPTION_BACK = 9;
-    static long noteId;
-    static GridIconAdapter mGridIconAdapter;
+    private static long noteId;
+    private static GridIconAdapter mGridIconAdapter;
 
-    public static void note_option(final AppCompatActivity act, long _noteId)
+    void note_option(final AppCompatActivity act, long _noteId)
     {
         AbsListView gridView;
         noteId = _noteId;
@@ -133,34 +140,32 @@ public class View_note_option {
         dlgAddNew = builder1.create();
         dlgAddNew.show();
     }
-    private static AlertDialog dlgAddNew;
+    AlertDialog dlgAddNew;
 
-    private static void startAddNoteActivity(AppCompatActivity act,int optionId)
+    private void startAddNoteActivity(AppCompatActivity act,int optionId)
     {
         System.out.println("View_note_option / _startAddNoteActivity / optionId = " + optionId);
 
         switch (optionId) {
             case ID_OPTION_MAIL:
-            {
-				// set Sent string Id
-				String sentString = Util.getStringWithXmlTag(TabsHost.getFocus_tabPos(),noteId);
-				sentString = Util.addXmlTag(sentString);
-
-                DB_page dB_page = new DB_page(act, TabsHost.getCurrentPageTableId());
-
-                // picture first priority
-                String picFile = dB_page.getNotePictureUri_byId(noteId);
-
-                System.out.println("-> picFile = " + picFile);
-
-				String[] picFileArray = null;
-				if( (picFile != null) &&
-						(picFile.length() > 0) )
-				{
-					picFileArray = new String[]{picFile};
-				}
-				new MailNotes(act,sentString,picFileArray);
-            }
+                dlgAddNew.dismiss();
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)//API23
+                {
+                    // check permission
+                    if (ActivityCompat.checkSelfPermission(act, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED)
+                    {
+                        // No explanation needed, we can request the permission.
+                        ActivityCompat.requestPermissions(act,
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                        Manifest.permission.READ_EXTERNAL_STORAGE},
+                                Util.PERMISSIONS_REQUEST_STORAGE);
+                    }
+                    else
+                        doMailNote(act);
+                }
+                else
+                    doMailNote(act);
             break;
 
             case ID_OPTION_AUTO_PLAY:
@@ -209,6 +214,28 @@ public class View_note_option {
                 break;
         }
 
+    }
+
+    void doMailNote(AppCompatActivity act)
+    {
+        // set Sent string Id
+        String sentString = Util.getStringWithXmlTag(TabsHost.getFocus_tabPos(),noteId);
+        sentString = Util.addXmlTag(sentString);
+
+        DB_page dB_page = new DB_page(act, TabsHost.getCurrentPageTableId());
+
+        // picture first priority
+        String picFile = dB_page.getNotePictureUri_byId(noteId);
+
+        System.out.println("-> picFile = " + picFile);
+
+        String[] picFileArray = null;
+        if( (picFile != null) &&
+                (picFile.length() > 0) )
+        {
+            picFileArray = new String[]{picFile};
+        }
+        new MailNotes(act,sentString,picFileArray);
     }
 
 

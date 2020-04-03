@@ -39,10 +39,9 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -59,7 +58,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class Note extends AppCompatActivity
@@ -101,22 +99,44 @@ public class Note extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
-        System.out.println("Note / _onCreate");
+	    System.out.println("Note / _onCreate");
 
-		// set current selection
-		mEntryPosition = getIntent().getExtras().getInt("POSITION");
-		NoteUi.setFocus_notePos(mEntryPosition);
+	    // set current selection
+	    mEntryPosition = getIntent().getExtras().getInt("POSITION");
+	    NoteUi.setFocus_notePos(mEntryPosition);
 
-		// init video
-		UtilVideo.mPlayVideoPosition = 0;   // not played yet
-		mPlayVideoPositionOfInstance = 0;
-		AsyncTaskVideoBitmapPager.mRotationStr = null;
+	    // init video
+	    UtilVideo.mPlayVideoPosition = 0;   // not played yet
+	    mPlayVideoPositionOfInstance = 0;
+	    AsyncTaskVideoBitmapPager.mRotationStr = null;
 
-		act = this;
+	    act = this;
 
-        MainAct.mMediaBrowserCompat = null;
-
+	    MainAct.mMediaBrowserCompat = null;
 	} //onCreate end
+
+	// callback of granted permission
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
+	{
+		System.out.println("grantResults.length =" + grantResults.length);
+		switch (requestCode)
+		{
+			case Util.PERMISSIONS_REQUEST_STORAGE:
+			{
+				View_note_option option = new View_note_option();
+				option.note_option(act,mNoteId);
+				// If request is cancelled, the result arrays are empty.
+				if ( (grantResults.length > 0) &&
+						( (grantResults[0] == PackageManager.PERMISSION_GRANTED) &&
+								(grantResults[1] == PackageManager.PERMISSION_GRANTED)    )) {
+					option.doMailNote(act);
+				}
+				option.dlgAddNew.dismiss();
+			}//case
+		}//switch
+	}
+
 
 	// Add to prevent resizing full screen picture,
 	// when popup menu shows up at picture mode
@@ -250,7 +270,8 @@ public class Note extends AppCompatActivity
 		{
 			public void onClick(View view)
 			{
-				View_note_option.note_option(act,mNoteId);
+				View_note_option option = new View_note_option();
+				option.note_option(act,mNoteId);
 			}
 		});
 
@@ -268,7 +289,7 @@ public class Note extends AppCompatActivity
 				}
 				else //view all mode
 				{
-					stopAV();
+					stopVideo();
 					finish();
 				}
 			}
@@ -569,7 +590,7 @@ public class Note extends AppCompatActivity
             	}
             	else if(isViewAllMode())
             	{
-					stopAV();
+					stopVideo();
 	            	finish();
             	}
                 return true;
@@ -699,7 +720,7 @@ public class Note extends AppCompatActivity
     	else
     	{
     		System.out.println("Note / _onBackPressed / view all mode");
-			stopAV();
+			stopVideo();
         	finish();
     	}
     }
@@ -869,7 +890,7 @@ public class Note extends AppCompatActivity
             picUI_touch.tempShow_picViewUI(111,getCurrentPictureString());
     }
 
-	public static void stopAV()
+	public static void stopVideo()
 	{
 		VideoPlayer.stopVideo();
 	}

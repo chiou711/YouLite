@@ -92,7 +92,13 @@ public class YouTubePlayerAct extends YouTubeFailureRecoveryActivity
                     prepare_play_YouTube(youTube_player);
             }
         });
+    }
 
+    @Override
+    protected void onDestroy() {
+        if(youTube_player != null)
+            youTube_player.release();
+        super.onDestroy();
     }
 
     @Override

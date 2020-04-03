@@ -18,6 +18,7 @@ package com.cw.youlite.operation.import_export;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -51,6 +52,17 @@ public class Import_webJsonAct extends AppCompatActivity
     // TODO Website path customization: input path, website rule for Import
     String homeUrl = "https://youlite-app.blogspot.com/2019/09/json.html";
     String downloadUrl ;
+
+    // issue:
+    //     java.lang.RuntimeException:
+    //     Unable to start activity ComponentInfo{com.cw.litenote/com.cw.litenote.operation.import_export.Import_webAct}:
+    //     android.view.InflateException: Binary XML file line #12: Error inflating class android.webkit.WebView
+    // fix:
+    //     https://stackoverflow.com/questions/41025200/android-view-inflateexception-error-inflating-class-android-webkit-webview
+    @Override
+    public AssetManager getAssets() {
+        return getResources().getAssets();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
