@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.cw.youlite"
-    android:versionCode="10210"
-    android:versionName="1.02.10">
+    android:versionCode="10212"
+    android:versionName="1.02.12">
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -68,8 +68,6 @@
 
         <activity android:name="com.cw.youlite.operation.youtube.YouTubePlayerAct"
                   android:configChanges="orientation|screenSize|keyboardHidden"/>
-        <activity android:name="com.cw.youlite.operation.import_export.Import_webAct"
-            android:theme="@style/MyTheme"/>
         <activity android:name="com.cw.youlite.operation.import_export.Import_webJsonAct"
             android:theme="@style/MyTheme"/>
         <activity android:name="com.cw.youlite.operation.import_export.GDriveBaseAct"

@@ -38,14 +38,14 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        System.out.println("DbHelper / constructor");
+//        System.out.println("DbHelper / constructor");
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
 
 	    // Create Drawer table
-	    System.out.println("DbHelper / _onCreate (will create Drawer table)");
+//	    System.out.println("DbHelper / _onCreate (will create Drawer table)");
 	    final String DB_CREATE_DRAWER_TABLE = "CREATE TABLE IF NOT EXISTS " + DB_drawer.DB_DRAWER_TABLE_NAME + "(" +
 			    DB_drawer.KEY_FOLDER_ID + " INTEGER PRIMARY KEY," +
 			    DB_drawer.KEY_FOLDER_TABLE_ID + " INTEGER," +
@@ -55,7 +55,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	    db.execSQL(DB_CREATE_DRAWER_TABLE);
 
 	    // Create folder table
-	    System.out.println("DbHelper / _onCreate (will create Folder1 table)");
+//	    System.out.println("DbHelper / _onCreate (will create Folder1 table)");
 	    int id = 1;
 	    String tableCreated = DB_folder.DB_FOLDER_TABLE_PREFIX.concat(String.valueOf(id));
 	    final String DB_CREATE_FOLDER_TABLE = "CREATE TABLE IF NOT EXISTS " + tableCreated + "(" +
@@ -67,7 +67,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	    db.execSQL(DB_CREATE_FOLDER_TABLE);
 
         // Create page table
-	    System.out.println("DbHelper / _onCreate (will create Page1_1 table)");
+//	    System.out.println("DbHelper / _onCreate (will create Page1_1 table)");
         final String DB_CREATE_PAGE_TABLE = "CREATE TABLE IF NOT EXISTS " + DB_page.DB_PAGE_TABLE_PREFIX.concat("1_1") + "(" +
 	    DB_page.KEY_NOTE_ID + " INTEGER PRIMARY KEY," +
 	    DB_page.KEY_NOTE_TITLE + " TEXT," +

@@ -139,22 +139,6 @@ public class Pref
         return pref.getInt(keyName, 0);
     }
 
-    // set key: will create default content
-    public static void setPref_will_create_default_content(Activity act, boolean will)
-    {
-        SharedPreferences pref = act.getSharedPreferences("create_view", 0);
-        String keyName = "KEY_WITH_DEFAULT_CONTENT";
-        pref.edit().putBoolean(keyName, will).apply();
-    }
-
-    // get key: will create default content
-    public static boolean getPref_will_create_default_content(Context context)
-    {
-        SharedPreferences pref = context.getSharedPreferences("create_view", 0);
-        String keyName = "KEY_WITH_DEFAULT_CONTENT";
-        return pref.getBoolean(keyName, false);
-    }
-
     // location about drawer table Id and page table Id
     static String getCurrentListViewLocation(Activity act)
     {

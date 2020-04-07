@@ -62,12 +62,15 @@ import com.mobeta.android.dslv.DragSortListView;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.RemoteException;
@@ -95,6 +98,9 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -343,26 +349,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         {
             switch (requestCode)
             {
-                case Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_YES:
-                    if(Define.DEFAULT_CONTENT == Define.BY_DOWNLOAD) {
-                        // start Fetch category service
-                        System.out.println("MainAct / _onRequestPermissionsResult / start Fetch category service =================================");
-                        Toast.makeText(mAct, R.string.toast_update_database,Toast.LENGTH_LONG).show();
-                        Intent serviceIntent = new Intent(MainAct.this, FetchService_category.class);
-                        serviceIntent.putExtra("FetchUrl", getDefaultUrl());
-                        startService(serviceIntent);
-                    }
-                    else {
-                        Pref.setPref_will_create_default_content(this, true);
-                        recreate();
-                    }
-                break;
-
-                case Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO:
-                    Pref.setPref_will_create_default_content(this, false);
-                    recreate();
-                break;
-
                 case Util.PERMISSIONS_REQUEST_STORAGE_EXPORT_ONE:
                     isStorageRequestedExportOne = true;
                     break;
@@ -378,7 +364,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         }
         else
         {
-            Pref.setPref_will_create_default_content(this, false);
             recreate();
         }
 
@@ -475,7 +460,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     @Override
     protected void onPause() {
         super.onPause();
-//        bluetooth_device_receiver.abortBroadcast();//todo better place?
         System.out.println("MainAct / _onPause");
     }
 
@@ -637,20 +621,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     protected void onDestroy()
     {
         System.out.println("MainAct / _onDestroy");
-
-        if(bluetooth_device_receiver != null)
-        {
-            try
-            {
-                unregisterReceiver(bluetooth_device_receiver);
-            }
-            catch (Exception e)
-            {
-            }
-            bluetooth_device_receiver = null;
-        }
-
-
         // unregister receiver
         if(localBroadcastMgr != null) {
             localBroadcastMgr.unregisterReceiver(responseReceiver);
@@ -1362,40 +1332,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
             case MenuId.IMPORT_RENEW:
                 mMenu.setGroupVisible(R.id.group_notes, false); //hide the menu
-                // delete database
-                try {
-                    System.out.println("MainAct/ _onOptionsItemSelected / will delete DB");
-                    deleteDatabase(DbHelper.DATABASE_NAME);
-
-                    ContentResolver resolver = getContentResolver();
-                    ContentProviderClient client = resolver.acquireContentProviderClient(Contract.CONTENT_AUTHORITY);
-                    Provider provider = (Provider) client.getLocalContentProvider();
-
-                    provider.mContentResolver = resolver;
-                    provider.mOpenHelper.close();
-
-                    provider.mOpenHelper = new DbHelper(this);
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                        client.close();
-                    else
-                        client.release();
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                // start Fetch category service
-                System.out.println("MainAct / _onOptionsItemSelected / start Fetch category service =================================");
-                Toast.makeText(mAct,R.string.toast_update_database,Toast.LENGTH_LONG).show();
-                Intent serviceIntent = new Intent(MainAct.this, FetchService_category.class);
-                serviceIntent.putExtra("FetchUrl", getDefaultUrl());
-                startService(serviceIntent);
-
-                // reset focus view position
-                Pref.setPref_focusView_folder_tableId(this, 1);
-                Pref.setPref_focusView_page_tableId(this, 1);
-
+                renewDB();
                 return true;
 
             case MenuId.CONFIG:
@@ -1432,6 +1369,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     void renewDB()
     {
         try {
+            // delete database
             System.out.println("MainAct/ _renewDB");
             deleteDatabase(DbHelper.DATABASE_NAME);
 
@@ -1456,7 +1394,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
         // start Fetch category service
         System.out.println("MainAct / _onOptionsItemSelected / start Fetch category service =================================");
-        Toast.makeText(mAct,R.string.toast_update_database,Toast.LENGTH_LONG).show();
+//        Toast.makeText(mAct,R.string.toast_update_database,Toast.LENGTH_LONG).show();
+        Toaster(this,getResources().getString(R.string.toast_update_database));
         Intent serviceIntent = new Intent(MainAct.this, FetchService_category.class);
         serviceIntent.putExtra("FetchUrl", getDefaultUrl());
         startService(serviceIntent);
@@ -1524,5 +1463,35 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             }
         }
     };
+
+    public static void Toaster(final Context ctx, final String text) {
+        final Dialog dialog = new Dialog(ctx);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setFlags(
+                android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        dialog.getWindow().setBackgroundDrawable(
+                new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.guide);
+        TextView guide = (TextView) dialog.findViewById(R.id.g_text);
+        guide.setText(text);
+
+        Button buy = (Button) dialog.findViewById(R.id.gotit);
+        buy.setVisibility(View.INVISIBLE);
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dialog.dismiss();
+            }
+        }, 2000);
+    }
 
 }

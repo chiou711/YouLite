@@ -94,7 +94,7 @@ class Import_webJsonAct_asyncTask extends AsyncTask<Void, Integer, Void> {
         }
     }
 
-    ParseXmlToDB importObject;
+    ParseJsonToDB importObject;
     private void insertSelectedFileContentToDB(boolean enableInsertDB)
     {
         ParseJsonToDB importObject = new ParseJsonToDB(filePath, act);

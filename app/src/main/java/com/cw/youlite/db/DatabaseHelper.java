@@ -38,7 +38,7 @@ class DatabaseHelper extends SQLiteOpenHelper
     	String tableCreated;
     	String DB_CREATE;
     	
-    	System.out.println("DatabaseHelper / _onCreate");
+//    	System.out.println("DatabaseHelper / _onCreate");
 
 		// Create Drawer table
 		tableCreated = DB_drawer.DB_DRAWER_TABLE_NAME;

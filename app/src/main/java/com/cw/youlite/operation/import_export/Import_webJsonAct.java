@@ -55,7 +55,7 @@ public class Import_webJsonAct extends AppCompatActivity
 
     // issue:
     //     java.lang.RuntimeException:
-    //     Unable to start activity ComponentInfo{com.cw.litenote/com.cw.litenote.operation.import_export.Import_webAct}:
+    //     Unable to start activity ComponentInfo{com.cw.litenote/com.cw.litenote.operation.import_export.Import_webJsonAct}:
     //     android.view.InflateException: Binary XML file line #12: Error inflating class android.webkit.WebView
     // fix:
     //     https://stackoverflow.com/questions/41025200/android-view-inflateexception-error-inflating-class-android-webkit-webview
@@ -80,7 +80,7 @@ public class Import_webJsonAct extends AppCompatActivity
                 ActivityCompat.requestPermissions(this,
                                                   new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                                                Manifest.permission.READ_EXTERNAL_STORAGE},
-                                                  Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO);
+                                                  Util.PERMISSIONS_REQUEST_STORAGE);
             }
             else
                 doCreate();
@@ -178,7 +178,7 @@ public class Import_webJsonAct extends AppCompatActivity
             @Override
             public void onPageFinished(WebView view, String url)
             {
-                System.out.println("Import_webAct / _setWebViewClient / url = " + url);
+                System.out.println("Import_webJsonAct / _setWebViewClient / url = " + url);
                 String homeHost = Uri.parse(homeUrl).getHost();
                 view.loadUrl("javascript:window.INTERFACE.processContent(document.getElementsByTagName('body')[0].innerText);");
                 if(!url.contains(homeHost))
@@ -203,7 +203,7 @@ public class Import_webJsonAct extends AppCompatActivity
         System.out.println("grantResults.length =" + grantResults.length);
         switch (requestCode)
         {
-            case Util.PERMISSIONS_REQUEST_STORAGE_WITH_DEFAULT_CONTENT_NO:
+            case Util.PERMISSIONS_REQUEST_STORAGE:
             {
                 // If request is cancelled, the result arrays are empty.
                 if ( (grantResults.length > 0) &&
@@ -218,7 +218,7 @@ public class Import_webJsonAct extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        System.out.println("Import_webAct / _onBackPressed");
+        System.out.println("Import_webJsonAct / _onBackPressed");
         // web view can go back
         if (webView.canGoBack()) {
             webView.goBack();
@@ -227,7 +227,7 @@ public class Import_webJsonAct extends AppCompatActivity
         else
             super.onBackPressed();
 
-        ParseXmlToDB.isParsing = false;
+        ParseJsonToDB.isParsing = false;
     }
 
     /* An instance of this class will be registered as a JavaScript interface */
@@ -248,7 +248,7 @@ public class Import_webJsonAct extends AppCompatActivity
                 public void run() {
                     content = _content;
                     int size = content.length();
-                    System.out.println("Import_webAct / content size = "+ size);
+                    System.out.println("Import_webJsonAct / content size = "+ size);
 
                     // workaround: test result is 15
                     if(size < 20) {

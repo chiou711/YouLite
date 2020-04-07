@@ -284,8 +284,8 @@ public class Provider extends ContentProvider {
 
     @Override
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
-        System.out.println("Provider / _bulkInsert / uri = " + uri.toString());
-        System.out.println("Provider / _bulkInsert / values.length = " + values.length);
+//        System.out.println("Provider / _bulkInsert / uri = " + uri.toString());
+//        System.out.println("Provider / _bulkInsert / values.length = " + values.length);
         switch (sUriMatcher.match(uri)) {
             case VIDEO: {
                 final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
@@ -297,7 +297,7 @@ public class Provider extends ContentProvider {
                         long _id = db.insertWithOnConflict(Contract.VideoEntry.PAGE_TABLE_NAME.concat(tableId),
                                 null, value, SQLiteDatabase.CONFLICT_REPLACE);
 
-                        System.out.println("Provider / _bulkInsert (case VIDEO) / _id = " + _id);
+//                        System.out.println("Provider / _bulkInsert (case VIDEO) / _id = " + _id);
                         if (_id != -1) {
                             returnCount++;
                         }
@@ -320,7 +320,7 @@ public class Provider extends ContentProvider {
                         long _id = db.insertWithOnConflict(Contract.CategoryEntry.DRAWER_TABLE_NAME,
                                 null, value, SQLiteDatabase.CONFLICT_REPLACE);
 
-                        System.out.println("Provider / _bulkInsert (case CATEGORY) / _id = " + _id);
+//                        System.out.println("Provider / _bulkInsert (case CATEGORY) / _id = " + _id);
                         if (_id != -1) {
                             returnCount++;
                         }

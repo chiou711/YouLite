@@ -54,6 +54,27 @@ public class YouTubePlayerAct extends YouTubeFailureRecoveryActivity
         // initialize YouTubeView
         YouTubePlayerView youTubeView = (YouTubePlayerView) findViewById(R.id.youtube_view);
         youTubeView.initialize(YouTubeDeveloperKey.DEVELOPER_KEY, this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(youTube_player != null)
+            youTube_player.release();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        bShow_landscape_prev_next_control = false;
+        setLayout();
+    }
+
+
+    YouTubePlayer youTube_player;
+    @Override
+    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean wasRestored) {
+        youTube_player = youTubePlayer;
 
         btn_group = findViewById(R.id.youtube_control);
         // image: previous button
@@ -92,27 +113,6 @@ public class YouTubePlayerAct extends YouTubeFailureRecoveryActivity
                     prepare_play_YouTube(youTube_player);
             }
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-        if(youTube_player != null)
-            youTube_player.release();
-        super.onDestroy();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        bShow_landscape_prev_next_control = false;
-        setLayout();
-    }
-
-
-    YouTubePlayer youTube_player;
-    @Override
-    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean wasRestored) {
-        youTube_player = youTubePlayer;
 
         youTube_player.setOnFullscreenListener(new YouTubePlayer.OnFullscreenListener() {
             @Override
@@ -261,7 +261,6 @@ public class YouTubePlayerAct extends YouTubeFailureRecoveryActivity
 
         next_btn.setVisibility(View.VISIBLE);
         next_btn.setAlpha(NoteUi.getFocus_notePos() == (Note.mPagerAdapter.getCount() - 1)?0.3f:1.0f);
-
     }
 
     void playNext()

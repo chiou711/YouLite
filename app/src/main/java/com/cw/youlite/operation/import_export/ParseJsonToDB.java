@@ -165,7 +165,7 @@ public class ParseJsonToDB {
                     JSONObject link = linksArray.getJSONObject(j);
 
                     String linkTitle = link.optString("note_title");
-                    System.out.println("ParseJsonToDB / _parseJsonAndInsertDB / linkTitle = " + linkTitle);
+//                    System.out.println("ParseJsonToDB / _parseJsonAndInsertDB / linkTitle = " + linkTitle);
 
                     String linkUrl = (String) link.opt("note_link_uri"); // Get the first link only.
 
