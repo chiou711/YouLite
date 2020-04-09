@@ -25,12 +25,10 @@ import java.util.List;
 import com.cw.youlite.R;
 import com.cw.youlite.config.About;
 import com.cw.youlite.config.Config;
-import com.cw.youlite.data.Contract;
-import com.cw.youlite.data.DbHelper;
 import com.cw.youlite.data.FetchService_category;
-import com.cw.youlite.data.Provider;
 import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.db.DB_page;
+import com.cw.youlite.db.RenewDB;
 import com.cw.youlite.drawer.Drawer;
 import com.cw.youlite.folder.Folder;
 import com.cw.youlite.folder.FolderUi;
@@ -62,15 +60,10 @@ import com.mobeta.android.dslv.DragSortListView;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
-import android.content.ContentProviderClient;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.RemoteException;
@@ -98,9 +91,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -135,8 +125,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     public final static int STATE_PAUSED = 0;
     public final static int STATE_PLAYING = 1;
     public boolean bEULA_accepted;
-
-    final int INIT_NUMBER = 1;
 
 	// Main Act onCreate
     @Override
@@ -212,7 +200,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             // Ok button listener
             dialog_EULA.clickListener_Ok = (DialogInterface dialog, int i) -> {
                 dialog_EULA.applyPreference();
-                renewDB();
+                new RenewDB(this);
             };
 
             // No button listener
@@ -230,15 +218,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 doCreate(savedInstanceState);
         }
 
-    }
-
-    // get default URL
-    private String getDefaultUrl()
-    {
-        // data base is not created yet, call service for the first time
-        String urlName = "catalog_url_".concat(String.valueOf(INIT_NUMBER));
-        int id = getResources().getIdentifier(urlName,"string",getPackageName());
-        return getString(id);
     }
 
     // Do major create operation
@@ -1332,7 +1311,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
             case MenuId.IMPORT_RENEW:
                 mMenu.setGroupVisible(R.id.group_notes, false); //hide the menu
-                renewDB();
+                new RenewDB(this);
                 return true;
 
             case MenuId.CONFIG:
@@ -1363,48 +1342,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
-    // renew data base
-    void renewDB()
-    {
-        try {
-            // delete database
-            System.out.println("MainAct/ _renewDB");
-            deleteDatabase(DbHelper.DATABASE_NAME);
-
-            ContentResolver resolver = getContentResolver();
-            ContentProviderClient client = resolver.acquireContentProviderClient(Contract.CONTENT_AUTHORITY);
-            Provider provider = (Provider) client.getLocalContentProvider();
-
-            provider.mContentResolver = resolver;
-            provider.mOpenHelper.close();
-
-            provider.mOpenHelper = new DbHelper(this);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                client.close();
-            else
-                client.release();
-
-            Pref.setPref_DB_ready(this,false);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // start Fetch category service
-        System.out.println("MainAct / _onOptionsItemSelected / start Fetch category service =================================");
-//        Toast.makeText(mAct,R.string.toast_update_database,Toast.LENGTH_LONG).show();
-        Toaster(this,getResources().getString(R.string.toast_update_database));
-        Intent serviceIntent = new Intent(MainAct.this, FetchService_category.class);
-        serviceIntent.putExtra("FetchUrl", getDefaultUrl());
-        startService(serviceIntent);
-
-        // reset focus view position
-        Pref.setPref_focusView_folder_tableId(this, 1);
-        Pref.setPref_focusView_page_tableId(this, 1);
-    }
-
 
     // configure layout view
     void configLayoutView()
@@ -1463,35 +1400,5 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             }
         }
     };
-
-    public static void Toaster(final Context ctx, final String text) {
-        final Dialog dialog = new Dialog(ctx);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.getWindow().setFlags(
-                android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        dialog.getWindow().setBackgroundDrawable(
-                new ColorDrawable(Color.TRANSPARENT));
-        dialog.setCancelable(false);
-        dialog.setContentView(R.layout.guide);
-        TextView guide = (TextView) dialog.findViewById(R.id.g_text);
-        guide.setText(text);
-
-        Button buy = (Button) dialog.findViewById(R.id.gotit);
-        buy.setVisibility(View.INVISIBLE);
-
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
-        dialog.show();
-        dialog.getWindow().setAttributes(lp);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                dialog.dismiss();
-            }
-        }, 2000);
-    }
 
 }

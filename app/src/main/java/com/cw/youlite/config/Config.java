@@ -19,6 +19,7 @@ package com.cw.youlite.config;
 
 import java.io.File;
 
+import com.cw.youlite.db.RenewDB;
 import com.cw.youlite.folder.FolderUi;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.BaseBackPressedListener;
@@ -543,24 +544,27 @@ public class Config extends Fragment
 				.show();
 	}
 
-	DialogInterface.OnClickListener listener_recover_default = new DialogInterface.OnClickListener(){
+	private DialogInterface.OnClickListener listener_recover_default = new DialogInterface.OnClickListener(){
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
+
+			dialog.dismiss();
+
+			((MainAct)getActivity()).getSupportFragmentManager()//??? warning
+					.beginTransaction()
+					.detach(Config.this)
+//					.attach(Config.this)
+					.commit();
 
 			//remove preference
 			clearSharedPreferencesForSettings(getActivity());
 
-			dialog.dismiss();
-
-            ((MainAct)getActivity()).getSupportFragmentManager()//??? warning
-                    .beginTransaction()
-                    .detach(Config.this)
-                    .attach(Config.this)
-                    .commit();
+			// renew DB
+			new RenewDB((MainAct)getActivity());
 		}
 	};
 
-    public static void clearSharedPreferencesForSettings(Context context)
+    private static void clearSharedPreferencesForSettings(Context context)
 	{
 		File dir = new File(context.getFilesDir().getParent() + "/shared_prefs/");
 
