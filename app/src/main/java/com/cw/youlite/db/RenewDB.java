@@ -1,9 +1,11 @@
 package com.cw.youlite.db;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -76,7 +78,7 @@ public class RenewDB {
 	}
 
 
-	private static void Toaster(final Context ctx, final String text) {
+	private void Toaster(final Context ctx, final String text) {
 		final Dialog dialog = new Dialog(ctx);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.getWindow().setFlags(
@@ -86,7 +88,6 @@ public class RenewDB {
 				new ColorDrawable(Color.TRANSPARENT));
 		dialog.setCancelable(false);
 		dialog.setContentView(R.layout.guide);
-		dialog.onAttachedToWindow();
 		TextView guide = (TextView) dialog.findViewById(R.id.g_text);
 		guide.setText(text);
 
@@ -102,9 +103,22 @@ public class RenewDB {
 		new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				dialog.dismiss();
-			}
+				hideDialog(dialog);			}
 		}, 2000);
+	}
+
+	private void hideDialog(Dialog dialog) {
+		if(dialog != null) {
+			if(dialog.isShowing()) {
+				Context context = ((ContextWrapper)dialog.getContext()).getBaseContext();
+				if(context instanceof Activity) {
+					if(!((Activity)context).isFinishing() && !((Activity)context).isDestroyed())
+						dialog.dismiss();
+				} else {
+					dialog.dismiss();
+				}
+			}
+		}
 	}
 
 }

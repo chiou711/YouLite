@@ -41,6 +41,8 @@ import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.Util;
 import com.cw.youlite.util.preferences.Pref;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -257,8 +259,15 @@ public class Checked_notes_option {
                     mDb_page.close();
 
                     // message
-                    String sentString = Util.getStringWithXmlTag(TabsHost.getFocus_tabPos(),Util.ID_FOR_NOTES);
-                    sentString = Util.addXmlTag(sentString);
+                    String sentString = null;
+                    try {
+                        sentString = Util.getJson(TabsHost.getFocus_tabPos(),Util.ID_FOR_NOTES).toString();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    sentString = "{\"client\":\"TV YouTube\",\"content\":[{\"category\":\"new folder\",\"link_page\":[{\"title\":\"new page\",\"links\":" +
+                            sentString +
+                            "}]}]}";
 
                     // picture array
                     int cnt = pictureFileNameList.size();

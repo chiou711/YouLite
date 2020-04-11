@@ -139,10 +139,10 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
          *  2. for assets mode: need to enable build.gradle assets.srcDirs = ['preferred/assets/']
          */
         /** 1 debug, download */
-        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_DOWNLOAD);
+//        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_DOWNLOAD);
 
         /** 2 release, download */
-//        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_DOWNLOAD);
+        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_DOWNLOAD);
 
         // Release mode: no debug message
         if (Define.CODE_MODE == Define.RELEASE_MODE) {
@@ -1010,7 +1010,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         DB_drawer dB_drawer = new DB_drawer(this);
         DB_folder dB_folder = new DB_folder(this, Pref.getPref_focusView_folder_tableId(this));
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        mFragmentManager = getSupportFragmentManager();
+        mFragmentTransaction = getSupportFragmentManager().beginTransaction();
 
         // Go back: check if Configure fragment now
         if( (item.getItemId() == android.R.id.home ))
@@ -1098,7 +1099,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                     drawer.closeDrawer();
                     mMenu.setGroupVisible(R.id.group_notes, false); //hide the menu
                     DeleteFolders delFoldersFragment = new DeleteFolders();
-                    mFragmentTransaction = mFragmentManager.beginTransaction();
                     mFragmentTransaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
                     mFragmentTransaction.replace(R.id.content_frame, delFoldersFragment).addToBackStack("delete_folders").commit();
                 }
@@ -1157,7 +1157,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 {
                     mMenu.setGroupVisible(R.id.group_notes, false); //hide the menu
                     DeletePages delPgsFragment = new DeletePages();
-                    mFragmentTransaction = mFragmentManager.beginTransaction();
                     mFragmentTransaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
                     mFragmentTransaction.replace(R.id.content_frame, delPgsFragment).addToBackStack("delete_pages").commit();
                 }
@@ -1231,8 +1230,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 			        mMenu.setGroupVisible(R.id.group_pages_and_more, false);
 			        // replace fragment
 			        Import_filesListJson importFragmentJson = new Import_filesListJson();
-			        transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-			        transaction.replace(R.id.content_frame, importFragmentJson, "import").addToBackStack(null).commit();
+                    mFragmentTransaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+                    mFragmentTransaction.replace(R.id.content_frame, importFragmentJson, "import").addToBackStack(null).commit();
 		        }
 		        return true;
 
@@ -1254,8 +1253,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                     if(dB_folder.getPagesCount(true)>0)
                     {
                         Export_toSDCardJsonFragment exportFragment = new Export_toSDCardJsonFragment();
-                        transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-                        transaction.replace(R.id.content_frame, exportFragment,"export").addToBackStack(null).commit();
+                        mFragmentTransaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+                        mFragmentTransaction.replace(R.id.content_frame, exportFragment,"export").addToBackStack(null).commit();
                     }
                     else
                     {
@@ -1280,8 +1279,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                     mMenu.setGroupVisible(R.id.group_notes, false);
                     mMenu.setGroupVisible(R.id.group_pages_and_more, false);
                     Export_toSDCardAllJsonFragment exportFragment = new Export_toSDCardAllJsonFragment();
-                    transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-                    transaction.replace(R.id.content_frame, exportFragment, "export").addToBackStack(null).commit();
+                    mFragmentTransaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+                    mFragmentTransaction.replace(R.id.content_frame, exportFragment, "export").addToBackStack(null).commit();
                 }
                 return true;
 
@@ -1300,8 +1299,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 {
                     Mail_filesListJson mailFragment = new Mail_filesListJson();
 
-                    transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-                    transaction.replace(R.id.content_frame, mailFragment,"mail").addToBackStack(null).commit();
+                    mFragmentTransaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+                    mFragmentTransaction.replace(R.id.content_frame, mailFragment,"mail").addToBackStack(null).commit();
                 }
                 else
                 {
@@ -1320,7 +1319,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 setTitle(R.string.settings);
 
                 mConfigFragment = new Config();
-                mFragmentTransaction = mFragmentManager.beginTransaction();
                 mFragmentTransaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
                 mFragmentTransaction.replace(R.id.content_frame, mConfigFragment).addToBackStack("config").commit();
                 return true;
@@ -1331,11 +1329,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 setTitle(R.string.about_title);
 
                 mAboutFragment = new About();
-                if(mFragmentManager != null) {
-                    mFragmentTransaction = mFragmentManager.beginTransaction();
-                    mFragmentTransaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-                    mFragmentTransaction.replace(R.id.content_frame, mAboutFragment).addToBackStack("about").commit();
-                }
+                mFragmentTransaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+                mFragmentTransaction.replace(R.id.content_frame, mAboutFragment).addToBackStack("about").commit();
                 return true;
 
             default:

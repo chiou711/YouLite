@@ -44,6 +44,8 @@ import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.Util;
 import com.cw.youlite.util.preferences.Pref;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -219,8 +221,15 @@ class View_note_option {
     void doMailNote(AppCompatActivity act)
     {
         // set Sent string Id
-        String sentString = Util.getStringWithXmlTag(TabsHost.getFocus_tabPos(),noteId);
-        sentString = Util.addXmlTag(sentString);
+        String sentString = null;
+        try {
+            sentString = Util.getJson(TabsHost.getFocus_tabPos(),noteId).get(0).toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        sentString = "{\"client\":\"TV YouTube\",\"content\":[{\"category\":\"new folder\",\"link_page\":[{\"title\":\"new page\",\"links\":[" +
+                            sentString +
+                             "]}]}]}";
 
         DB_page dB_page = new DB_page(act, TabsHost.getCurrentPageTableId());
 
