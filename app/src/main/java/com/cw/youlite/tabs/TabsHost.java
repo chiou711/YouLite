@@ -402,7 +402,8 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
             tabStrip.getChildAt(tabPos).setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    editPageTitle(tabPos,MainAct.mAct);
+                    if(Pref.getPref_DB_ready(getActivity())) // add for Renew DB exception
+                        editPageTitle(tabPos,MainAct.mAct);
                     return false;
                 }
             });
