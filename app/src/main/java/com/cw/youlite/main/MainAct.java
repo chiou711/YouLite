@@ -728,6 +728,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                     System.currentTimeMillis() + 1000 * 60 * 5, // formal: 300 seconds
 //					System.currentTimeMillis() + 1000 * 10, // test: 10 seconds
                     stringFileName);
+
+            recreate();
         }
 
         // YouTube

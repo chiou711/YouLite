@@ -184,7 +184,7 @@ public class Mail_filesListJson extends ListFragment
                     fragment.setArguments(args);
                     FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                     transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-                    transaction.replace(R.id.file_list_linear, fragment,"import_view").addToBackStack(null).commit();
+                    transaction.replace(R.id.file_list_linear, fragment,"mail").addToBackStack(null).commit();
             	}
             	else
             	{

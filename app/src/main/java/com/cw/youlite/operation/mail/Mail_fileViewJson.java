@@ -101,7 +101,7 @@ public class Mail_fileViewJson extends Fragment
 		Button backButton = (Button) rootView.findViewById(R.id.view_back);
 		backButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_back, 0, 0, 0);
 
-		// import button
+		// confirm button
 		Button confirmButton = (Button) rootView.findViewById(R.id.view_confirm);
 		confirmButton.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_menu_send, 0, 0, 0);
 		confirmButton.setText(R.string.mail_notes_btn);
@@ -273,7 +273,7 @@ public class Mail_fileViewJson extends Fragment
 		{
 			Uri uri = Uri.parse(file);
 			uris.add(uri);
-			System.out.println("MailJsonFragment / _sendEMail / uri to string" + uri.toString());
+			System.out.println("Mail_fileViewJson / _sendEMail / uri to string" + uri.toString());
 		}
 
 		// eMail extra
