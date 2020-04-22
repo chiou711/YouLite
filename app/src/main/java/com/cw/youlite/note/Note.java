@@ -513,7 +513,8 @@ public class Note extends AppCompatActivity
 			mPagerHandler.removeCallbacks(mOnBackPressedRun);		
 	    
 		ViewGroup view = (ViewGroup) getWindow().getDecorView();
-	    view.setBackgroundColor(getResources().getColor(color.background_dark)); // avoid white flash
+//	    view.setBackgroundColor(getResources().getColor(color.background_dark)); // avoid white flash
+		view.setBackgroundColor(getResources().getColor(R.color.bar_color)); // avoid white flash
 	    view.removeAllViews();
 
 		super.finish();
