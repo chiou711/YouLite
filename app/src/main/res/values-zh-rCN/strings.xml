@@ -45,10 +45,10 @@
     <string name="file_not_found">未找到文件</string>
     <string name="file_is_not_created">未建立文件</string>
     <string name="folder_operation">文件夹操作</string>
-    <string name="page_operation">笔记页操作 ></string>
-    <string name="note_operation">笔记操作 ></string>
-    <string name="backup_operation">备份操作 ></string>
-    <string name="settings_operation">设置 ></string>
+    <string name="page_operation">笔记页操作</string>
+    <string name="note_operation">笔记操作</string>
+    <string name="backup_operation">备份操作</string>
+    <string name="settings_operation">设置</string>
     <string name="set_enable">启用</string>
     <string name="set_disable">停用</string>
     <string name="no_page_yet">还没有页面</string>

@@ -5,11 +5,11 @@
         android:id="@+id/group_notes"
         android:title="notes"
         app:showAsAction="ifRoom|withText"
-        android:orderInCategory="0">
+        android:orderInCategory="1">
     <!-- Add note -->
     <item
         android:id="@+id/ADD_NEW_NOTE"
-        android:orderInCategory="0"
+        android:orderInCategory="1"
         app:showAsAction="ifRoom|withText"
         android:title="@string/add_new_note"
 		android:icon="@drawable/ic_input_add">
@@ -29,25 +29,40 @@
     <group
         android:id="@+id/group_pages_and_more"
         android:title="more"
-        app:showAsAction="ifRoom|withText"
-        android:orderInCategory="1">
-    <item
-        android:id="@+id/options"
-        android:orderInCategory="3"
-        app:showAsAction="always|withText"
-        android:title="@string/options"
-        android:icon="@drawable/ic_menu_moreoverflow">
+        app:showAsAction="never"
+        android:orderInCategory="2">
 
-    <!-- more sub menu -->
-    <menu xmlns:android="http://schemas.android.com/apk/res/android">
+        <!-- Note operation -->
+        <item
+            android:id="@+id/note_operation"
+            android:orderInCategory="1"
+            app:showAsAction="never"
+            android:title="@string/note_operation"
+            >
+            <menu>
+                <item
+                    android:id="@+id/ENABLE_NOTE_DRAG_AND_DROP"
+                    android:orderInCategory="1"
+                    app:showAsAction="never"
+                    android:title="@string/drag_note"
+                    android:icon="@drawable/btn_check_off_holo_light"/>
+                <item
+                    android:id="@+id/SHOW_BODY"
+                    android:orderInCategory="2"
+                    app:showAsAction="never"
+                    android:title="@string/preview_note_body"
+                    android:icon="@drawable/btn_check_off_holo_light"/>
+            </menu>
+        </item>
+
         <!-- Page operation -->
         <item
             android:id="@+id/page_operation"
-            android:orderInCategory="1"
-            app:showAsAction="ifRoom|withText"
+            android:orderInCategory="2"
+            app:showAsAction="never"
             android:title="@string/page_operation"
             >
-        <menu xmlns:android="http://schemas.android.com/apk/res/android">
+        <menu>
             <item
                 android:id="@+id/ADD_NEW_PAGE"
                 android:orderInCategory="1"
@@ -75,82 +90,53 @@
         </menu>
         </item>
 
-        <!-- Note operation -->
-        <item
-            android:id="@+id/note_operation"
-            android:orderInCategory="2"
-            app:showAsAction="ifRoom|withText"
-            android:title="@string/note_operation"
-            >
-            <menu xmlns:android="http://schemas.android.com/apk/res/android">
-                <item
-                    android:id="@+id/ENABLE_NOTE_DRAG_AND_DROP"
-                    android:orderInCategory="1"
-                    app:showAsAction="never"
-                    android:title="@string/drag_note"
-                    android:icon="@drawable/btn_check_off_holo_light"/>
-                <item
-                    android:id="@+id/SHOW_BODY"
-                    android:orderInCategory="2"
-                    app:showAsAction="never"
-                    android:title="@string/preview_note_body"
-                    android:icon="@drawable/btn_check_off_holo_light"/>
-                <!--<item-->
-                    <!--android:id="@+id/CLICK_LAUNCH_YOUTUBE"-->
-                    <!--android:orderInCategory="3"-->
-                    <!--app:showAsAction="never"-->
-                    <!--android:title="@string/click_launch_youtube"-->
-                    <!--android:icon="@drawable/btn_check_off_holo_light"/>-->
-            </menu>
-        </item>
-
         <!-- backup operation -->
         <item
             android:id="@+id/backup_operation"
             android:orderInCategory="3"
-            app:showAsAction="ifRoom|withText"
+            app:showAsAction="never"
             android:title="@string/backup_operation"
             >
         <menu android:background ="#4f004f">
             <item
                 android:id="@+id/IMPORT_JSON_FROM_WEB"
-                android:orderInCategory="2"
+                android:orderInCategory="1"
                 app:showAsAction="never"
                 android:title="@string/config_import_Json_Web"
                 android:icon="@android:drawable/ic_input_add"/>
             <item
                 android:id="@+id/IMPORT_FROM_SD_CARD_JSON"
-                android:orderInCategory="4"
+                android:orderInCategory="2"
                 app:showAsAction="never"
                 android:title="@string/config_import_SDCard_Json_entry"
                 android:icon="@android:drawable/ic_input_add"/>
             <item
                 android:id="@+id/EXPORT_TO_SD_CARD_JSON"
-                android:orderInCategory="6"
+                android:orderInCategory="3"
                 app:showAsAction="never"
                 android:title="@string/config_export_SDCard_JSON_title"
                 android:icon="@android:drawable/ic_menu_save"/>
             <item
                 android:id="@+id/EXPORT_TO_SD_CARD_ALL_JSON"
-                android:orderInCategory="7"
+                android:orderInCategory="4"
                 app:showAsAction="never"
                 android:title="@string/config_export_SDCard_all_JSON_title"
                 android:icon="@android:drawable/ic_menu_save"/>
             <item
                 android:id="@+id/EXPORT_TO_GDrive_ALL_JSON"
-                android:orderInCategory="8"
+                android:orderInCategory="5"
                 app:showAsAction="never"
                 android:title="@string/config_export_GDrive_all_JSON_title"
                 android:icon="@drawable/google_drive"/>
             <item
                 android:id="@+id/SEND_JSON"
-                android:orderInCategory="10"
+                android:orderInCategory="6"
                 app:showAsAction="never"
                 android:title="@string/mail_json_title"
                 android:icon="@android:drawable/ic_menu_send"/>
             <item
                 android:id="@+id/IMPORT_RENEW"
-                android:orderInCategory="11"
+                android:orderInCategory="7"
                 app:showAsAction="never"
                 android:title="@string/config_import_renew"
                 android:icon="@drawable/perm_group_sync_settings"/>
@@ -173,44 +159,6 @@
             app:showAsAction="never"
             android:title="@string/about_menu"
         />
-    </menu>
-    </item>
     </group>
 
-    <!-- folder group -->
-    <!--<group-->
-        <!--android:id="@+id/group_folders"-->
-        <!--android:title="folder"-->
-        <!--app:showAsAction="ifRoom|withText"-->
-        <!--android:orderInCategory="2">-->
-    <!--<item-->
-        <!--android:id="@+id/ADD_FOLDER_OPTIONS"-->
-        <!--android:orderInCategory="0"-->
-        <!--app:showAsAction="ifRoom|withText"-->
-        <!--android:title="@string/folder_operation"-->
-        <!--android:icon="@android:drawable/ic_menu_more">-->
-
-    <!--&lt;!&ndash; more sub menu &ndash;&gt;-->
-    <!--<menu xmlns:android="http://schemas.android.com/apk/res/android">-->
-        <!--<item-->
-            <!--android:id="@+id/ADD_NEW_FOLDER"-->
-            <!--android:orderInCategory="0"-->
-            <!--app:showAsAction="never"-->
-            <!--android:title="@string/add_new_folder"-->
-            <!--android:icon="@drawable/ic_menu_add_new_page"/>-->
-        <!--<item-->
-            <!--android:id="@+id/ENABLE_FOLDER_DRAG_AND_DROP"-->
-            <!--android:orderInCategory="1"-->
-            <!--app:showAsAction="never"-->
-            <!--android:title="@string/drag_folder"-->
-            <!--android:icon="@drawable/ic_dragger_on"/>-->
-        <!--<item-->
-            <!--android:id="@+id/DELETE_FOLDERS"-->
-            <!--android:orderInCategory="2"-->
-            <!--app:showAsAction="never"-->
-            <!--android:title="@string/delete_folders"-->
-            <!--android:icon="@drawable/ic_delete"/>-->
-    <!--</menu>-->
-    <!--</item>-->
-    <!--</group>-->
 </menu>

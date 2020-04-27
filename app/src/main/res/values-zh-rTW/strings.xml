@@ -45,10 +45,10 @@
     <string name="file_not_found">找不到檔案</string>
     <string name="file_is_not_created">未建立檔案</string>
     <string name="folder_operation">文件夾操作</string>
-    <string name="page_operation">記事頁操作 ></string>
-    <string name="note_operation">記事操作 ></string>
-    <string name="backup_operation">備份操作 ></string>
-    <string name="settings_operation">設定 ></string>
+    <string name="page_operation">記事頁操作</string>
+    <string name="note_operation">記事操作</string>
+    <string name="backup_operation">備份操作</string>
+    <string name="settings_operation">設定</string>
     <string name="set_enable">啟用</string>
     <string name="set_disable">停用</string>
     <string name="no_page_yet">還沒有頁面</string>

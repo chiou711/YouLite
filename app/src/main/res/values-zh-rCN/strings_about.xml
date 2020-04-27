@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="about_open_source_licenses">开放源代码许可</string>
-    <string name="about_menu">关于 ></string>
+    <string name="about_menu">关于</string>
     <string name="about_title">关于</string>
     <string name="about_version">版本</string>
     <string name="about_version_name">版本名称</string>
