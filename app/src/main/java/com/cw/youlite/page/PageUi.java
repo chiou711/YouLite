@@ -340,16 +340,22 @@ public class PageUi
         // get layout inflater
         View rootView = act.getLayoutInflater().inflate(R.layout.add_new_page, null);
         final TouchableEditText editPageName = (TouchableEditText)rootView.findViewById(R.id.new_page_name);
+		final String hintPageName = pageName;
 
-        // set cursor
-        try {
-            Field f = TextView.class.getDeclaredField("mCursorDrawableRes");
-            f.setAccessible(true);
-            f.set(editPageName, R.drawable.cursor);
-        } catch (Exception ignored) {
-        }
+		// set hint
+		((EditText)editPageName).setHint(hintPageName);
 
-        final String hintPageName = pageName;
+		// request cursor
+		editPageName.requestFocus();
+
+//        try {
+//            Field f = TextView.class.getDeclaredField("mCursorDrawableRes");
+//            f.setAccessible(true);
+//            f.set(editPageName, R.drawable.cursor);
+//        } catch (Exception ignored) {
+//        }
+
+
 
         // set hint
 //        editPageName.setHint(pageName);

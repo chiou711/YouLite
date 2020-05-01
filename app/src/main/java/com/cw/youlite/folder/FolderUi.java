@@ -83,18 +83,25 @@ public class FolderUi
         View rootView = act.getLayoutInflater().inflate(R.layout.add_new_folder, null);
         final TouchableEditText editFolderName = (TouchableEditText) rootView.findViewById(R.id.new_folder_name);
 
+        // set hint
+	    ((EditText)editFolderName).setHint(hintFolderName);
+
+	    // request cursor
+	    editFolderName.requestFocus();
+
         // set cursor
-        try {
-            Field f = TextView.class.getDeclaredField("mCursorDrawableRes");
-            f.setAccessible(true);
-            f.set(editFolderName, R.drawable.cursor);
-        } catch (Exception ignored) {
-        }
+//        try {
+//            Field f = TextView.class.getDeclaredField("mCursorDrawableRes");
+//            f.setAccessible(true);
+//            f.set(editFolderName, R.drawable.cursor);
+//        } catch (Exception ignored) {
+//        }
 
         // set hint
         editFolderName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+	            System.out.println("FolderUi / _onFocusChange /  hasFocus = " + hasFocus);
                 if (hasFocus) {
                     ((EditText) v).setHint(hintFolderName);
                 }
@@ -417,7 +424,7 @@ public class FolderUi
 	private static int mFolderTableId2;
 	private static String mFolderTitle1;
 	private static String mFolderTitle2;
-	public static void swapFolderRows(int startPosition, int endPosition)
+	static void swapFolderRows(int startPosition, int endPosition)
 	{
         Activity act = MainAct.mAct;
 		DB_drawer db_drawer = new DB_drawer(act);
@@ -443,7 +450,7 @@ public class FolderUi
 	}
 
     // Update focus position
-    public static void updateFocus_folderPosition()
+    static void updateFocus_folderPosition()
     {
     	Activity act = MainAct.mAct;
         DB_drawer db_drawer = new DB_drawer(act);
