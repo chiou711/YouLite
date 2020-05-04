@@ -1155,9 +1155,13 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             return true;
 
             case MenuId.DELETE_PAGES:
+                //hide the menu
+                mMenu.setGroupVisible(R.id.group_notes, false);
+                mMenu.setGroupVisible(R.id.group_pages_and_more, false);
+
                 if(dB_folder.getPagesCount(true)>0)
                 {
-                    mMenu.setGroupVisible(R.id.group_notes, false); //hide the menu
+
                     DeletePages delPgsFragment = new DeletePages();
                     mFragmentTransaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
                     mFragmentTransaction.replace(R.id.content_frame, delPgsFragment).addToBackStack("delete_pages").commit();
@@ -1295,7 +1299,9 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 return true;
 
             case MenuId.SEND_JSON:
-                mMenu.setGroupVisible(R.id.group_notes, false); //hide the menu
+                //hide the menu
+                mMenu.setGroupVisible(R.id.group_notes, false);
+                mMenu.setGroupVisible(R.id.group_pages_and_more, false);
 
                 if(dB_folder.getPagesCount(true)>0)
                 {
