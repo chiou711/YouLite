@@ -79,9 +79,11 @@ public class MainUi {
             }
 
             DB_drawer db_drawer = new DB_drawer(act);
-            DB_folder db_folder = new DB_folder(act, Pref.getPref_focusView_folder_tableId(act));
             int folders_count = db_drawer.getFoldersCount(true);
+
+            DB_folder db_folder = new DB_folder(act, Pref.getPref_focusView_folder_tableId(act));
             int pages_count = db_folder.getPagesCount(true);
+
             if((folders_count == 0) || (pages_count == 0))
             {
                 Toast.makeText(act,"No folder or no page yet, please add a new one in advance.",Toast.LENGTH_LONG).show();

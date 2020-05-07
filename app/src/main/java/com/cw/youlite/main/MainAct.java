@@ -453,11 +453,24 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
     	mAct = this;
 
-        configLayoutView(); //createAssetsFile inside
 
         // Sync the toggle state after onRestoreInstanceState has occurred.
-        if(bEULA_accepted)
+        if(bEULA_accepted) {
+            configLayoutView(); //createAssetsFile inside
             drawer.drawerToggle.syncState();
+
+            //   get folder table id by preference
+            DB_drawer dbDrawer = new DB_drawer(mAct);
+            int foldersCnt = dbDrawer.getFoldersCount(true);
+            int focus_folder_tableId =  Pref.getPref_focusView_folder_tableId(mAct);
+
+            // select focus folder view by preference
+            for (int pos=0;pos< foldersCnt;pos++)
+            {
+                if(focus_folder_tableId == dbDrawer.getFolderTableId(pos,true))
+                    FolderUi.setFocus_folderPos(pos);
+            }
+        }
 
         // receiver for fetch category service
         IntentFilter statusIntentFilter = new IntentFilter(FetchService_category.Constants.BROADCAST_ACTION);
@@ -466,18 +479,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         // Registers the FetchServiceResponseReceiver and its intent filters
         localBroadcastMgr = LocalBroadcastManager.getInstance(this);
         localBroadcastMgr.registerReceiver(responseReceiver, statusIntentFilter );
-
-        //   get folder table id by preference
-        DB_drawer dbDrawer = new DB_drawer(mAct);
-        int foldersCnt = new DB_drawer(mAct).getFoldersCount(true);
-        int focus_folder_tableId =  Pref.getPref_focusView_folder_tableId(mAct);
-
-        // select focus folder view by preference
-        for (int pos=0;pos< foldersCnt;pos++)
-        {
-            if(focus_folder_tableId == dbDrawer.getFolderTableId(pos,true))
-                FolderUi.setFocus_folderPos(pos);
-        }
     }
 
     // Broadcast receiver for receiving status updates from the IntentService

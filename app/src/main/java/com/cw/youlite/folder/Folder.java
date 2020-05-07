@@ -38,48 +38,29 @@ public class Folder
 {
     public DragSortListView listView;
     public SimpleDragSortCursorAdapter adapter;
-    DragSortController controller;
-    AppCompatActivity act;
-    DB_drawer dB_drawer;
-    SimpleDragSortCursorAdapter folderAdapter;
+    private DragSortController controller;
+    private AppCompatActivity act;
+    private SimpleDragSortCursorAdapter folderAdapter;
 
     public Folder(AppCompatActivity act)
     {
         this.act = act;
         listView = (DragSortListView) act.findViewById(R.id.drawer_listview);
-        dB_drawer = new DB_drawer(act);
-        folderAdapter = initFolder();
+        initFolder();
     }
 
     // initialize folder list view
-    SimpleDragSortCursorAdapter initFolder()
+    private void initFolder()
     {
         // set Folder title
-        if(dB_drawer.getFoldersCount(true) == 0)
+        DB_drawer dB_drawer = new DB_drawer(act);
+        for(int i = 0; i< dB_drawer.getFoldersCount(true); i++)
         {
-            // default: add 2 new folders
-//            for(int i = 0; i< Define.INITIAL_FOLDERS_COUNT; i++)
-//            {
-//                // insert folder
-//                System.out.println("Folder/ _initFolder / insert folder "+ i) ;
-//                String folderTitle = Define.getFolderTitle(act,i);
-//                MainAct.mFolderTitles.add(folderTitle);
-//                dB_drawer.insertFolder(i+1, folderTitle );
-//            }
-        }
-        else
-        {
-            for(int i = 0; i< dB_drawer.getFoldersCount(true); i++)
-            {
-            	if(MainAct.mFolderTitles != null) {
-		            MainAct.mFolderTitles.add(""); // init only
-		            MainAct.mFolderTitles.set(i, dB_drawer.getFolderTitle(i, true));
-	            }
+            if(MainAct.mFolderTitles != null) {
+                MainAct.mFolderTitles.add(""); // init only
+                MainAct.mFolderTitles.set(i, dB_drawer.getFolderTitle(i, true));
             }
         }
-
-        // check DB
-//        DB_drawer.listFolders();
 
         // set adapter
         dB_drawer.open();
@@ -122,7 +103,6 @@ public class Folder
         listView.setDragListener(onDrag);
         listView.setDropListener(onDrop);
 
-        return adapter;
     }
 
     public SimpleDragSortCursorAdapter getAdapter()
@@ -131,7 +111,7 @@ public class Folder
     }
 
     // list view listener: on drag
-    DragSortListView.DragListener onDrag = new DragSortListView.DragListener()
+    private DragSortListView.DragListener onDrag = new DragSortListView.DragListener()
     {
         @Override
         public void drag(int startPosition, int endPosition) {
@@ -139,7 +119,7 @@ public class Folder
     };
 
     // list view listener: on drop
-    DragSortListView.DropListener onDrop = new DragSortListView.DropListener()
+    private DragSortListView.DropListener onDrop = new DragSortListView.DropListener()
     {
         @Override
         public void drop(int startPosition, int endPosition) {
