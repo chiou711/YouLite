@@ -74,6 +74,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentManager.OnBackStackChangedListener;
@@ -254,6 +255,9 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         }
 
         isAddedOnNewIntent = false;
+
+        if(bEULA_accepted)
+            configLayoutView(); //createAssetsFile inside
     }
 
 
@@ -453,10 +457,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
     	mAct = this;
 
-
         // Sync the toggle state after onRestoreInstanceState has occurred.
         if(bEULA_accepted) {
-            configLayoutView(); //createAssetsFile inside
             drawer.drawerToggle.syncState();
 
             //   get folder table id by preference

@@ -37,8 +37,7 @@ public class UilApplication extends MultiDexApplication {
 	@SuppressWarnings("unused")
 	@Override
 	public void onCreate() {
-//		if (DEVELOPER_MODE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) 
-		if (DEVELOPER_MODE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) 
+		if (DEVELOPER_MODE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
 		{
 			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyDialog().build());
 			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyDeath().build());

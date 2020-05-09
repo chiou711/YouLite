@@ -44,6 +44,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import androidx.fragment.app.FragmentTransaction;
 import androidx.fragment.app.ListFragment;
@@ -203,7 +204,7 @@ public class Mail_filesListJson extends ListFragment
         if(files == null)
         {
         	Toast.makeText(getActivity(),R.string.toast_import_SDCard_no_file,Toast.LENGTH_SHORT).show();
-        	getActivity().finish();
+            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
         }
         else
         {

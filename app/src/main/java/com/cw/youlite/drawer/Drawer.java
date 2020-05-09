@@ -127,8 +127,6 @@ public class Drawer {
             }
         });
 
-
-
         act = activity;
         listView = (DragSortListView) act.findViewById(R.id.drawer_listview);
         // ActionBarDrawerToggle ties together the the proper interactions
@@ -155,7 +153,7 @@ public class Drawer {
                         // will call Folder_adapter _getView
                         listView.invalidateViews();
                     }
-                }
+                } // onDrawerOpened
 
                 public void onDrawerClosed(View view)
                 {
@@ -177,10 +175,8 @@ public class Drawer {
                                 MainAct.mToolbar.setLogo(null);
                             }
                         }
-
-                        MainAct.openFolder();
                     }
-                }
+                } // onDrawerClosed
            };
     }
 
