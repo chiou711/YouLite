@@ -28,24 +28,25 @@ import android.widget.RadioGroup;
 
 import com.cw.youlite.R;
 
+import java.util.Objects;
+
 public class Note_addNew_option
 {
 	private RadioGroup mRadioGroup0;
-    private CheckedTextView check_add_folder_if_exists,check_add_link_if_exists;
-    private AlertDialog mDialog = null;
+    CheckedTextView check_add_link_if_exists;
+    AlertDialog mDialog;
     private SharedPreferences mPref_add_new_note_location;
-    private boolean bAddToTop, bAddFolder, bAddLink;
+    private boolean bAddToTop, bAddLink;
 
-	public Note_addNew_option(final Activity activity)
+	Note_addNew_option(final Activity activity)
 	{
 		mPref_add_new_note_location = activity.getSharedPreferences("add_new_note_option", 0);
   		// inflate select style layout
   		LayoutInflater inflater;
   		inflater= (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-  		View view = inflater.inflate(R.layout.note_add_new_option, null);
+  		View view = Objects.requireNonNull(inflater).inflate(R.layout.note_add_new_option, null);
 
 		mRadioGroup0 = (RadioGroup)view.findViewById(R.id.radioGroup_new_at);
-		check_add_folder_if_exists = (CheckedTextView)view.findViewById(R.id.check_add_folder_if_exists);
 		check_add_link_if_exists = (CheckedTextView)view.findViewById(R.id.check_add_link_if_exists);
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -82,35 +83,8 @@ public class Note_addNew_option
         mRadioGroup0.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup RG, int id) {
-                bAddToTop = (mRadioGroup0.indexOfChild(mRadioGroup0.findViewById(id))==0)?true:false;
+                bAddToTop = mRadioGroup0.indexOfChild(mRadioGroup0.findViewById(id))==0;
             }
-        });
-
-		// add all directory: init
-		if (mPref_add_new_note_location.getString("KEY_ADD_DIRECTORY","no").equalsIgnoreCase("yes") )
-		{
-			check_add_folder_if_exists.setChecked(true);
-			bAddFolder = true;
-		}
-		else if (mPref_add_new_note_location.getString("KEY_ADD_DIRECTORY","no").equalsIgnoreCase("no") )
-		{
-			check_add_folder_if_exists.setChecked(false);
-			bAddFolder = false;
-		}
-
-		//  add all directory: listener
-        check_add_folder_if_exists.setOnClickListener(new View.OnClickListener()
-        {	@Override
-        public void onClick(View view)
-        {
-            boolean currentCheck = ((CheckedTextView)view).isChecked();
-            ((CheckedTextView)view).setChecked(!currentCheck);
-
-            if(((CheckedTextView)view).isChecked())
-                bAddFolder = true;
-            else
-                bAddFolder = false;
-        }
         });
 
 		// add link: init
@@ -152,11 +126,6 @@ public class Note_addNew_option
 			mPref_add_new_note_location.edit().putString("KEY_ADD_NEW_NOTE_TO", "top").apply();
 		else
 			mPref_add_new_note_location.edit().putString("KEY_ADD_NEW_NOTE_TO", "bottom").apply();
-
-		if(bAddFolder)
-			mPref_add_new_note_location.edit().putString("KEY_ADD_DIRECTORY", "yes").apply();
-		else
-			mPref_add_new_note_location.edit().putString("KEY_ADD_DIRECTORY", "no").apply();
 
 		if(bAddLink)
 			mPref_add_new_note_location.edit().putString("KEY_ENABLE_LINK_TITLE_SAVE", "yes").apply();

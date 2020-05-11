@@ -319,6 +319,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     private boolean isStorageRequestedExportOne = false;
     private boolean isStorageRequestedExportAll = false;
     private boolean isStorageRequestedImport = false;
+    private boolean isStorageRequested = false;
 
     // callback of granted permission
     @Override
@@ -332,6 +333,10 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         {
             switch (requestCode)
             {
+                case Util.PERMISSIONS_REQUEST_STORAGE:
+                    isStorageRequested = true;
+                    break;
+
                 case Util.PERMISSIONS_REQUEST_STORAGE_EXPORT_ONE:
                     isStorageRequestedExportOne = true;
                     break;
@@ -459,7 +464,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
         // Sync the toggle state after onRestoreInstanceState has occurred.
         if(bEULA_accepted) {
-            drawer.drawerToggle.syncState();
+        	if(drawer != null)
+                drawer.drawerToggle.syncState();
 
             //   get folder table id by preference
             DB_drawer dbDrawer = new DB_drawer(mAct);
@@ -525,7 +531,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         System.out.println("MainAct / _onResumeFragments ");
         super.onResumeFragments();
 
-        if(isStorageRequestedExportOne ||
+        if(isStorageRequested ||
+           isStorageRequestedExportOne ||
            isStorageRequestedExportAll ||
            isStorageRequestedImport      )
         {
@@ -533,6 +540,24 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             mMenu.setGroupVisible(R.id.group_notes, false);
             mMenu.setGroupVisible(R.id.group_pages_and_more, false);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            if(isStorageRequested)
+            {
+                DB_folder dB_folder = new DB_folder(this, Pref.getPref_focusView_folder_tableId(this));
+                if(dB_folder.getPagesCount(true)>0)
+                {
+                    Mail_filesListJson mailFragment = new Mail_filesListJson();
+
+                    mFragmentTransaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+                    mFragmentTransaction.replace(R.id.content_frame, mailFragment,"mail").addToBackStack(null).commit();
+                }
+                else
+                {
+                    Toast.makeText(this, R.string.no_page_yet, Toast.LENGTH_SHORT).show();
+                }
+
+                isStorageRequested = false;
+            }
 
             if(isStorageRequestedExportOne) {
                 DB_folder dB_folder = new DB_folder(this, Pref.getPref_focusView_folder_tableId(this));
@@ -1302,20 +1327,32 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 return true;
 
             case MenuId.SEND_JSON:
-                //hide the menu
-                mMenu.setGroupVisible(R.id.group_notes, false);
-                mMenu.setGroupVisible(R.id.group_pages_and_more, false);
-
-                if(dB_folder.getPagesCount(true)>0)
+                if( (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) && //API23
+                        (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) // check permission
+                                != PackageManager.PERMISSION_GRANTED))
                 {
-                    Mail_filesListJson mailFragment = new Mail_filesListJson();
-
-                    mFragmentTransaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
-                    mFragmentTransaction.replace(R.id.content_frame, mailFragment,"mail").addToBackStack(null).commit();
+                    // No explanation needed, we can request the permission.
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE},
+                            Util.PERMISSIONS_REQUEST_STORAGE);
                 }
-                else
-                {
-                    Toast.makeText(this, R.string.no_page_yet, Toast.LENGTH_SHORT).show();
+                else {
+                    //hide the menu
+                    mMenu.setGroupVisible(R.id.group_notes, false);
+                    mMenu.setGroupVisible(R.id.group_pages_and_more, false);
+
+                    if(dB_folder.getPagesCount(true)>0)
+                    {
+                        Mail_filesListJson mailFragment = new Mail_filesListJson();
+
+                        mFragmentTransaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+                        mFragmentTransaction.replace(R.id.content_frame, mailFragment,"mail").addToBackStack(null).commit();
+                    }
+                    else
+                    {
+                        Toast.makeText(this, R.string.no_page_yet, Toast.LENGTH_SHORT).show();
+                    }
                 }
                 return true;
 

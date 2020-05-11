@@ -129,7 +129,7 @@ public class Note extends AppCompatActivity
 				// If request is cancelled, the result arrays are empty.
 				if ( (grantResults.length > 0) &&
 						( (grantResults[0] == PackageManager.PERMISSION_GRANTED) &&
-								(grantResults[1] == PackageManager.PERMISSION_GRANTED)    )) {
+					      (grantResults[1] == PackageManager.PERMISSION_GRANTED)       )) {
 					option.doMailNote(act);
 				}
 				option.dlgAddNew.dismiss();

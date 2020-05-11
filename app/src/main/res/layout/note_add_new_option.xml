@@ -43,18 +43,6 @@
 	<View android:layout_width="match_parent" android:layout_height="1dip" android:background="#4f4f4f" />
 
 	<CheckedTextView
-		android:id="@+id/check_add_folder_if_exists"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:textSize="18sp"
-		android:text="@string/dialog_add_new_multiple"
-		android:drawableLeft="?android:attr/listChoiceIndicatorMultiple"
-		android:clickable="true"
-		android:gravity="center_vertical" />
-
-	<View android:layout_width="match_parent" android:layout_height="1dip" android:background="#4f4f4f" />
-
-	<CheckedTextView
 		android:id="@+id/check_add_link_if_exists"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
