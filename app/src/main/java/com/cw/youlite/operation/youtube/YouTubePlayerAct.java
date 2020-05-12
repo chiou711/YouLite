@@ -166,7 +166,7 @@ public class YouTubePlayerAct extends YouTubeFailureRecoveryActivity
 
     /**
      *  Prepare to play YouTube
-     * @param youTubePlayer
+     * @param youTubePlayer YouTubePlayer instance
      */
     void prepare_play_YouTube(YouTubePlayer youTubePlayer)
     {
@@ -195,7 +195,16 @@ public class YouTubePlayerAct extends YouTubeFailureRecoveryActivity
            Util.isEmptyString(playListIdStr) )
         {
             // auto start playing
-            youTubePlayer.loadVideo(idStr);// cf. _cueVideo for manual start
+            if (youTubePlayer != null) {
+                try {
+                    youTubePlayer.loadVideo(idStr); // cf. _cueVideo for manual start
+                } catch (IllegalStateException e) {
+                    youTubeView = findViewById(R.id.youtube_view);
+                    youTubeView.initialize(YouTubeDeveloperKey.DEVELOPER_KEY, this);
+                }
+            }
+
+
         }
         // v and list
         else if(!Util.isEmptyString(idStr) &&
