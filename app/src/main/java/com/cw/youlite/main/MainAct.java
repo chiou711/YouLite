@@ -1249,7 +1249,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
 	        case MenuId.IMPORT_FROM_SD_CARD_JSON:
 		        if( (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) && //API23
-				        (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) // check permission
+				    (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) // check permission
 						        != PackageManager.PERMISSION_GRANTED))
 		        {
 			        // No explanation needed, we can request the permission.
@@ -1328,7 +1328,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
             case MenuId.SEND_JSON:
                 if( (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) && //API23
-                        (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) // check permission
+                    (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) // check permission
                                 != PackageManager.PERMISSION_GRANTED))
                 {
                     // No explanation needed, we can request the permission.

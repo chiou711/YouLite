@@ -163,7 +163,6 @@ public class YouTubePlayerAct extends YouTubeFailureRecoveryActivity
         return (YouTubePlayerView) findViewById(R.id.youtube_view);
     }
 
-
     /**
      *  Prepare to play YouTube
      * @param youTubePlayer YouTubePlayer instance
@@ -195,16 +194,12 @@ public class YouTubePlayerAct extends YouTubeFailureRecoveryActivity
            Util.isEmptyString(playListIdStr) )
         {
             // auto start playing
-            if (youTubePlayer != null) {
-                try {
-                    youTubePlayer.loadVideo(idStr); // cf. _cueVideo for manual start
-                } catch (IllegalStateException e) {
-                    youTubeView = findViewById(R.id.youtube_view);
-                    youTubeView.initialize(YouTubeDeveloperKey.DEVELOPER_KEY, this);
-                }
+            try {
+                youTubePlayer.loadVideo(idStr); // cf. _cueVideo for manual start
+            } catch (IllegalStateException e) {
+                youTubeView = findViewById(R.id.youtube_view);
+                youTubeView.initialize(YouTubeDeveloperKey.DEVELOPER_KEY, this);
             }
-
-
         }
         // v and list
         else if(!Util.isEmptyString(idStr) &&

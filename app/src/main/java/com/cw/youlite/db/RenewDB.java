@@ -24,6 +24,8 @@ import com.cw.youlite.data.FetchService_category;
 import com.cw.youlite.data.Provider;
 import com.cw.youlite.util.preferences.Pref;
 
+import java.util.Objects;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class RenewDB {
@@ -37,9 +39,9 @@ public class RenewDB {
 
 			ContentResolver resolver = act.getContentResolver();
 			ContentProviderClient client = resolver.acquireContentProviderClient(Contract.CONTENT_AUTHORITY);
-			Provider provider = (Provider) client.getLocalContentProvider();
+			Provider provider = (Provider) Objects.requireNonNull(client).getLocalContentProvider();
 
-			provider.mContentResolver = resolver;
+			Objects.requireNonNull(provider).mContentResolver = resolver;
 			provider.mOpenHelper.close();
 
 			provider.mOpenHelper = new DbHelper(act);
