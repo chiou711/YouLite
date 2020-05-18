@@ -56,67 +56,64 @@ public class CustomWebView extends WebView {
     public CustomWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
-    
+
+	@Override
+	public boolean performClick() {
+		return super.performClick();
+	}
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) 
     {
         boolean consumed = super.onTouchEvent(ev);
 
-        if (isClickable())
-            switch (ev.getAction() & MotionEvent.ACTION_MASK)
-            {
+	    if (isClickable()) {
+		    performClick();
 
-               case MotionEvent.ACTION_DOWN: 
-                  start.set(ev.getX(), ev.getY());
-                  mode = DRAG;
-                  break;
-               case MotionEvent.ACTION_UP: 
-               case MotionEvent.ACTION_POINTER_UP: 
-                  mode = NONE;
-                  break;
-               case MotionEvent.ACTION_POINTER_DOWN: 
-                  oldDist = spacing(ev);
-                  if (oldDist > 5f) {
-                     midPoint(mid, ev);
-                     mode = ZOOM;
-                  }
-                  break;
+		    switch (ev.getAction() & MotionEvent.ACTION_MASK) {
+			    case MotionEvent.ACTION_DOWN:
+				    start.set(ev.getX(), ev.getY());
+				    mode = DRAG;
+				    break;
+			    case MotionEvent.ACTION_UP:
+			    case MotionEvent.ACTION_POINTER_UP:
+				    mode = NONE;
+				    break;
+			    case MotionEvent.ACTION_POINTER_DOWN:
+				    oldDist = spacing(ev);
+				    if (oldDist > 5f) {
+					    midPoint(mid, ev);
+					    mode = ZOOM;
+				    }
+				    break;
 
-               case MotionEvent.ACTION_MOVE: 
-                  if (mode == DRAG) 
-                  { 
-                  }
-                  else if (mode == ZOOM) 
-                  { 
-                	 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
-                	 {
-	                     float newDist = spacing(ev);
-	                     if (newDist > 5f) 
-	                     {
-	                        scale = newDist / oldDist; 
-	                        if(scale>1)
-	                        {
-	                            if(Math.abs(oldScale -scale)>0.3)
-	                            {
-	                           		zoomIn();
-	                                oldScale = scale;
-	                            }
-	                        }
-	                        if(scale<1)
-	                        {
-	                            if( getContentHeight()*getScale() > displayHeight )
-	                           		zoomOut();	
-	                        }
-	
-	                        int newDefaultScale = (int) (getScale()*100);
-	                        mPref_web_view = mContext.getSharedPreferences("web_view", 0);
-	                       	mPref_web_view.edit().putInt("KEY_WEB_VIEW_SCALE",newDefaultScale).apply();
-	                     }
-                	 }
-                  }
-                  break;
-               }
-        
+			    case MotionEvent.ACTION_MOVE:
+				    if (mode == DRAG) {
+				    } else if (mode == ZOOM) {
+					    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+						    float newDist = spacing(ev);
+						    if (newDist > 5f) {
+							    scale = newDist / oldDist;
+							    if (scale > 1) {
+								    if (Math.abs(oldScale - scale) > 0.3) {
+									    zoomIn();
+									    oldScale = scale;
+								    }
+							    }
+							    if (scale < 1) {
+								    if (getContentHeight() * getScale() > displayHeight)
+									    zoomOut();
+							    }
+
+							    int newDefaultScale = (int) (getScale() * 100);
+							    mPref_web_view = mContext.getSharedPreferences("web_view", 0);
+							    mPref_web_view.edit().putInt("KEY_WEB_VIEW_SCALE", newDefaultScale).apply();
+						    }
+					    }
+				    }
+				    break;
+		    }// switch
+	    }// if
         return consumed;
     }
 
