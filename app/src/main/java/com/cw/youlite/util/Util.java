@@ -2020,7 +2020,10 @@ public class Util
 				intent = YouTubeIntents.createPlayPlaylistIntent(act, playListIdStr);
             }
 
-			act.startActivityForResult(intent,YOUTUBE_LINK_INTENT);
+	        if(Pref.getPref_is_autoPlay_YouTubeApi(act))
+				act.startActivityForResult(intent,YOUTUBE_LINK_INTENT);
+	        else
+	        	act.startActivity(intent);
 		}
 		// by Chrome browser
 		else if(linkUri.contains("youtube.com"))

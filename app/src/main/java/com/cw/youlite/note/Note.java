@@ -644,7 +644,7 @@ public class Note extends AppCompatActivity
     }
 
 //    //
-//    // Open link of YouTube
+//    // Open link by native YouTube
 //    //
 //    // Due to "AdWords or copyright" server limitation, for some URI,
 //    // "video is not available" message could show up.

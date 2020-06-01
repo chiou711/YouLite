@@ -140,10 +140,10 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
          *  2. for assets mode: need to enable build.gradle assets.srcDirs = ['preferred/assets/']
          */
         /** 1 debug, download */
-//        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_DOWNLOAD);
+        Define.setAppBuildMode(Define.DEBUG_DEFAULT_BY_DOWNLOAD);
 
         /** 2 release, download */
-        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_DOWNLOAD);
+//        Define.setAppBuildMode(Define.RELEASE_DEFAULT_BY_DOWNLOAD);
 
         // Release mode: no debug message
         if (Define.CODE_MODE == Define.RELEASE_MODE) {

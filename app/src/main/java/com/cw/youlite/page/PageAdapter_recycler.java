@@ -354,7 +354,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 							holder.textTitle.setVisibility(View.VISIBLE);
 							holder.rowId.setText(String.valueOf(position + 1));
 							holder.rowId.setTextColor(ColorSet.mText_ColorArray[style]);
-
 						}
 					}
 				});

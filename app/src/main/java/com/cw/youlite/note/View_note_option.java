@@ -94,16 +94,6 @@ class View_note_option {
                         android.R.drawable.ic_menu_send,
                         R.string.mail_notes_btn));
 
-        // auto play
-        if(Pref.getPref_is_autoPlay_YouTubeApi(act))
-            option_list.add(new View_note_option(ID_OPTION_AUTO_PLAY,
-                            R.drawable.btn_radio_on_holo_dark,
-                            R.string.view_note_auto_play));
-        else
-            option_list.add(new View_note_option(ID_OPTION_AUTO_PLAY,
-                            R.drawable.btn_radio_off_holo_dark,
-                            R.string.view_note_auto_play));
-
         // search youtube with keyword
         option_list.add(new View_note_option(ID_OPTION_SEARCH_YOUTUBE ,
                 R.drawable.ic_youtube,
@@ -168,28 +158,6 @@ class View_note_option {
                 }
                 else
                     doMailNote(act);
-            break;
-
-            case ID_OPTION_AUTO_PLAY:
-            {
-                // toggle setting
-                if(Pref.getPref_is_autoPlay_YouTubeApi(act)) {
-                    Pref.setPref_is_autoPlay_YouTubeApi(act,false);
-                    option_list.set(optionId,
-                            new View_note_option(ID_OPTION_AUTO_PLAY,
-                                    R.drawable.btn_radio_off_holo_dark,
-                                    R.string.view_note_auto_play));
-                }
-                else {
-                    Pref.setPref_is_autoPlay_YouTubeApi(act,true);
-                    option_list.set(optionId,
-                            new View_note_option(ID_OPTION_AUTO_PLAY,
-                                    R.drawable.btn_radio_on_holo_dark,
-                                    R.string.view_note_auto_play));
-                }
-
-                mGridIconAdapter.notifyDataSetChanged();
-            }
             break;
 
             case ID_OPTION_SEARCH_YOUTUBE:
