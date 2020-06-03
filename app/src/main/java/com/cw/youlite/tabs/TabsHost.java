@@ -24,6 +24,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.material.tabs.TabLayout;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
@@ -50,10 +53,11 @@ import com.cw.youlite.page.Page_recycler;
 import com.cw.youlite.util.ColorSet;
 import com.cw.youlite.util.Util;
 import com.cw.youlite.util.preferences.Pref;
+
 //if(Define.ENABLE_ADMOB)
-//import com.google.android.gms.ads.AdRequest;
-//import com.google.android.gms.ads.AdView;
-//import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 import java.util.ArrayList;
 
@@ -71,6 +75,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
     public static int firstPos_pageId;
 
     public static boolean isDoingMarking;
+    private AdView adView;
 
     public TabsHost()
     {
@@ -169,15 +174,41 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
         // if ENABLE_ADMOB = true, enable the following
         // test app id
         if(Define.ENABLE_ADMOB) {
-//            if (Define.CODE_MODE == Define.DEBUG_MODE)
-//                MobileAds.initialize(getActivity(), getActivity().getResources().getString(R.string.ad_mob_app_id_test));
-//            else // real app id
-//                MobileAds.initialize(getActivity(), getActivity().getResources().getString(R.string.ad_mob_app_id));
+
+            // old code
+//                if (Define.CODE_MODE == Define.DEBUG_MODE)
+//                    MobileAds.initialize(getActivity(), getActivity().getResources().getString(R.string.ad_mob_app_id_test));
+//                else // real app id
+//                    MobileAds.initialize(getActivity(), getActivity().getResources().getString(R.string.ad_mob_app_id));
 //
-//            // Load an ad into the AdMob banner view.
-//            AdView adView = (AdView) rootView.findViewById(R.id.adView);
-//            AdRequest adRequest = new AdRequest.Builder().build();
-//            adView.loadAd(adRequest);
+//                // Load an ad into the AdMob banner view.
+//                AdView adView = (AdView) rootView.findViewById(R.id.adView);
+//                AdRequest adRequest = new AdRequest.Builder().build();
+//                adView.loadAd(adRequest);
+
+            // new code
+            // Initialize the Mobile Ads SDK.
+            MobileAds.initialize(getActivity(), new OnInitializationCompleteListener() {
+                @Override
+                public void onInitializationComplete(InitializationStatus initializationStatus) {}
+            });
+
+            // get test ads on a physical device
+//            String android_id = Settings.Secure.getString(getActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
+//            String deviceId = md5(android_id).toUpperCase();
+//
+//            Log.d("TabsHost  <deviceId>" , deviceId);
+//
+//            MobileAds.setRequestConfiguration(
+//                    new RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList(deviceId))
+//                            .build());
+
+            // Create an ad request.
+            AdRequest adRequest = new AdRequest.Builder().build();
+
+            adView = rootView.findViewById(R.id.adView);
+            // Start loading the ad in the background.
+            adView.loadAd(adRequest);
         }
         return rootView;
     }

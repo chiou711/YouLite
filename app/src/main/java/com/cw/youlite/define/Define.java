@@ -115,7 +115,7 @@ public class Define {
      * Enable AdMob at page bottom
      *
      ***************************************************************************/
-    public static boolean ENABLE_ADMOB = false; //true; //false;
+    public static boolean ENABLE_ADMOB = true; //true; //false;
 
 
     // Apply system default for picture path

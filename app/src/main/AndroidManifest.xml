@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.cw.youlite"
-    android:versionCode="10227"
-    android:versionName="1.02.27">
+    android:versionCode="10228"
+    android:versionName="1.02.28">
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -87,9 +87,15 @@
             android:name="com.cw.youlite.util.DeleteFileAlarmReceiver"
             android:enabled="true" />
 
+        <!-- AdMob: formal case    -->
+<!--        <meta-data-->
+<!--            android:name="com.google.android.gms.ads.APPLICATION_ID"-->
+<!--            android:value="@string/ad_mob_app_id"/>-->
+
+        <!-- AdMob: debug case        -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/ad_mob_app_id"/>
+            android:value="@string/ad_mob_app_id_test"/>
 
         <!-- fetch Json -->
         <service
