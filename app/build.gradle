@@ -26,10 +26,10 @@ android {
 
     defaultConfig {
         applicationId "com.cw.youlite"
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 29
         multiDexEnabled true
-        signingConfig signingConfigs.debug
+        signingConfig signingConfigs.gdrive
     }
 
     buildTypes {
@@ -80,7 +80,7 @@ dependencies {
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
 
@@ -89,7 +89,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-ads:19.1.0'
 
     // for Google Drive API
-    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.android.gms:play-services-auth:18.0.0'
     implementation 'com.google.android.gms:play-services-drive:17.0.0'
 
     // group: short and best
