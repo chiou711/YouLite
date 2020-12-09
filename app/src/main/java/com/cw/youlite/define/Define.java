@@ -35,19 +35,17 @@ import com.cw.youlite.R;
  */
 public class Define {
 
-    public static int getAppBuildMode() {
-        return app_build_mode;
-    }
-
-    //
     public final static int DEBUG_DEFAULT_BY_DOWNLOAD = 2;
     public final static int RELEASE_DEFAULT_BY_DOWNLOAD = 5;
 
+    public static void setAppBuildMode( ) {
+        /* 1 debug, download */
+//        app_build_mode = DEBUG_DEFAULT_BY_DOWNLOAD;
 
-    public static void setAppBuildMode(int appBuildMode) {
-        app_build_mode = appBuildMode;
+        /* 2 release, download */
+        app_build_mode = RELEASE_DEFAULT_BY_DOWNLOAD;
 
-        switch (appBuildMode)
+        switch (app_build_mode)
         {
             case DEBUG_DEFAULT_BY_DOWNLOAD:
                 CODE_MODE = DEBUG_MODE;
@@ -112,7 +110,10 @@ public class Define {
 
 
     /***************************************************************************
-     * Enable AdMob at page bottom
+     *  Enable AdMob at page bottom
+     *  Need to choose a case in AndroidManifest.xml
+     *     <!-- AdMob: formal case    -->
+     *     <!-- AdMob: debug case    -->
      *
      ***************************************************************************/
     public static boolean ENABLE_ADMOB = true; //true; //false;
