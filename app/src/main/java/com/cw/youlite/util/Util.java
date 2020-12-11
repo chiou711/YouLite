@@ -2020,10 +2020,14 @@ public class Util
 				intent = YouTubeIntents.createPlayPlaylistIntent(act, playListIdStr);
             }
 
-	        if(Pref.getPref_is_autoPlay_YouTubeApi(act))
-				act.startActivityForResult(intent,YOUTUBE_LINK_INTENT);
+	        if (intent.resolveActivity(act.getPackageManager()) != null) {
+		        if(Pref.getPref_is_autoPlay_YouTubeApi(act))
+			        act.startActivityForResult(intent, YOUTUBE_LINK_INTENT);
+		        else
+			        act.startActivity(intent);
+	        }
 	        else
-	        	act.startActivity(intent);
+		        Toast.makeText(act,R.string.toast_check_youtube_installation,Toast.LENGTH_SHORT).show();
 		}
 		// by Chrome browser
 		else if(linkUri.contains("youtube.com"))
@@ -2046,14 +2050,18 @@ public class Util
 		}
 	}
 
-	public static void openLink_YouTube(ListActivity act, String idStr)
+	public static void openSearchLink_YouTube(ListActivity act, String idStr)
 	{
 			System.out.println("Util / _openLink_YouTube / idStr = " + idStr);
 
 			Intent intent = null;
-			if (!Util.isEmptyString(idStr) )
+			if (!Util.isEmptyString(idStr) ) {
 				intent = YouTubeIntents.createPlayVideoIntentWithOptions(act, idStr, false/*fullscreen*/, true/*finishOnEnd*/);
 
-			act.startActivity(intent);
+				if (intent.resolveActivity(act.getPackageManager()) != null)
+					act.startActivity(intent);
+				else
+					Toast.makeText(act,R.string.toast_check_youtube_installation,Toast.LENGTH_SHORT).show();
+			}
 	}
 }

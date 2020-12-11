@@ -375,7 +375,7 @@ public class SearchYouTube extends ListActivity {
                 public void onClick(View v) {
                     String idStr = listIDs.get(position);
                     // apply native YouTube
-                    Util.openLink_YouTube(SearchYouTube.this, idStr);
+                    Util.openSearchLink_YouTube(SearchYouTube.this, idStr);
                 }
             });
             return convertView;
