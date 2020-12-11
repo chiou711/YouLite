@@ -16,4 +16,5 @@
     <string name="toast_edit_drawing_to_portrait">For viewing whole image,please rotate your device orientation to portrait</string>
     <string name="toast_update_database">Update database</string>
     <string name="toast_check_youtube_installation">Please check if YouTube application is installed</string>
+    <string name="toast_check_browser_installation">Please check if browser application is installed</string>
 </resources>

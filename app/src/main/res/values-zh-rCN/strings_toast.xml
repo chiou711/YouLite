@@ -16,4 +16,5 @@
     <string name="toast_edit_drawing_to_portrait">要查看整个图像，请将您的设备方向旋转为纵向</string>
     <string name="toast_update_database">更新数据库</string>
     <string name="toast_check_youtube_installation">请检查是否已安装YouTube应用程序</string>
+    <string name="toast_check_browser_installation">请检查是否安装了浏览器应用程序</string>
 </resources>
