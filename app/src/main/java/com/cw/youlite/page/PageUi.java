@@ -33,7 +33,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Space;
-import android.widget.TextView;
 
 import com.cw.youlite.R;
 import com.cw.youlite.db.DB_folder;
@@ -42,11 +41,9 @@ import com.cw.youlite.folder.FolderUi;
 import com.cw.youlite.main.MainAct;
 import com.cw.youlite.define.Define;
 import com.cw.youlite.tabs.TabsHost;
-import com.cw.youlite.util.TouchableEditText;
+import com.cw.youlite.util.MyEditText;
 import com.cw.youlite.util.Util;
 import com.cw.youlite.util.preferences.Pref;
-
-import java.lang.reflect.Field;
 
 // implement lambda expressions
 public class PageUi
@@ -339,7 +336,7 @@ public class PageUi
 
         // get layout inflater
         View rootView = act.getLayoutInflater().inflate(R.layout.add_new_page, null);
-        final TouchableEditText editPageName = (TouchableEditText)rootView.findViewById(R.id.new_page_name);
+        final MyEditText editPageName = (MyEditText)rootView.findViewById(R.id.new_page_name);
 		final String hintPageName = pageName;
 
 		// set hint

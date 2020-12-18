@@ -21,12 +21,12 @@ import android.util.AttributeSet;
 import androidx.appcompat.widget.AppCompatEditText;
 
 /**
- * Created by cw on 2018/2/6.
+ * Created by cw on 2020/2/18
  */
 
-public class TouchableEditText extends AppCompatEditText {
+public class MyEditText extends AppCompatEditText {
 
-    public TouchableEditText(Context context, AttributeSet attrs) {
+    public MyEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 

@@ -45,7 +45,7 @@
 		android:text="@string/edit_page_tab_message"
 		android:textColor="@android:color/white"/>
 
-	<com.cw.youlite.util.TouchableEditText
+	<com.cw.youlite.util.MyEditText
 		android:id="@+id/new_page_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

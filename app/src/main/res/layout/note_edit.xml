@@ -7,7 +7,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
 			android:layout_width="match_parent"
     		android:layout_height="match_parent"
-    		android:orientation="vertical"      >
+    		android:orientation="vertical"
+			android:theme="@style/Theme.AppCompat">
 <LinearLayout
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
@@ -42,9 +43,8 @@
 		android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
-        <!-- expanded image -->
-	<EditText
-    	android:id="@+id/edit_title" 
+	<com.cw.youlite.util.MyEditText
+    	android:id="@+id/edit_title"
 	  	android:layout_width="0dp"
         android:layout_weight="1"
 		android:layout_height="wrap_content"
@@ -54,6 +54,7 @@
 	    android:textSize="18sp"
 	    android:minLines="2"
 	    android:maxLines="20" />
+		<!-- expanded image -->
 	<ImageView
           android:id="@+id/edit_picture"
           android:layout_width="100dp"

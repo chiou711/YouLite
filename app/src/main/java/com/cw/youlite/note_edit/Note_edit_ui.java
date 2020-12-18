@@ -23,6 +23,7 @@ import com.cw.youlite.main.MainAct;
 import com.cw.youlite.R;
 import com.cw.youlite.db.DB_page;
 import com.cw.youlite.tabs.TabsHost;
+import com.cw.youlite.util.MyEditText;
 import com.cw.youlite.util.image.TouchImageView;
 import com.cw.youlite.util.image.UtilImage_bitmapLoader;
 import com.cw.youlite.util.ColorSet;
@@ -35,7 +36,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 import android.text.Html;
 import android.view.MotionEvent;
@@ -47,7 +47,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class Note_edit_ui {
@@ -60,7 +59,7 @@ public class Note_edit_ui {
 	String oriLinkUri;
 
 	private EditText linkEditText;
-	private EditText titleEditText;
+	private MyEditText titleEditText;
 	private String oriTitle;
 
 	private Long noteId;
@@ -131,7 +130,7 @@ public class Note_edit_ui {
         {
             @Override
             public void onClick(View view) {
-            	if(bShowEnlargedImage == true)
+            	if(bShowEnlargedImage)
             	{
             		closeEnlargedImage();
             		// show soft input
@@ -205,7 +204,7 @@ public class Note_edit_ui {
 		if(block != null)
 			block.setBackgroundColor(ColorSet.mBG_ColorArray[style]);
 
-		titleEditText = (EditText) act.findViewById(R.id.edit_title);
+		titleEditText =  (MyEditText) act.findViewById(R.id.edit_title);
 		linkEditText = (EditText) act.findViewById(R.id.edit_link);
 
 		//set title color
@@ -224,7 +223,7 @@ public class Note_edit_ui {
     	{   @Override
 			public void onClick(View v) 
 			{
-				if(bShowEnlargedImage == true)
+				if(bShowEnlargedImage)
 					closeEnlargedImage();
 			}
 		});
@@ -233,7 +232,7 @@ public class Note_edit_ui {
     	{   @Override
             public void onFocusChange(View v, boolean hasFocus) 
     		{
-    				if(bShowEnlargedImage == true)
+    				if(bShowEnlargedImage)
     					closeEnlargedImage();
             } 
     	});   
@@ -338,6 +337,8 @@ public class Note_edit_ui {
 			String strTitleEdit = dB_page.getNoteTitle_byId(rowId);
 			titleEditText.setText(strTitleEdit);
 			titleEditText.setSelection(strTitleEdit.length());
+			// request cursor
+			titleEditText.requestFocus();
 
 			// link
 			String strLinkEdit = dB_page.getNoteLinkUri_byId(rowId);
@@ -431,6 +432,7 @@ public class Note_edit_ui {
 						public boolean onTouch(View v, MotionEvent event) {
 						        ((EditText) v).setText(hint);
                                 ((EditText) v).setSelection(hint.length());
+                                v.performClick();
 							return false;
 						}
 					});

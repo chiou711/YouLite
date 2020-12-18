@@ -36,7 +36,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.TextView;
 
 import com.cw.youlite.R;
 import com.cw.youlite.db.DB_page;
@@ -45,7 +44,7 @@ import com.cw.youlite.db.DB_drawer;
 import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.main.MainAct;
 import com.cw.youlite.tabs.TabsHost;
-import com.cw.youlite.util.TouchableEditText;
+import com.cw.youlite.util.MyEditText;
 import com.cw.youlite.util.Util;
 import com.cw.youlite.util.preferences.Pref;
 import com.mobeta.android.dslv.DragSortListView;
@@ -83,7 +82,7 @@ public class FolderUi
 
         // get layout inflater
         View rootView = act.getLayoutInflater().inflate(R.layout.add_new_folder, null);
-        final TouchableEditText editFolderName = (TouchableEditText) rootView.findViewById(R.id.new_folder_name);
+        final MyEditText editFolderName = (MyEditText) rootView.findViewById(R.id.new_folder_name);
 
         // set hint
 	    ((EditText)editFolderName).setHint(hintFolderName);
