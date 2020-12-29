@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dp"
-    tools:context="com.cw.youlite.operation.import_export.GDriveRewriteAct">
+    tools:context=".operation.gdrive.GDriveAct">
 
   <EditText
       android:id="@+id/file_title_edittext"
@@ -29,35 +29,19 @@
       android:layout_alignParentBottom="true">
 
     <Button
-        android:id="@+id/open_btn"
+        android:id="@+id/cancel_btn"
         android:layout_height="match_parent"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:text="Open"
+        android:text="Cancel"
         style="?attr/buttonBarButtonStyle" />
 
     <Button
-        android:id="@+id/create_btn"
+        android:id="@+id/overwrite_btn"
         android:layout_height="match_parent"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:text="Create"
-        style="?attr/buttonBarButtonStyle" />
-
-    <Button
-        android:id="@+id/save_btn"
-        android:layout_height="match_parent"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:text="Save"
-        style="?attr/buttonBarButtonStyle" />
-
-    <Button
-        android:id="@+id/query_btn"
-        android:layout_height="match_parent"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:text="Query"
+        android:text="Overwrite"
         style="?attr/buttonBarButtonStyle" />
 
   </LinearLayout>

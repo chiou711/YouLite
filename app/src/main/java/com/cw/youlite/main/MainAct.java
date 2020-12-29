@@ -35,9 +35,9 @@ import com.cw.youlite.folder.FolderUi;
 import com.cw.youlite.note_add.Add_note_option;
 import com.cw.youlite.operation.delete.DeleteFolders;
 import com.cw.youlite.operation.delete.DeletePages;
+import com.cw.youlite.operation.gdrive.GDriveAct;
 import com.cw.youlite.operation.import_export.Export_toSDCardAllJsonFragment;
 import com.cw.youlite.operation.import_export.Export_toSDCardJsonFragment;
-import com.cw.youlite.operation.import_export.GDriveRewriteAct;
 import com.cw.youlite.operation.import_export.Import_filesListJson;
 import com.cw.youlite.operation.import_export.Import_webJsonAct;
 import com.cw.youlite.operation.mail.Mail_filesListJson;
@@ -1318,7 +1318,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 //hide the menu
                 mMenu.setGroupVisible(R.id.group_notes, false);
                 mMenu.setGroupVisible(R.id.group_pages_and_more, false);
-                Intent intent = new Intent(this, GDriveRewriteAct.class);
+                Intent intent = new Intent(this, GDriveAct.class);
                 startActivity(intent);
                 return true;
 

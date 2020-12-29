@@ -86,11 +86,18 @@ dependencies {
 
     // if ENABLE_ADMOB = true, enable the following
     implementation 'androidx.annotation:annotation:1.1.0'
-    implementation 'com.google.android.gms:play-services-ads:19.5.0'
+    implementation 'com.google.android.gms:play-services-ads:19.6.0'
 
     // for Google Drive API
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
-    implementation 'com.google.android.gms:play-services-drive:17.0.0'
+    implementation 'com.google.http-client:google-http-client-gson:1.26.0'
+//    implementation 'com.google.android.gms:play-services-drive:17.0.0'
+    implementation('com.google.api-client:google-api-client-android:1.30.9') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+    implementation('com.google.apis:google-api-services-drive:v3-rev136-1.25.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
 
     // group: short and best
 //    implementation('com.google.api-client:google-api-client-android:1.27.0') {
