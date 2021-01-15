@@ -35,6 +35,7 @@
     <string name="config_SDCard_file_content">档案内容: </string>
     <string name="config_import_SDCard_entry">汇入XML:从SD卡</string>
     <string name="config_import_SDCard_Json_entry">汇入JSON:从SD卡</string>
+    <string name="config_import_GDrive_Json_entry">汇入JSON:从Google Drive</string>
     <string name="config_import_SDCard_title">选择要汇入的档案：</string>
     <string name="config_mail_Json_SDCard_title">选择要寄送的JSON档案:</string>
     <string name="config_import">汇入</string>

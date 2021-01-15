@@ -46,6 +46,7 @@ public class MenuId {
         // operation
         static final int IMPORT_JSON_FROM_WEB = R.id.IMPORT_JSON_FROM_WEB;
         static final int IMPORT_FROM_SD_CARD_JSON = R.id.IMPORT_FROM_SD_CARD_JSON;
+        static final int IMPORT_FROM_GDRIVE_JSON = R.id.IMPORT_FROM_GDRIVE_JSON;
         static final int EXPORT_TO_SD_CARD_JSON = R.id.EXPORT_TO_SD_CARD_JSON;
         static final int EXPORT_TO_SD_CARD_ALL_JSON = R.id.EXPORT_TO_SD_CARD_ALL_JSON;
         static final int EXPORT_TO_GDRIVE_ALL_JSON = R.id.EXPORT_TO_GDrive_ALL_JSON;

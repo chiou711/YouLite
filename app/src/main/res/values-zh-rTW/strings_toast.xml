@@ -17,4 +17,6 @@
     <string name="toast_update_database">更新資料庫</string>
     <string name="toast_check_youtube_installation">請檢查是否已安裝YouTube應用程序</string>
     <string name="toast_check_browser_installation">請檢查是否安裝了瀏覽器應用程序</string>
+    <string name="toast_import_gdrive_json">從Google雲端硬盤導入JSON內容?</string>
+    <string name="toast_export_gdrive_json">將JSON內容導出到Google雲端硬盤?</string>
 </resources>

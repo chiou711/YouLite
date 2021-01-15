@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.cw.youlite.operation.gdrive;
+package com.cw.youlite.operation.GDrvTest1;
 
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -47,7 +47,7 @@ import androidx.core.util.Pair;
 public class DriveServiceHelper {
     private final Executor mExecutor = Executors.newSingleThreadExecutor();
     private final Drive mDriveService;
-    private static final String TAG = "DriveServiceHelper";
+    private static final String TAG = "GDrv";
 
     public DriveServiceHelper(Drive driveService) {
         mDriveService = driveService;
@@ -147,7 +147,7 @@ public class DriveServiceHelper {
 
                 // Convert content to an AbstractInputStreamContent instance.
 //            ByteArrayContent contentStream = ByteArrayContent.fromString("text/plain", content);
-                ByteArrayContent contentStream = ByteArrayContent.fromString("application/json", content);
+            ByteArrayContent contentStream = ByteArrayContent.fromString("application/json", content);
 
                 // Update the metadata and contents.
                 mDriveService.files().update(fileId, metadata, contentStream).execute();

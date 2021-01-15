@@ -35,7 +35,8 @@ import com.cw.youlite.folder.FolderUi;
 import com.cw.youlite.note_add.Add_note_option;
 import com.cw.youlite.operation.delete.DeleteFolders;
 import com.cw.youlite.operation.delete.DeletePages;
-import com.cw.youlite.operation.gdrive.GDriveAct;
+import com.cw.youlite.operation.gdrive.ExportGDriveAct;
+import com.cw.youlite.operation.gdrive.ImportGDriveAct;
 import com.cw.youlite.operation.import_export.Export_toSDCardAllJsonFragment;
 import com.cw.youlite.operation.import_export.Export_toSDCardJsonFragment;
 import com.cw.youlite.operation.import_export.Import_filesListJson;
@@ -1265,6 +1266,13 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 		        }
 		        return true;
 
+            case MenuId.IMPORT_FROM_GDRIVE_JSON:
+                mMenu.setGroupVisible(R.id.group_notes, false);
+                mMenu.setGroupVisible(R.id.group_pages_and_more, false);
+                Intent intent = new Intent(this, ImportGDriveAct.class);
+                startActivity(intent);
+                return true;
+
             case MenuId.EXPORT_TO_SD_CARD_JSON:
                 if( (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) && //API23
                     (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) // check permission
@@ -1318,8 +1326,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 //hide the menu
                 mMenu.setGroupVisible(R.id.group_notes, false);
                 mMenu.setGroupVisible(R.id.group_pages_and_more, false);
-                Intent intent = new Intent(this, GDriveAct.class);
-                startActivity(intent);
+                Intent intnt = new Intent(this, ExportGDriveAct.class);
+                startActivity(intnt);
                 return true;
 
             case MenuId.SEND_JSON:

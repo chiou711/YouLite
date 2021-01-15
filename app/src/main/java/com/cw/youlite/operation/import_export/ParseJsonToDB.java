@@ -205,7 +205,7 @@ public class ParseJsonToDB {
         contentResolver.bulkInsert(Contract.CategoryEntry.CONTENT_URI, contentValues);//The key is the column name for the field.
 
         // level 3 insert content: links to page table
-        //System.out.println("ParseJsonToDB / _parseJsonAndInsertDB / contentList.size() = " + contentList.size());
+        //System.out.println("ParseJsonToDB / _parseJsonAndInsertDB / listL1.size() = " + listL1.size());
         for(int i=0;i<listL1.size();i++) {
             //System.out.println("ParseJsonToDB / _parseJsonAndInsertDB / i = " + i);
             for(int j=0;j<listL1.get(i).size();j++) {

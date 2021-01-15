@@ -121,7 +121,7 @@ public class Util
 {
     SharedPreferences mPref_vibration;
     private static Context mContext;
-	private Activity mAct;
+	private static Activity mAct;
 	private String mEMailString;
     private static DB_folder mDbFolder;
     public static String NEW_LINE = "\r" + System.getProperty("line.separator");
@@ -223,7 +223,7 @@ public class Util
 		return queryAllJsonDB(data);
 	}
 
-	
+
 	// Export data to be SD Card file
 	public void exportToSdCardFile(String filename,String data)
 	{
@@ -352,7 +352,7 @@ public class Util
 		//	JSONObject: link , page (= links + title), category (= pages + category_name) , client ( = categories + clientName)
 		//	JSONArray: links, pages, categories
 
-		DB_drawer dB_drawer = new DB_drawer(MainAct.mAct);
+		DB_drawer dB_drawer = new DB_drawer(mAct);
 		int foldersCount = dB_drawer.getFoldersCount(true);
 
 		JSONArray categories = new JSONArray();
@@ -813,14 +813,14 @@ public class Util
 	 */
 	public static JSONArray getAllJson(int folder_table_id, int tabPos, long noteId) throws JSONException
 	{
-		DB_folder mDb_folder = new DB_folder(MainAct.mAct, folder_table_id);
+		DB_folder mDb_folder = new DB_folder(mAct, folder_table_id);
 		int pageTableId = mDb_folder.getPageTableId(tabPos,true);
 
 		System.out.println("Util / _getJson / pageTableId = " + pageTableId );
 
 		List<Long> noteIdArray = new ArrayList<>();
 
-		DB_page dbPage = new DB_page(MainAct.mAct, pageTableId);
+		DB_page dbPage = new DB_page(mAct, pageTableId);
 		dbPage.open();
 
 		int count = dbPage.getNotesCount(false);

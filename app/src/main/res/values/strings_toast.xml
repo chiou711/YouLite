@@ -17,4 +17,6 @@
     <string name="toast_update_database">Update database</string>
     <string name="toast_check_youtube_installation">Please check if YouTube application is installed</string>
     <string name="toast_check_browser_installation">Please check if browser application is installed</string>
+    <string name="toast_import_gdrive_json">Import JSON content from Google Drive?</string>
+    <string name="toast_export_gdrive_json">Export JSON content to Google Drive?</string>
 </resources>

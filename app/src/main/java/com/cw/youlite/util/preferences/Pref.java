@@ -158,7 +158,7 @@ public class Pref
     {
         SharedPreferences pref = context.getSharedPreferences("show_note_attribute", 0);
         String keyName = "KEY_IS_AUTO_PLAY_YOUTUBE_API";
-        return pref.getBoolean(keyName, false);
+        return pref.getBoolean(keyName, true);
     }
 
     // Set YouTube auto play in note view

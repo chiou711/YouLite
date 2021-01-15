@@ -70,7 +70,9 @@
                   android:configChanges="orientation|screenSize|keyboardHidden"/>
         <activity android:name="com.cw.youlite.operation.import_export.Import_webJsonAct"
             android:theme="@style/MyTheme"/>
-        <activity android:name="com.cw.youlite.operation.gdrive.GDriveAct"
+        <activity android:name="com.cw.youlite.operation.gdrive.ImportGDriveAct"
+            android:theme="@style/MyTheme"/>
+        <activity android:name="com.cw.youlite.operation.gdrive.ExportGDriveAct"
             android:theme="@style/MyTheme"/>
         <activity android:name="com.cw.youlite.operation.gallery.GalleryGridAct"/>
         <activity android:name="com.cw.youlite.operation.gallery.GalleryPagerAct"/>
