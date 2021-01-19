@@ -265,6 +265,7 @@ public class DriveServiceHelper {
                 File metadata = new File()
                         .setParents(root)
 //                        .setMimeType(DriveFolder.MIME_TYPE)
+                        .setMimeType("application/vnd.google-apps.folder")
                         .setName(folderName);
 
                 File googleFile = mDriveService.files().create(metadata).execute();
@@ -417,6 +418,8 @@ public class DriveServiceHelper {
                 // Retrive the metadata as a File object.
                 FileList result = mDriveService.files().list()
 //                        .setQ("mimeType = '" + DriveFolder.MIME_TYPE + "' and name = '" + folderName + "' ")
+                        .setQ("mimeType = " + "'" + "application/vnd.google-apps.folder"+ "'" +
+                                  " and name = " + "'" + folderName + "'")
                         .setSpaces("drive")
                         .execute();
 
