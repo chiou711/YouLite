@@ -91,6 +91,15 @@ public class MainActivity2 extends AppCompatActivity {
                             @Override
                             public void onSuccess(List<GoogleDriveFileHolder> googleDriveFileHolders) {
                                 Gson gson = new Gson();
+
+                                // check folder info
+                                for(int i=0;i<googleDriveFileHolders.size();i++) {
+                                    String jsonStr = gson.toJson(googleDriveFileHolders.get(i));
+                                    FolderInfo folderInfoStr = gson.fromJson(jsonStr, FolderInfo.class);
+                                    System.out.println(TAG + " id=" +  folderInfoStr.id
+                                                                            + " name=" +folderInfoStr.name);
+                                }
+
                                 Log.d(TAG, "onSuccess: " + gson.toJson(googleDriveFileHolders));
                             }
                         })
