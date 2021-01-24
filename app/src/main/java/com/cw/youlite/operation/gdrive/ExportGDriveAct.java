@@ -189,8 +189,8 @@ public class ExportGDriveAct extends AppCompatActivity {
 
             final String file_content = jsonContent;
 
-            mDriveServiceHelper.createJsonFile(file_title)
-                    .addOnSuccessListener(file_Id -> readJsonFile_and_save(file_Id,file_content))
+            mDriveServiceHelper.createJsonFile(file_title,file_content)
+                    .addOnSuccessListener(file_Id ->  exportGDriveJsonSuccess())
                     .addOnFailureListener(exception ->
                             Log.e(TAG, "Couldn't create JSON file.", exception));
         }
@@ -268,14 +268,15 @@ public class ExportGDriveAct extends AppCompatActivity {
             mDriveServiceHelper.saveJsonFile(mOpenFileId, fileName, fileContent)
                     .addOnFailureListener(exception ->
                             Log.e(TAG, "Unable to save file via REST.", exception))
-                    .addOnSuccessListener(nameAndContent -> exportJsonSuccess());
+                    .addOnSuccessListener(nameAndContent -> exportGDriveJsonSuccess());
         }
     }
 
     // toast for Export JSON successfully
-    private void exportJsonSuccess() {
+    private void exportGDriveJsonSuccess() {
         Toast.makeText(this,"Export JSON file successfully",Toast.LENGTH_SHORT).show();
     }
+
 
     /**
      * Updates the UI to read-only mode.

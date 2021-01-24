@@ -26,7 +26,7 @@
         <!-- android:theme="@style/Theme.AppCompat" -->
         <!-- android:theme="@style/CustomTheme" -->
         <activity
-            android:name="com.cw.youlite.operation.GDrvTest2.MainActivity2"
+            android:name="com.cw.youlite.main.MainAct"
             android:theme="@style/MyTheme"
             android:launchMode="singleTop"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize|screenLayout|uiMode"

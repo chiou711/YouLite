@@ -26,6 +26,12 @@
             android:text="create text file" />
 
         <Button
+            android:id="@+id/create_json_file"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="create json file" />
+
+        <Button
             android:id="@+id/create_folder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

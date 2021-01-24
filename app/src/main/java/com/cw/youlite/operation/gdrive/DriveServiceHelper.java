@@ -75,14 +75,21 @@ public class DriveServiceHelper {
     /**
      * Creates a text file in the user's My Drive folder and returns its file ID.
      */
-    public Task<String> createJsonFile(String file_title) {
+    public Task<String> createJsonFile(String file_title,String content) {
         return Tasks.call(mExecutor, () -> {
                 File metadata = new File()
                         .setParents(Collections.singletonList("root"))
                         .setMimeType("text/plain")
                         .setName(file_title);
 
-                File googleFile = mDriveService.files().create(metadata).execute();
+            ByteArrayContent contentStream = ByteArrayContent.fromString("application/json", content);
+
+            // case: w/o content
+//                File googleFile = mDriveService.files().create(metadata).execute();
+
+            // case: w/ content
+            File googleFile = mDriveService.files().create(metadata, contentStream).execute();
+
                 if (googleFile == null) {
                     throw new IOException("Null result when requesting file creation.");
                 }

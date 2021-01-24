@@ -199,6 +199,7 @@ public class DriveServiceHelper {
                 if (googleFile == null) {
                     throw new IOException("Null result when requesting file creation.");
                 }
+
                 GoogleDriveFileHolder googleDriveFileHolder = new GoogleDriveFileHolder();
                 googleDriveFileHolder.setId(googleFile.getId());
                 return googleDriveFileHolder;
