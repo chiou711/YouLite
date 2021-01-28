@@ -150,8 +150,8 @@ public class ImportGDriveAct extends AppCompatActivity {
         new_intent.addFlags(FLAG_ACTIVITY_CLEAR_TASK);
         new_intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
 
-        // reset focus view to default
-        Pref.setPref_focusView_folder_tableId(this, 1);
+        // reset focus view to list view top
+        Pref.setPref_focusView_folder_tableId(this, FolderUi.getTopFolderId(this));
         FolderUi.setFocus_folderPos(0);
         Pref.setPref_focusView_page_tableId(this, 1);
 

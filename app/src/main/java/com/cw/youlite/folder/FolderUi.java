@@ -224,6 +224,13 @@ public class FolderUi
         });
     }
 
+    // get list view top folder Id
+	public static int getTopFolderId(Activity act){
+
+		DB_drawer db_drawer = new DB_drawer(act);
+		return db_drawer.getFolderTableId(0,true);
+	}
+
 
 	/**
 	 * delete selected folder

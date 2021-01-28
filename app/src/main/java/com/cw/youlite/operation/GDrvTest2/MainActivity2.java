@@ -147,17 +147,17 @@ public class MainActivity2 extends AppCompatActivity {
                     return;
                 }
 
-                // JSON file name
-                String fileName = "YouLiteJson";
+                // JSON folder name
+                String folderName = "YouLiteJson";
 
-                mDriveServiceHelper.searchFolder(fileName)
+                mDriveServiceHelper.searchFolder(folderName)
                         .addOnSuccessListener(new OnSuccessListener<List<GoogleDriveFileHolder>>() {
                             @Override
                             public void onSuccess(List<GoogleDriveFileHolder> googleDriveFileHolders) {
                                 Gson gson = new Gson();
                                 Log.d(TAG, "search Json folder onSuccess: " + gson.toJson(googleDriveFileHolders));
 
-                                createFileInExistingJsonFolder(fileName, googleDriveFileHolders);
+                                createJsonFile_targetFolder(folderName, googleDriveFileHolders);
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
@@ -165,7 +165,7 @@ public class MainActivity2 extends AppCompatActivity {
                             public void onFailure(@NonNull Exception e) {
                                 Log.d(TAG, "search Json folder onFailure: " + e.getMessage());
 
-                                createJsonFolderAndFile(fileName);
+                                createJsonFile_newFolder(folderName);
                             }
                         });
 
@@ -276,13 +276,12 @@ public class MainActivity2 extends AppCompatActivity {
             }
         });
 
-
     }
 
     //
-    // create file in existing JSON folder
+    // create JSON file in target folder
     //
-    void createFileInExistingJsonFolder(String fileName,List<GoogleDriveFileHolder> googleDriveFileHolders) {
+    void createJsonFile_targetFolder(String folderName, List<GoogleDriveFileHolder> googleDriveFileHolders) {
         String destination_id = null;
         // check folder info
         Gson gson = new Gson();
@@ -292,17 +291,17 @@ public class MainActivity2 extends AppCompatActivity {
             System.out.println(TAG + "createFileInJsonFolder  id=" +  folderInfoStr.id
                     + " name=" +folderInfoStr.name);
 
-            if(folderInfoStr.name.equalsIgnoreCase(fileName)) {
+            if(folderInfoStr.name.equalsIgnoreCase(folderName)) {
                 destination_id = folderInfoStr.id;
                 break;
             }
         }
 
         if(destination_id == null) // includes [] case
-            createJsonFolderAndFile(fileName);
+            createJsonFile_newFolder(folderName);
         else {
             // existing folder case
-            mDriveServiceHelper.createTextFile(fileName, "JSON file content", destination_id)
+            mDriveServiceHelper.createTextFile("JsonFileName.json", "JSON file content", destination_id)
                 .addOnSuccessListener(new OnSuccessListener<GoogleDriveFileHolder>() {
                     @Override
                     public void onSuccess(GoogleDriveFileHolder googleDriveFileHolder) {
@@ -321,10 +320,10 @@ public class MainActivity2 extends AppCompatActivity {
     }
 
     //
-    // create JSON folder and also the file
+    // create JSON file folder in new folder
     //
-    void createJsonFolderAndFile(String fileName) {
-        mDriveServiceHelper.createFolder(fileName, null)
+    void createJsonFile_newFolder(String folderName) {
+        mDriveServiceHelper.createFolder(folderName, null)
                 .addOnSuccessListener(new OnSuccessListener<GoogleDriveFileHolder>() {
                     @Override
                     public void onSuccess(GoogleDriveFileHolder googleDriveFileHolder) {
@@ -334,7 +333,7 @@ public class MainActivity2 extends AppCompatActivity {
                         // check folder info
                         String jsonStr = gson.toJson(googleDriveFileHolder);
                         FolderInfo folderInfoStr = gson.fromJson(jsonStr, FolderInfo.class);
-                        mDriveServiceHelper.createTextFile(fileName, "JSON file content",  folderInfoStr.id);
+                        mDriveServiceHelper.createTextFile(folderName, "JSON file content",  folderInfoStr.id);
 
                     }
                 })
