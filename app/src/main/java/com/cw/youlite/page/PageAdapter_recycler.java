@@ -247,7 +247,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 		if( Util.isEmptyString(strTitle) )
 		{
 			if(Util.isYouTubeLink(linkUri)) {
-				strTitle = Util.getYouTubeTitle(linkUri);
+				strTitle = "";//Util.getYouTubeTitle(linkUri);
 				holder.textTitle.setVisibility(View.VISIBLE);
 				holder.textTitle.setText(strTitle);
 				holder.textTitle.setTextColor(Color.GRAY);

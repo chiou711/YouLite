@@ -51,8 +51,10 @@ public class MainUi {
      * Add note with Intent link
      */
     String title;
-    String addNote_IntentLink(Intent intent,final AppCompatActivity act)
+    String addNote_IntentLink(Intent intent,final AppCompatActivity act,boolean isAdded_onNewIntent)
     {
+        System.out.println("MainUi / _addNote_IntentLink /  ");
+
         Bundle extras = intent.getExtras();
         String pathOri = null;
         String path;
@@ -107,27 +109,29 @@ public class MainUi {
             // update title: YouTube
             if( Util.isYouTubeLink(path))
             {
-                title = Util.getYouTubeTitle(path);
+                Util.request_and_save_youTubeTitle(path,isAdded_onNewIntent);
 
-                if(pref_show_note_attribute
-                        .getString("KEY_ENABLE_LINK_TITLE_SAVE", "yes")
-                        .equalsIgnoreCase("yes"))
-                {
-                    Date now = new Date();
+//                title = Util.getYouTubeTitle(path);
 
-                    long row_id;
-                    if(isAddedToTop)
-                        row_id = dB_page.getNoteId(0,true);
-                    else
-                        row_id = dB_page.getNoteId(count-1,true);
-
-                    dB_page.updateNote(row_id, title, "",  path, 0, now.getTime(), true); // update note
-                }
-
-                Toast.makeText(act,
-                        act.getResources().getText(R.string.add_new_note_option_title) + title,
-                        Toast.LENGTH_SHORT)
-                        .show();
+//                if(pref_show_note_attribute
+//                        .getString("KEY_ENABLE_LINK_TITLE_SAVE", "yes")
+//                        .equalsIgnoreCase("yes"))
+//                {
+//                    Date now = new Date();
+//
+//                    long row_id;
+//                    if(isAddedToTop)
+//                        row_id = dB_page.getNoteId(0,true);
+//                    else
+//                        row_id = dB_page.getNoteId(count-1,true);
+//
+//                    dB_page.updateNote(row_id, title, "",  path, 0, now.getTime(), true); // update note
+//                }
+//
+//                Toast.makeText(act,
+//                        act.getResources().getText(R.string.add_new_note_option_title) + title,
+//                        Toast.LENGTH_SHORT)
+//                        .show();
             }
             // update title: Web page
             else if(!Util.isEmptyString(path) &&

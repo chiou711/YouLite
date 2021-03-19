@@ -40,12 +40,14 @@ public class Folder
     public SimpleDragSortCursorAdapter adapter;
     private DragSortController controller;
     private AppCompatActivity act;
+    DB_drawer dB_drawer;
     private SimpleDragSortCursorAdapter folderAdapter;
 
     public Folder(AppCompatActivity act)
     {
         this.act = act;
         listView = (DragSortListView) act.findViewById(R.id.drawer_listview);
+        dB_drawer = new DB_drawer(act);
         initFolder();
     }
 
@@ -53,7 +55,7 @@ public class Folder
     private void initFolder()
     {
         // set Folder title
-        DB_drawer dB_drawer = new DB_drawer(act);
+        dB_drawer = new DB_drawer(act);
         for(int i = 0; i< dB_drawer.getFoldersCount(true); i++)
         {
             if(MainAct.mFolderTitles != null) {

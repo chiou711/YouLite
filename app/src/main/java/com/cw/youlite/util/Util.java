@@ -33,6 +33,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -42,8 +43,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.cw.youlite.db.DB_drawer;
 import com.cw.youlite.main.MainAct;
+import com.cw.youlite.operation.youtube.YouTubeDeveloperKey;
 import com.cw.youlite.page.Checked_notes_option;
 import com.cw.youlite.R;
 import com.cw.youlite.db.DB_folder;
@@ -1621,34 +1627,108 @@ public class Util
 	}
 
 	// Get YouTube title
+	// note: this function is now working now, reason is unknown, replace it by  _requestYouTube_title
 	public static String getYouTubeTitle(String youtubeUrl)
 	{
-    		URL embeddedURL = null;
-    		if (youtubeUrl != null) 
-    		{
-    			try {
-					embeddedURL = new URL("http://www.youtube.com/oembed?url=" +
-										   youtubeUrl +
-										   "&format=json");
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				}
-    		}
+        URL embeddedURL = null;
+        if (youtubeUrl != null)
+        {
+            try {
+				embeddedURL = new URL("http://www.youtube.com/oembed?url=" +
+									   youtubeUrl +
+									   "&format=json");
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+        }
 
-			JsonAsync jsonAsyncTask = new JsonAsync();
-    		jsonAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,embeddedURL);
-    		isTimeUp = false;
-			setupLongTimeout(1000);
+		JsonAsync jsonAsyncTask = new JsonAsync();
+        jsonAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,embeddedURL);
+        isTimeUp = false;
+		setupLongTimeout(1000);
 
-			while(Util.isEmptyString(jsonAsyncTask.title) && (!isTimeUp))
-    		{
-    			//Add for Android 7.1.1 hang up after adding YouTube link
-				try { Thread.sleep(100); } catch (InterruptedException e) {}
-    		}
-    		isTimeUp = true;
-	        return jsonAsyncTask.title;
+		while(Util.isEmptyString(jsonAsyncTask.title) && (!isTimeUp))
+        {
+            //Add for Android 7.1.1 hang up after adding YouTube link
+			try { Thread.sleep(100); } catch (InterruptedException e) {}
+        }
+        isTimeUp = true;
+        return jsonAsyncTask.title;
 	}
 
+
+    // Request YouTube title via Volley and save it tot DB
+    // cf: https://stackoverflow.com/questions/44941341/how-to-get-the-title-of-youtube-video-through-the-youtube-api
+    public static String title;
+	public static void request_and_save_youTubeTitle(String youtubeUrl,boolean isAdded_onNewIntent){
+		System.out.println("Util / _request_and_save_youTubeTitle / youtubeUrl = " + youtubeUrl);
+
+		String idStr = Util.getYoutubeId(youtubeUrl);
+		title = null;
+		String urlStr = "https://www.googleapis.com/youtube/v3/videos?id=" +
+								idStr +
+								"&key=" +
+								YouTubeDeveloperKey.DEVELOPER_KEY +
+								"&part=snippet,contentDetails,statistics,status";
+
+		// volley
+		StringRequest stringRequest = new StringRequest(
+				Request.Method.GET,
+				urlStr,
+				response -> {
+					try {
+						JSONObject jsonObject = new JSONObject(response);
+						JSONArray jsonArray = jsonObject.getJSONArray("items");
+
+						JSONObject object = jsonArray.getJSONObject(0);
+						JSONObject snippet = object.getJSONObject("snippet");
+
+						title = snippet.getString("title");
+						System.out.println("Util / _request_and_save_youTubeTitle / title = " + title);
+
+						// save title to DB
+						SharedPreferences pref_show_note_attribute = MainAct.mAct.getSharedPreferences("add_new_note_option", 0);
+						boolean isAddedToTop = pref_show_note_attribute.getString("KEY_ADD_NEW_NOTE_TO","bottom").equalsIgnoreCase("top");
+
+						DB_page dB_page = new DB_page(MainAct.mAct,Pref.getPref_focusView_page_tableId(MainAct.mAct));
+						int count = dB_page.getNotesCount(true);
+
+						if(pref_show_note_attribute
+								.getString("KEY_ENABLE_LINK_TITLE_SAVE", "yes")
+								.equalsIgnoreCase("yes"))
+						{
+							Date now = new Date();
+
+							long row_id;
+							if(isAddedToTop)
+								row_id = dB_page.getNoteId(0,true);
+							else
+								row_id = dB_page.getNoteId(count-1,true);
+
+							dB_page.updateNote(row_id, title, "",  youtubeUrl, 0, now.getTime(), true); // update note
+						}
+
+						Toast.makeText(MainAct.mAct,
+								MainAct.mAct.getResources().getText(R.string.add_new_note_option_title) + title,
+								Toast.LENGTH_SHORT)
+								.show();
+
+						if(!isAdded_onNewIntent)
+							MainAct.mAct.finish();
+
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				},
+				error -> Toast.makeText(MainAct.mAct, error.getMessage(), Toast.LENGTH_LONG).show()){};
+
+		// Request (if not using Singleton [RequestHandler]
+		 RequestQueue requestQueue = Volley.newRequestQueue(MainAct.mAct);
+		 requestQueue.add(stringRequest);
+
+		// Request with RequestHandler (Singleton: if created)
+//		Request.getInstance(MainAct.mAct).addToRequestQueue(stringRequest);
+	}
 
 	// Set Http title
 	static String httpTitle;

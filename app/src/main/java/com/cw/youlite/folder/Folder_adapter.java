@@ -37,17 +37,17 @@ import static com.cw.youlite.db.DB_drawer.KEY_FOLDER_TITLE;
 
 public class Folder_adapter extends SimpleDragSortCursorAdapter
 {
-    int cursor_count;
     Folder_adapter(Context context, int layout, Cursor c,
             String[] from, int[] to, int flags)
     {
         super(context, layout, c, from, to, flags);
-        cursor_count = c.getCount();
     }
 
     @Override
     public int getCount() {
-        return cursor_count;
+        DB_drawer db_drawer = new DB_drawer(MainAct.mAct);
+        int count = db_drawer.getFoldersCount(true);
+        return count;
     }
 
     @Override
@@ -81,22 +81,9 @@ public class Folder_adapter extends SimpleDragSortCursorAdapter
             viewHolder = (ViewHolder) convertView.getTag();
 
         DB_drawer db_drawer = new DB_drawer(MainAct.mAct);
-        db_drawer.open();
+        viewHolder.folderTitle.setText(db_drawer.getFolderTitle(position,true));
 
-        Cursor cursor = db_drawer.mCursor_folder;
-        cursor.moveToPosition(position);
-        String folder_title="";
-        try {
-            folder_title =cursor.getString(cursor.getColumnIndex(KEY_FOLDER_TITLE));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        db_drawer.close();
-
-        viewHolder.folderTitle.setText(folder_title);
-
-        // dragger
+        // draggable
         SharedPreferences pref = MainAct.mAct.getSharedPreferences("show_note_attribute", 0);;
         if(pref.getString("KEY_ENABLE_FOLDER_DRAGGABLE", "no").equalsIgnoreCase("yes"))
             viewHolder.dragIcon.setVisibility(View.VISIBLE);

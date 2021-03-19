@@ -41,7 +41,7 @@ public class Drawer {
 
 
     public static DrawerLayout drawerLayout;
-    private AppCompatActivity act;
+    private final AppCompatActivity act;
     public ActionBarDrawerToggle drawerToggle;
     public static NavigationView mNavigationView;
     DragSortListView listView;

@@ -20,11 +20,8 @@ import com.cw.youlite.R;
 import com.cw.youlite.db.DB_page;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.image.TouchImageView;
-import com.cw.youlite.util.ColorSet;
 import com.cw.youlite.util.Util;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.AlertDialog.Builder;
@@ -41,7 +38,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class Note_edit extends Activity 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+public class Note_edit extends AppCompatActivity
 {
 
     private Long noteId, createdTime;
@@ -53,6 +54,8 @@ public class Note_edit extends Activity
     TouchImageView enlargedImage;
     int position;
     final int EDIT_LINK = 1;
+	static final int CHANGE_LINK = R.id.ADD_LINK;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) 
     {
@@ -74,9 +77,17 @@ public class Note_edit extends Activity
         
 		enlargedImage = (TouchImageView)findViewById(R.id.expanded_image);
 
-		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setBackgroundDrawable(new ColorDrawable(ColorSet.getBarColor(this)));
+	    Toolbar toolbar = (Toolbar) findViewById(R.id.recorder_toolbar);
+	    toolbar.setPopupTheme(R.style.ThemeOverlay_AppCompat_Light);
+	    if (toolbar != null)
+		    setSupportActionBar(toolbar);
+
+	    ActionBar actionBar = getSupportActionBar();
+	    if (actionBar != null) {
+		    actionBar.setTitle(R.string.edit_note_title);
+		    actionBar.setDisplayHomeAsUpEnabled(true);
+		    actionBar.setDisplayShowHomeEnabled(true);
+	    }
 
     	Bundle extras = getIntent().getExtras();
     	position = extras.getInt("list_view_position");
@@ -314,9 +325,6 @@ public class Note_edit extends Activity
 	    }
     }
     
-    static final int CHANGE_LINK = R.id.ADD_LINK;
-	private Uri picUri;
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -406,48 +414,8 @@ public class Note_edit extends Activity
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent)
 	{
-		// take picture
-		if (requestCode == Util.ACTIVITY_TAKE_PICTURE)
-		{
-			if (resultCode == Activity.RESULT_OK)
-			{
-				picUri = Uri.parse(note_edit_ui.currPictureUri);
-//				String str = getResources().getText(R.string.note_take_picture_OK ).toString();
-//	            Toast.makeText(Note_edit.this, str + " " + imageUri.toString(), Toast.LENGTH_SHORT).show();
-				note_edit_ui.populateFields_all(noteId);
-	            bUseCameraImage = true;
-			}
-			else if (resultCode == RESULT_CANCELED)
-			{
-				bUseCameraImage = false;
-				{
-					// skip new Uri, roll back to original one
-					note_edit_ui.currPictureUri = note_edit_ui.oriPictureUri;
-			    	picUriStr = note_edit_ui.oriPictureUri;
-					Toast.makeText(Note_edit.this, R.string.note_cancel_add_new, Toast.LENGTH_LONG).show();
-				}
-				
-				enSaveDb = true;
-				note_edit_ui.saveStateInDB(noteId, enSaveDb, picUriStr);
-				note_edit_ui.populateFields_all(noteId);
-			}
-		}
-		
-		// choose picture
-        if(requestCode == Util.CHOOSER_SET_PICTURE && resultCode == Activity.RESULT_OK)
-        {
-			String pictureUri = Util.getPicturePathOnActivityResult(this,returnedIntent);
-        	System.out.println("Note_edit / _onActivityResult / picUri = " + pictureUri);
-        	
-        	noteId = note_edit_ui.saveStateInDB(noteId,true,pictureUri );
+		super.onActivityResult(requestCode,resultCode,returnedIntent);
 
-			note_edit_ui.populateFields_all(noteId);
-			
-            // set for Rotate any times
-            bUseCameraImage = true;
-            picUriStr = note_edit_ui.currPictureUri; // for pause
-        }
-        
         // choose link
 		if(requestCode == EDIT_LINK)
 		{

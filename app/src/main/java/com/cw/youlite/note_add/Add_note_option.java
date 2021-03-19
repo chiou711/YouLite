@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cw.youlite.R;
+import com.cw.youlite.folder.FolderUi;
 import com.cw.youlite.util.Util;
 
 import java.util.ArrayList;
@@ -182,6 +183,8 @@ public class Add_note_option {
             case ID_NEW_BACK:
             {
                 dlgAddNew.dismiss();
+                // for showing new added title, otherwise will show N/A
+                FolderUi.selectFolder(act,FolderUi.getFocus_folderPos());
             }
             break;
 

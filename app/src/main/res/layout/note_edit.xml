@@ -4,7 +4,15 @@
 <!-- body header 		   -->
 <!-- body Edit 			   -->
 <!-- bottoms 			   -->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:id="@+id/edit_main"
+	android:orientation="vertical"      >
+<include android:id="@+id/recorder_toolbar"
+	layout="@layout/recording_toolbar"
+	 />
+<ScrollView
 			android:layout_width="match_parent"
     		android:layout_height="match_parent"
     		android:orientation="vertical"
@@ -169,3 +177,4 @@
 
 </LinearLayout>
 </ScrollView>
+</LinearLayout>
