@@ -16,7 +16,6 @@
 
 package com.cw.youlite.note;
 
-import com.cw.youlite.note_edit.Note_edit;
 import com.cw.youlite.R;
 import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.db.DB_page;
@@ -34,7 +33,6 @@ import com.cw.youlite.operation.mail.MailNotes;
 import com.cw.youlite.util.uil.UilCommon;
 import com.cw.youlite.util.Util;
 
-import android.R.color;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -78,22 +76,16 @@ public class Note extends AppCompatActivity
     public DB_page mDb_page;
     public static Long mNoteId;
     int mEntryPosition;
-    int EDIT_CURRENT_VIEW = 5;
-    int MAIL_CURRENT_VIEW = 6;
     static int mStyle;
     
     static SharedPreferences mPref_show_note_attribute;
 
-    Button editButton;
     Button optionButton;
     Button backButton;
 
     public AppCompatActivity act;
     public static int mPlayVideoPositionOfInstance;
-
 	public static int mCurrentState;
-	public final static int STATE_PAUSED = 0;
-	public final static int STATE_PLAYING = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) 
@@ -245,23 +237,6 @@ public class Note extends AppCompatActivity
 		// Note: if viewPager.getCurrentItem() is not equal to mEntryPosition, _onPageSelected will
 		//       be called again after rotation
 		viewPager.setOnPageChangeListener(onPageChangeListener);//todo deprecated
-
-		// edit note button
-		editButton = (Button) findViewById(R.id.view_edit);
-		editButton.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_menu_edit, 0, 0, 0);
-		editButton.setOnClickListener(new View.OnClickListener()
-		{
-			public void onClick(View view)
-			{
-				Intent intent = new Intent(Note.this, Note_edit.class);
-				intent.putExtra(DB_page.KEY_NOTE_ID, mNoteId);
-				intent.putExtra(DB_page.KEY_NOTE_TITLE, mDb_page.getNoteTitle_byId(mNoteId));
-				intent.putExtra(DB_page.KEY_NOTE_PICTURE_URI , mDb_page.getNotePictureUri_byId(mNoteId));
-				intent.putExtra(DB_page.KEY_NOTE_LINK_URI , mDb_page.getNoteLinkUri_byId(mNoteId));
-				intent.putExtra(DB_page.KEY_NOTE_CREATED, mDb_page.getNoteCreatedTime_byId(mNoteId));
-				startActivityForResult(intent, EDIT_CURRENT_VIEW);
-			}
-		});
 
 		// send note button
 		optionButton = (Button) findViewById(R.id.view_option);
