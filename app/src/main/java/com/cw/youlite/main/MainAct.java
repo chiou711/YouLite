@@ -127,6 +127,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     public final static int STATE_PAUSED = 0;
     public final static int STATE_PLAYING = 1;
     public boolean bEULA_accepted;
+    public static boolean isEdited_link;
+    public static int edit_position;
 
 	// Main Act onCreate
     @Override
@@ -216,6 +218,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 doCreate(savedInstanceState);
         }
 
+        isEdited_link = false;
+        edit_position = 0;
     }
 
     // Do major create operation
@@ -429,7 +433,12 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     {
         super.onNewIntent(intent);
         System.out.println("MainAct / _onNewIntent ");
-        if(!isAdded_onNewIntent)
+
+        if(isEdited_link) {
+            System.out.println("MainAct / _onNewIntent / call Edited link");
+            mMainUi.editNote_IntentLink(intent, mAct, isAdded_onNewIntent,edit_position);
+        }
+        else if(!isAdded_onNewIntent)
         {
             if(Build.VERSION.SDK_INT >= O)//API26
                 isAdded_onNewIntent = true; // fix 2 times _onNewIntent on API26

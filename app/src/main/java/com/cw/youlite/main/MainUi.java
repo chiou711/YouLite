@@ -93,6 +93,8 @@ public class MainUi {
             }
 
             System.out.println("MainUi / _addNote_IntentLink / path = " + path);
+
+            // insert link
             DB_page dB_page = new DB_page(act,Pref.getPref_focusView_page_tableId(act));
             dB_page.insertNote("", "",  path,  0, (long) 0);// add new note, get return row Id
 
@@ -106,33 +108,10 @@ public class MainUi {
             if( isAddedToTop && (count > 1) )
                 TabsHost.getCurrentPage().swapTopBottom();
 
-            // update title: YouTube
+            // update link title: YouTube
             if( Util.isYouTubeLink(path))
-            {
                 Util.request_and_save_youTubeTitle(path,isAdded_onNewIntent);
 
-//                title = Util.getYouTubeTitle(path);
-
-//                if(pref_show_note_attribute
-//                        .getString("KEY_ENABLE_LINK_TITLE_SAVE", "yes")
-//                        .equalsIgnoreCase("yes"))
-//                {
-//                    Date now = new Date();
-//
-//                    long row_id;
-//                    if(isAddedToTop)
-//                        row_id = dB_page.getNoteId(0,true);
-//                    else
-//                        row_id = dB_page.getNoteId(count-1,true);
-//
-//                    dB_page.updateNote(row_id, title, "",  path, 0, now.getTime(), true); // update note
-//                }
-//
-//                Toast.makeText(act,
-//                        act.getResources().getText(R.string.add_new_note_option_title) + title,
-//                        Toast.LENGTH_SHORT)
-//                        .show();
-            }
             // update title: Web page
             else if(!Util.isEmptyString(path) &&
                     path.startsWith("http")   &&
@@ -188,6 +167,117 @@ public class MainUi {
                     TabsHost.getCurrentPage().swapTopBottom();
                 }
 
+                Toast.makeText(act,
+                        act.getResources().getText(R.string.add_new_note_option_title) + title,
+                        Toast.LENGTH_SHORT)
+                        .show();
+            }
+
+            return title;
+        }
+        else
+            return null;
+    }
+
+    /**
+     * Edit note with Intent link
+     */
+    String editNote_IntentLink(Intent intent,final AppCompatActivity act,boolean isEdited_onNewIntent,int position)
+    {
+        System.out.println("MainUi / _editNote_IntentLink /  ");
+
+        Bundle extras = intent.getExtras();
+        String pathOri = null;
+        String path;
+        if(extras != null)
+            pathOri = extras.getString(Intent.EXTRA_TEXT);
+        else
+            System.out.println("MainUi / _editNote_IntentLink / extras == null");
+
+        path = pathOri;
+
+        if(!Util.isEmptyString(pathOri))
+        {
+            System.out.println("MainUi / _editNote_IntentLink / pathOri = " + pathOri);
+            // for SoundCloud case, path could contain other strings before URI path
+            if(pathOri.contains("http"))
+            {
+                String[] str = pathOri.split("http");
+
+                for(int i=0;i< str.length;i++)
+                {
+                    if(str[i].contains("://"))
+                        path = "http".concat(str[i]);
+                }
+            }
+
+            DB_drawer db_drawer = new DB_drawer(act);
+            int folders_count = db_drawer.getFoldersCount(true);
+
+            DB_folder db_folder = new DB_folder(act, Pref.getPref_focusView_folder_tableId(act));
+            int pages_count = db_folder.getPagesCount(true);
+
+            if((folders_count == 0) || (pages_count == 0))
+            {
+                Toast.makeText(act,"No folder or no page yet, please add a new one in advance.",Toast.LENGTH_LONG).show();
+                return null;
+            }
+
+            System.out.println("MainUi / _editNote_IntentLink / path = " + path);
+
+            // save to top or to bottom
+            final String link =path;
+
+            // update link title: YouTube
+            if( Util.isYouTubeLink(path))
+                Util.request_save_and_edit_youTubeTitle(path,isEdited_onNewIntent,position);
+
+                // update title: Web page
+            else if(!Util.isEmptyString(path) &&
+                    path.startsWith("http")   &&
+                    !Util.isYouTubeLink(path)   )
+            {
+//                System.out.println("MainUi / _editNote_IntentLink / Web page");
+                title = path; //set default
+                final CustomWebView web = new CustomWebView(act);
+                web.loadUrl(path);
+                web.setVisibility(View.INVISIBLE);
+
+                web.setWebChromeClient(new WebChromeClient() {
+                    @Override
+                    public void onReceivedTitle(WebView view, String titleReceived) {
+                        super.onReceivedTitle(view, titleReceived);
+//                        System.out.println("MainUi / _editNote_IntentLink / Web page / onReceivedTitle");
+                        if (!TextUtils.isEmpty(titleReceived) &&
+                                !titleReceived.equalsIgnoreCase("about:blank"))
+                        {
+                            SharedPreferences pref_show_note_attribute = act.getSharedPreferences("add_new_note_option", 0);
+                            if(pref_show_note_attribute
+                                    .getString("KEY_ENABLE_LINK_TITLE_SAVE", "yes")
+                                    .equalsIgnoreCase("yes"))
+                            {
+                                Date now = new Date();
+                                DB_page dB_page = new DB_page(act, Pref.getPref_focusView_page_tableId(act));
+                                long row_id;
+                                row_id = dB_page.getNoteId(position,true);
+                                dB_page.updateNote(row_id, titleReceived, "",  link,  0, now.getTime(), true); // update note
+                            }
+
+                            Toast.makeText(act,
+                                    act.getResources().getText(R.string.add_new_note_option_title) + titleReceived,
+                                    Toast.LENGTH_SHORT)
+                                    .show();
+                            CustomWebView.pauseWebView(web);
+                            CustomWebView.blankWebView(web);
+
+                            title = titleReceived;
+                        }
+                    }
+                });
+            }
+            else // other
+            {
+                title = pathOri;
                 Toast.makeText(act,
                         act.getResources().getText(R.string.add_new_note_option_title) + title,
                         Toast.LENGTH_SHORT)

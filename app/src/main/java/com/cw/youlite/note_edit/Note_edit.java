@@ -18,6 +18,7 @@ package com.cw.youlite.note_edit;
 
 import com.cw.youlite.R;
 import com.cw.youlite.db.DB_page;
+import com.cw.youlite.main.MainAct;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.image.TouchImageView;
 import com.cw.youlite.util.Util;
@@ -49,7 +50,6 @@ public class Note_edit extends AppCompatActivity
     private String title, picUriStr,  linkUri;
     Note_edit_ui note_edit_ui;
     private boolean enSaveDb = true;
-    boolean bUseCameraImage;
     DB_page dB;
     TouchImageView enlargedImage;
     int position;
@@ -101,7 +101,6 @@ public class Note_edit extends AppCompatActivity
         //initialization
         note_edit_ui = new Note_edit_ui(this, dB, noteId, title, picUriStr, linkUri,  createdTime);
         note_edit_ui.UI_init();
-        bUseCameraImage = false;
 
         if(savedInstanceState != null)
         {
@@ -258,22 +257,11 @@ public class Note_edit extends AppCompatActivity
         super.onSaveInstanceState(outState);
 
         System.out.println("Note_edit / onSaveInstanceState / enSaveDb = " + enSaveDb);
-        System.out.println("Note_edit / onSaveInstanceState / bUseCameraImage = " + bUseCameraImage);
+//        System.out.println("Note_edit / onSaveInstanceState / bUseCameraImage = " + bUseCameraImage);
 
         if(note_edit_ui.bRemovePictureUri)
     	    outState.putBoolean("removeOriginalPictureUri",true);
 
-        if(bUseCameraImage)
-        {
-        	outState.putBoolean("UseCameraImage",true);
-        	outState.putString("showCameraImageUri", picUriStr);
-        }
-        else
-        {
-        	outState.putBoolean("UseCameraImage",false);
-        	outState.putString("showCameraImageUri", "");
-        }
-        
         noteId = note_edit_ui.saveStateInDB(noteId, enSaveDb, picUriStr);
         outState.putSerializable(DB_page.KEY_NOTE_ID, noteId);
         
@@ -285,8 +273,6 @@ public class Note_edit extends AppCompatActivity
     {
     	super.onRestoreInstanceState(savedInstanceState);
 
-    	bUseCameraImage = savedInstanceState.getBoolean("UseCameraImage");
-    	
     	System.out.println("Note_edit / onRestoreInstanceState / savedInstanceState.getBoolean removeOriginalPictureUri =" +
     							savedInstanceState.getBoolean("removeOriginalPictureUri"));
         if(savedInstanceState.getBoolean("removeOriginalPictureUri"))
@@ -387,9 +373,12 @@ public class Note_edit extends AppCompatActivity
 			@Override
 			public void onClick(DialogInterface dialog, int which) 
 			{
+				System.out.println("Note_edit  / onClick:  select YouTube link");
 	        	Intent intent_youtube_link = new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.youtube.com"));
 	        	startActivityForResult(intent_youtube_link,EDIT_LINK);
 	        	enSaveDb = false;
+				MainAct.isEdited_link = true;
+				MainAct.edit_position = position;
 			}
 		});
 		// None
@@ -416,12 +405,16 @@ public class Note_edit extends AppCompatActivity
 	{
 		super.onActivityResult(requestCode,resultCode,returnedIntent);
 
+		//todo Why this is not called when Share link
+		System.out.println("Note_edit / _onActivityResult");
         // choose link
-		if(requestCode == EDIT_LINK)
+		if( (requestCode == EDIT_LINK) && (resultCode == RESULT_CANCELED))
 		{
+			System.out.println("Note_edit / _onActivityResult / canceled");
 			Toast.makeText(Note_edit.this, R.string.note_cancel_add_new, Toast.LENGTH_LONG).show();
             setResult(RESULT_CANCELED, getIntent());
             enSaveDb = true;
+			MainAct.isEdited_link = false;
             return; // must add this
 		}
 

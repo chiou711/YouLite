@@ -49,6 +49,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.cw.youlite.db.DB_drawer;
 import com.cw.youlite.main.MainAct;
+import com.cw.youlite.note_edit.Note_edit;
 import com.cw.youlite.operation.youtube.YouTubeDeveloperKey;
 import com.cw.youlite.page.Checked_notes_option;
 import com.cw.youlite.R;
@@ -1725,6 +1726,80 @@ public class Util
 		// Request (if not using Singleton [RequestHandler]
 		 RequestQueue requestQueue = Volley.newRequestQueue(MainAct.mAct);
 		 requestQueue.add(stringRequest);
+
+		// Request with RequestHandler (Singleton: if created)
+//		Request.getInstance(MainAct.mAct).addToRequestQueue(stringRequest);
+	}
+
+	// Request, Save and Edit youtube title
+	static int position;
+	public static void request_save_and_edit_youTubeTitle(String youtubeUrl,boolean isAdded_onNewIntent,int _position){
+		System.out.println("Util / _request_save_and_edit_youTubeTitle / youtubeUrl = " + youtubeUrl);
+
+		String idStr = Util.getYoutubeId(youtubeUrl);
+		title = null;
+		position = _position;
+		String urlStr = "https://www.googleapis.com/youtube/v3/videos?id=" +
+				idStr +
+				"&key=" +
+				YouTubeDeveloperKey.DEVELOPER_KEY +
+				"&part=snippet,contentDetails,statistics,status";
+
+		// volley
+		StringRequest stringRequest = new StringRequest(
+				Request.Method.GET,
+				urlStr,
+				response -> {
+					try {
+						JSONObject jsonObject = new JSONObject(response);
+						JSONArray jsonArray = jsonObject.getJSONArray("items");
+
+						JSONObject object = jsonArray.getJSONObject(0);
+						JSONObject snippet = object.getJSONObject("snippet");
+
+						title = snippet.getString("title");
+						System.out.println("Util / _request_and_save_youTubeTitle / title = " + title);
+
+						// save title to DB
+						SharedPreferences pref_show_note_attribute = MainAct.mAct.getSharedPreferences("add_new_note_option", 0);
+
+						DB_page dB_page = new DB_page(MainAct.mAct,Pref.getPref_focusView_page_tableId(MainAct.mAct));
+
+						if(pref_show_note_attribute
+								.getString("KEY_ENABLE_LINK_TITLE_SAVE", "yes")
+								.equalsIgnoreCase("yes"))
+						{
+							Date now = new Date();
+							long row_id;
+							row_id = dB_page.getNoteId(position,true);
+							dB_page.updateNote(row_id, title, "",  youtubeUrl, 0, now.getTime(), true); // update note
+						}
+
+						Toast.makeText(MainAct.mAct,
+								MainAct.mAct.getResources().getText(R.string.add_new_note_option_title) + title,
+								Toast.LENGTH_SHORT)
+								.show();
+
+			            Long rowId = dB_page.getNoteId(position,true);
+
+			            Intent i = new Intent(MainAct.mAct, Note_edit.class);
+			            i.putExtra("list_view_position", position);
+			            i.putExtra(DB_page.KEY_NOTE_ID, rowId);
+			            i.putExtra(DB_page.KEY_NOTE_TITLE, dB_page.getNoteTitle_byId(rowId));
+			            i.putExtra(DB_page.KEY_NOTE_PICTURE_URI , dB_page.getNotePictureUri_byId(rowId));
+			            i.putExtra(DB_page.KEY_NOTE_LINK_URI , dB_page.getNoteLinkUri_byId(rowId));
+			            i.putExtra(DB_page.KEY_NOTE_CREATED, dB_page.getNoteCreatedTime_byId(rowId));
+			            MainAct.mAct.startActivity(i);
+
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				},
+				error -> Toast.makeText(MainAct.mAct, error.getMessage(), Toast.LENGTH_LONG).show()){};
+
+		// Request (if not using Singleton [RequestHandler]
+		RequestQueue requestQueue = Volley.newRequestQueue(MainAct.mAct);
+		requestQueue.add(stringRequest);
 
 		// Request with RequestHandler (Singleton: if created)
 //		Request.getInstance(MainAct.mAct).addToRequestQueue(stringRequest);
