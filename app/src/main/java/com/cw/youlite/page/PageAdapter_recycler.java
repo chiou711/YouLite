@@ -58,6 +58,9 @@ import com.cw.youlite.util.preferences.Pref;
 import com.cw.youlite.util.uil.UilCommon;
 import com.cw.youlite.util.video.UtilVideo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.cw.youlite.db.DB_page.KEY_NOTE_CREATED;
 import static com.cw.youlite.db.DB_page.KEY_NOTE_LINK_URI;
 import static com.cw.youlite.db.DB_page.KEY_NOTE_MARKING;
@@ -70,15 +73,18 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         implements ItemTouchHelperAdapter
 {
 	private AppCompatActivity mAct;
-	private Cursor cursor;
-	private int count;
+	private String strTitle;
+	private String pictureUri;
 	private String linkUri;
+	private int marking;
+	private Long timeCreated;
 	private static int style;
     DB_folder dbFolder;
 	private int page_pos;
     private final OnStartDragListener mDragStartListener;
 	DB_page mDb_page;
 	int page_table_id;
+	List<Db_cache> listCache;
 
     PageAdapter_recycler(int pagePos,  int pageTableId, OnStartDragListener dragStartListener) {
 	    mAct = MainAct.mAct;
@@ -87,6 +93,8 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 	    dbFolder = new DB_folder(mAct,Pref.getPref_focusView_folder_tableId(mAct));
 	    page_pos = pagePos;
 	    page_table_id = pageTableId;
+
+	    updateDbCache();
     }
 
     /**
@@ -170,27 +178,27 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
         ((CardView)holder.itemView).setCardBackgroundColor(ColorSet.mBG_ColorArray[style]);
 
-
-        // get DB data
-        String strTitle = null;
-        String pictureUri = null;
-        Long timeCreated = null;
-        linkUri = null;
-        int marking = 0;
-
 		SharedPreferences pref_show_note_attribute = MainAct.mAct.getSharedPreferences("show_note_attribute", 0);
 
-		mDb_page = new DB_page(mAct, page_table_id);
-		mDb_page.open();
-		cursor = mDb_page.mCursor_note;
-        if(cursor.moveToPosition(position)) {
-            strTitle = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_TITLE));
-            pictureUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_PICTURE_URI));
-            linkUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_LINK_URI));
-            marking = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_NOTE_MARKING));
-            timeCreated = cursor.getLong(cursor.getColumnIndex(KEY_NOTE_CREATED));
-        }
-	    mDb_page.close();
+	    // get DB data
+	    // add check to avoid exception during Copy/Move checked
+//        System.out.println("PageAdapter / _onBindViewHolder / listCache.size() = " + listCache.size());
+	    if( (listCache != null) &&
+		    (listCache.size() > 0) &&
+		    (position!=listCache.size()) )
+	    {
+            strTitle =  listCache.get(position).title;;
+            pictureUri = listCache.get(position).pictureUri;
+            linkUri = listCache.get(position).linkUri;
+		    marking = listCache.get(position).marking;
+            timeCreated = listCache.get(position).timeCreated;
+	    } else  {
+		    strTitle ="";
+			pictureUri = "";
+		    linkUri = "";
+		    marking = 0;
+		    timeCreated = Long.valueOf(0);
+	    }
 
         /**
          *  control block
@@ -275,7 +283,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 		if(Util.isEmptyString(pictureUri) &&
 		   Util.isYouTubeLink(linkUri)      )
 		{
-			pictureUri = "http://img.youtube.com/vi/"+Util.getYoutubeId(linkUri)+"/0.jpg";
+			pictureUri = "https://img.youtube.com/vi/"+Util.getYoutubeId(linkUri)+"/0.jpg";
 		}
 
 		// case 1: show thumb nail if picture Uri exists
@@ -390,9 +398,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
      */
     void setBindViewHolder_listeners(ViewHolder viewHolder, final int position)
     {
-
 //        System.out.println("PageAdapter_recycler / setBindViewHolder_listeners / position = " + position);
-
         /**
          *  control block
          */
@@ -402,17 +408,31 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
             public void onClick(View v) {
 
                 System.out.println("PageAdapter / _getView / btnMarking / _onClick");
-                // toggle marking
-                toggleNoteMarking(mAct,position);
+
+	            // toggle marking and get new setting
+	            int marking = toggleNoteMarking(mAct,position);
+
+	            updateDbCache();
 
                 //Toggle marking will resume page, so do Store v scroll
                 RecyclerView listView = TabsHost.mTabsPagerAdapter.fragmentList.get(TabsHost.getFocus_tabPos()).recyclerView;
                 TabsHost.store_listView_vScroll(listView);
-                TabsHost.isDoingMarking = true;
 
-                TabsHost.reloadCurrentPage();
-                TabsHost.showFooter(MainAct.mAct);
+	            // set marking icon
+	            if(marking == 1)
+	            {
+		            v.setBackgroundResource(style % 2 == 1 ?
+				            R.drawable.btn_check_on_holo_light :
+				            R.drawable.btn_check_on_holo_dark);
+	            }
+	            else
+	            {
+		            v.setBackgroundResource(style % 2 == 1 ?
+				            R.drawable.btn_check_off_holo_light :
+				            R.drawable.btn_check_off_holo_dark);
+	            }
 
+	            TabsHost.showFooter(MainAct.mAct);
             }
         });
 
@@ -591,6 +611,31 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
         setBindViewHolder_listeners((ViewHolder)sourceViewHolder,toPos);
         setBindViewHolder_listeners((ViewHolder)targetViewHolder,fromPos);
+
+	    updateDbCache();
     }
+
+	// update list cache from DB
+	public void updateDbCache() {
+//        System.out.println("PageAdapter_recycler / _updateDbCache " );
+		listCache = new ArrayList<>();
+
+		int notesCount = getItemCount();
+		mDb_page = new DB_page(mAct, page_table_id);
+		mDb_page.open();
+		for(int i=0;i<notesCount;i++) {
+			Cursor cursor = mDb_page.mCursor_note;
+			if (cursor.moveToPosition(i)) {
+				Db_cache cache = new Db_cache();
+				cache.title = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_TITLE));
+				cache.pictureUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_PICTURE_URI));
+				cache.linkUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_LINK_URI));
+				cache.marking = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_NOTE_MARKING));
+				cache.timeCreated = cursor.getLong(cursor.getColumnIndex(KEY_NOTE_CREATED));
+				listCache.add(cache);
+			}
+		}
+		mDb_page.close();
+	}
 
 }

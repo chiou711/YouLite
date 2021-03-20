@@ -291,8 +291,6 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
         setLongClickListener();
 
         TabsHost.showFooter(MainAct.mAct);
-
-        isDoingMarking = false;
     }
 
     @Override
@@ -300,8 +298,40 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
     }
 
     @Override
-    public void onTabReselected(TabLayout.Tab tab) {
+    public void onTabReselected(TabLayout.Tab tab) { doOnTabReselected(tab);
     }
+
+    public void doOnTabReselected(TabLayout.Tab tab) {
+        System.out.println("TabsHost / _doOnTabReselected / tab position: " + tab.getPosition());
+        // TODO
+        //  note: tab position is kept after importing new XML, how to change it?
+        setFocus_tabPos(tab.getPosition());
+
+        // keep focus view page table Id
+        int pageTableId = mTabsPagerAdapter.dbFolder.getPageTableId(getFocus_tabPos(), true);
+        Pref.setPref_focusView_page_tableId(MainAct.mAct, pageTableId);
+
+        // current page table Id
+        setCurrentPageTableId(pageTableId);
+
+        // refresh list view of selected page
+        Page_recycler page = mTabsPagerAdapter.fragmentList.get(getFocus_tabPos());
+
+        // add for update page item view
+        if((page != null) && (page.itemAdapter != null)) {
+            page.itemAdapter.updateDbCache();
+            page.itemAdapter.notifyDataSetChanged();
+        }
+
+        // call onCreateOptionsMenu
+        MainAct.mAct.invalidateOptionsMenu();
+
+        // set long click listener
+        setLongClickListener();
+
+        TabsHost.showFooter(MainAct.mAct);
+    }
+
 
     @Override
     public void onResume() {
@@ -407,6 +437,12 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
     public static Page_recycler getCurrentPage()
     {
         return mTabsPagerAdapter.fragmentList.get(getFocus_tabPos());
+    }
+
+    public static void setCurrentPageTableId(int id)
+    {
+        //System.out.println("TabsHost / _setCurrentPageTableId / id = " + id);
+        mFocusPageTableId = id;
     }
 
     public static int getCurrentPageTableId()

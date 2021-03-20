@@ -241,7 +241,7 @@ public class Note_adapter extends FragmentStatePagerAdapter
     	// Check if Uri is for YouTube
     	if(Util.isEmptyString(pictureUri) && Util.isYouTubeLink(linkUri) )
     	{
-			pictureUri = "http://img.youtube.com/vi/"+Util.getYoutubeId(linkUri)+"/0.jpg";//??? how to get this jpg for a playlist
+			pictureUri = "https://img.youtube.com/vi/"+Util.getYoutubeId(linkUri)+"/0.jpg";//??? how to get this jpg for a playlist
 			System.out.println("Note_adapter / _showPictureView / YouTube pictureUri = " + pictureUri);
 		}
 

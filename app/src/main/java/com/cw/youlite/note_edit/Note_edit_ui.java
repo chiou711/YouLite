@@ -126,72 +126,72 @@ public class Note_edit_ui {
 	    final InputMethodManager imm = (InputMethodManager) act.getSystemService(Context.INPUT_METHOD_SERVICE);
 
 		// set thumb nail listener
-        picImageView.setOnClickListener(new OnClickListener()
-        {
-            @Override
-            public void onClick(View view) {
-            	if(bShowEnlargedImage)
-            	{
-            		closeEnlargedImage();
-            		// show soft input
+//        picImageView.setOnClickListener(new OnClickListener()
+//        {
+//            @Override
+//            public void onClick(View view) {
+//            	if(bShowEnlargedImage)
+//            	{
+//            		closeEnlargedImage();
+//            		// show soft input
+////            		if (act.getCurrentFocus() != null)
+////            		    imm.showSoftInput(act.getCurrentFocus(), 0);
+//            	}
+//            	else
+//                {
+//            		// hide soft input
 //            		if (act.getCurrentFocus() != null)
-//            		    imm.showSoftInput(act.getCurrentFocus(), 0);
-            	}
-            	else
-                {
-            		// hide soft input
-            		if (act.getCurrentFocus() != null)
-            			imm.hideSoftInputFromWindow(act.getCurrentFocus().getWindowToken(), 0);
-
-                	System.out.println("Note_edit_ui / pictureUriInDB = " + pictureUriInDB);
-                	if( (!Util.isEmptyString(pictureUriInDB))  )
-                	{
-                		bRemovePictureUri = false;
-                		System.out.println("picImageView.setOnClickListener / pictureUriInDB = " + pictureUriInDB);
-
-                		// check if pictureUri has scheme
-                		if(Util.isUriExisted(pictureUriInDB, act) )
-                		{
-	                		if(Uri.parse(pictureUriInDB).isAbsolute())
-	                		{
-//	                			int style =  Util.getCurrentPageStyle(TabsHost.getFocus_tabPos());
-	                			new UtilImage_bitmapLoader(enlargedImage,
-                                                           pictureUriInDB,
-                                                           progressBarExpand,
-//	                					                   (style % 2 == 1 ?
-//                                                            UilCommon.optionsForRounded_light:
-//                                                            UilCommon.optionsForRounded_dark),
-                                                           UilCommon.optionsForFadeIn,
-                                                           act);
-	                			bShowEnlargedImage = true;
-	                		}
-	                		else
-	                		{
-	                			System.out.println("pictureUriInDB is not Uri format");
-	                		}
-                		}
-                		else
-                			Toast.makeText(act,R.string.file_not_found,Toast.LENGTH_SHORT).show();
-                	}
-                	else
-            			Toast.makeText(act,R.string.file_is_not_created,Toast.LENGTH_SHORT).show();
-
-				}
-            }
-        });
+//            			imm.hideSoftInputFromWindow(act.getCurrentFocus().getWindowToken(), 0);
+//
+//                	System.out.println("Note_edit_ui / pictureUriInDB = " + pictureUriInDB);
+//                	if( (!Util.isEmptyString(pictureUriInDB))  )
+//                	{
+//                		bRemovePictureUri = false;
+//                		System.out.println("picImageView.setOnClickListener / pictureUriInDB = " + pictureUriInDB);
+//
+//                		// check if pictureUri has scheme
+//                		if(Util.isUriExisted(pictureUriInDB, act) )
+//                		{
+//	                		if(Uri.parse(pictureUriInDB).isAbsolute())
+//	                		{
+////	                			int style =  Util.getCurrentPageStyle(TabsHost.getFocus_tabPos());
+//	                			new UtilImage_bitmapLoader(enlargedImage,
+//                                                           pictureUriInDB,
+//                                                           progressBarExpand,
+////	                					                   (style % 2 == 1 ?
+////                                                            UilCommon.optionsForRounded_light:
+////                                                            UilCommon.optionsForRounded_dark),
+//                                                           UilCommon.optionsForFadeIn,
+//                                                           act);
+//	                			bShowEnlargedImage = true;
+//	                		}
+//	                		else
+//	                		{
+//	                			System.out.println("pictureUriInDB is not Uri format");
+//	                		}
+//                		}
+//                		else
+//                			Toast.makeText(act,R.string.file_not_found,Toast.LENGTH_SHORT).show();
+//                	}
+//                	else
+//            			Toast.makeText(act,R.string.file_is_not_created,Toast.LENGTH_SHORT).show();
+//
+//				}
+//            }
+//        });
 
 		// set thumb nail long click listener
-        picImageView.setOnLongClickListener(new View.OnLongClickListener()
-        {
-            @Override
-            public boolean onLongClick(View view) {
-            	if(bEditPicture) {
-					if(!Util.isEmptyString(pictureUriInDB) )
-						openSetPictureDialog();
-				}
-                return false;
-            }
-        });
+//        picImageView.setOnLongClickListener(new View.OnLongClickListener()
+//        {
+//            @Override
+//            public boolean onLongClick(View view) {
+//            	if(bEditPicture) {
+//					if(!Util.isEmptyString(pictureUriInDB) )
+//						openSetPictureDialog();
+//				}
+//                return false;
+//            }
+//        });
     }
 
 	private void UI_init_text()
@@ -371,7 +371,7 @@ public class Note_edit_ui {
 			System.out.println("Note_edit_ui /  _populateFields_all / pictureUriInDB = " + pictureUriInDB);
     		
 			// load bitmap to image view
-		    if(pictureUriInDB == null)
+		    if(Util.isEmptyString(pictureUriInDB))
 		    {
 			    String thumbUri ="";
 			    System.out.println("populateFields_all / oriLinkUri = " + oriLinkUri);
