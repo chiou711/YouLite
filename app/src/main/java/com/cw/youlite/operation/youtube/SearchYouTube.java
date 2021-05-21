@@ -227,7 +227,7 @@ public class SearchYouTube extends ListActivity {
 
     boolean isGotDurations;
     public void getDurations() {
-        System.out.println("SearchYouTube / _getDuration");
+        System.out.println("SearchYouTube / _getDurations");
 
         // Call the API and print results.
         Executors.newSingleThreadExecutor().submit(new Runnable() {

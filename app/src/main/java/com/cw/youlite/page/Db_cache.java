@@ -5,5 +5,5 @@ class Db_cache {
 	String pictureUri;
 	String linkUri;
 	int marking;
-	Long timeCreated;
+	String duration;
 }

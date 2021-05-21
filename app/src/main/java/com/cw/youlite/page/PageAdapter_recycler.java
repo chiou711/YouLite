@@ -45,6 +45,8 @@ import com.cw.youlite.db.DB_page;
 import com.cw.youlite.main.MainAct;
 import com.cw.youlite.note.Note;
 import com.cw.youlite.note_edit.Note_edit;
+import com.cw.youlite.operation.youtube.YouTubeDeveloperKey;
+import com.cw.youlite.operation.youtube.YouTubeTimeConvert;
 import com.cw.youlite.page.item_touch_helper.ItemTouchHelperAdapter;
 import com.cw.youlite.page.item_touch_helper.ItemTouchHelperViewHolder;
 import com.cw.youlite.page.item_touch_helper.OnStartDragListener;
@@ -57,11 +59,20 @@ import com.cw.youlite.util.image.UtilImage_bitmapLoader;
 import com.cw.youlite.util.preferences.Pref;
 import com.cw.youlite.util.uil.UilCommon;
 import com.cw.youlite.util.video.UtilVideo;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.VideoListResponse;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executors;
 
-import static com.cw.youlite.db.DB_page.KEY_NOTE_CREATED;
 import static com.cw.youlite.db.DB_page.KEY_NOTE_LINK_URI;
 import static com.cw.youlite.db.DB_page.KEY_NOTE_MARKING;
 import static com.cw.youlite.db.DB_page.KEY_NOTE_PICTURE_URI;
@@ -77,7 +88,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 	private String pictureUri;
 	private String linkUri;
 	private int marking;
-	private Long timeCreated;
+	private String duration;
 	private static int style;
     DB_folder dbFolder;
 	private int page_pos;
@@ -85,6 +96,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 	DB_page mDb_page;
 	int page_table_id;
 	List<Db_cache> listCache;
+	private static YouTube youtube;
 
     PageAdapter_recycler(int pagePos,  int pageTableId, OnStartDragListener dragStartListener) {
 	    mAct = MainAct.mAct;
@@ -95,6 +107,13 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 	    page_table_id = pageTableId;
 
 	    updateDbCache();
+
+	    // get duration
+	    youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), new HttpRequestInitializer() {
+		    public void initialize(HttpRequest request) throws IOException {
+		    }
+	    }
+	    ).setApplicationName("YouLite").build();
     }
 
     /**
@@ -191,13 +210,28 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
             pictureUri = listCache.get(position).pictureUri;
             linkUri = listCache.get(position).linkUri;
 		    marking = listCache.get(position).marking;
-            timeCreated = listCache.get(position).timeCreated;
+
+		    // get duration
+		    isGotDuration = false;
+		    getDuration(Util.getYoutubeId(linkUri));
+		    //wait for buffering
+		    int time_out_count = 0;
+		    while ((!isGotDuration) && time_out_count< 10)
+		    {
+			    try {
+				    Thread.sleep(100);
+			    } catch (InterruptedException e) {
+				    e.printStackTrace();
+			    }
+			    time_out_count++;
+		    }
+		    duration = acquiredDuration;
 	    } else  {
 		    strTitle ="";
 			pictureUri = "";
 		    linkUri = "";
 		    marking = 0;
-		    timeCreated = Long.valueOf(0);
+		    duration = "n/a";
 	    }
 
         /**
@@ -378,8 +412,8 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 	  	if(pref_show_note_attribute.getString("KEY_SHOW_BODY", "yes").equalsIgnoreCase("yes"))
 	  	{
 //			holder.rowDivider.setVisibility(View.VISIBLE);
-			// time stamp
-            holder.textTime.setText(Util.getTimeString(timeCreated));
+			// duration
+            holder.textTime.setText(duration);
 			holder.textTime.setTextColor(ColorSet.mText_ColorArray[style]);
 	  	}
 	  	else
@@ -631,11 +665,52 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 				cache.pictureUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_PICTURE_URI));
 				cache.linkUri = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTE_LINK_URI));
 				cache.marking = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_NOTE_MARKING));
-				cache.timeCreated = cursor.getLong(cursor.getColumnIndex(KEY_NOTE_CREATED));
+				cache.duration = "unknown";
+
 				listCache.add(cache);
 			}
 		}
 		mDb_page.close();
+	}
+
+	boolean isGotDuration;
+	String acquiredDuration;
+	public void getDuration(String youtubeId) {
+
+		// Call the API and print results.
+		Executors.newSingleThreadExecutor().submit(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					HashMap<String, String> parameters = new HashMap<>();
+					parameters.put("part", "contentDetails");
+					String stringsList = youtubeId;
+
+					System.out.println("PageAdapter_recycler / _getDuration/ run /stringsList = "+ stringsList);
+					parameters.put("id", stringsList);
+
+					YouTube.Videos.List videosListMultipleIdsRequest = youtube.videos().list(parameters.get("part").toString());
+					videosListMultipleIdsRequest.setKey(YouTubeDeveloperKey.DEVELOPER_KEY);
+					if (parameters.containsKey("id") && parameters.get("id") != "") {
+						videosListMultipleIdsRequest.setId(parameters.get("id").toString());
+					}
+
+					VideoListResponse response = videosListMultipleIdsRequest.execute();
+
+					String duration = response.getItems().get(0).getContentDetails().getDuration();
+					acquiredDuration = YouTubeTimeConvert.convertYouTubeDuration(duration);
+					System.out.println("PageAdapter_recycler / _getDurations / runnable / duration" + "(" + 0 + ") = " + duration);
+
+					isGotDuration = true;
+				} catch (GoogleJsonResponseException e) {
+					e.printStackTrace();
+					System.err.println("There was a service error: " + e.getDetails().getCode() + " : " + e.getDetails().getMessage());
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+
+			}
+		});
 	}
 
 }
