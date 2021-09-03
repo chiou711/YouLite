@@ -50,7 +50,7 @@ public class MainUi {
     /**
      * Add note with Intent link
      */
-    String title;
+    String titleReceived,title;
     String addNote_IntentLink(Intent intent,final AppCompatActivity act,boolean isAdded_onNewIntent)
     {
         System.out.println("MainUi / _addNote_IntentLink /  ");
@@ -78,6 +78,11 @@ public class MainUi {
                     if(str[i].contains("://"))
                         path = "http".concat(str[i]);
                 }
+            }
+
+            if(Util.isWebLink(path)){
+                String[] str = pathOri.split("http");
+                titleReceived = str[0];
             }
 
             DB_drawer db_drawer = new DB_drawer(act);
@@ -110,54 +115,38 @@ public class MainUi {
 
             // update link title: YouTube
             if( Util.isYouTubeLink(path))
-                Util.request_and_save_youTubeTitle(path,isAdded_onNewIntent);
-
+                title = Util.request_and_save_youTubeTitle(path, isAdded_onNewIntent);
             // update title: Web page
-            else if(!Util.isEmptyString(path) &&
-                    path.startsWith("http")   &&
-                    !Util.isYouTubeLink(path)   )
-            {
-//                System.out.println("MainUi / _addNote_IntentLink / Web page");
-                title = path; //set default
-                final CustomWebView web = new CustomWebView(act);
-                web.loadUrl(path);
-                web.setVisibility(View.INVISIBLE);
+            else if(Util.isWebLink(path)){
+                System.out.println("MainUi / _addNote_IntentLink / Web page / titleReceived = " + titleReceived);
+                if (!TextUtils.isEmpty(titleReceived)){
+                    title = titleReceived;
 
-                web.setWebChromeClient(new WebChromeClient() {
-                    @Override
-                    public void onReceivedTitle(WebView view, String titleReceived) {
-                        super.onReceivedTitle(view, titleReceived);
-//                        System.out.println("MainUi / _addNote_IntentLink / Web page / onReceivedTitle");
-                        if (!TextUtils.isEmpty(titleReceived) &&
-                           !titleReceived.equalsIgnoreCase("about:blank"))
-                        {
-                            SharedPreferences pref_show_note_attribute = act.getSharedPreferences("add_new_note_option", 0);
-                            if(pref_show_note_attribute
-                                    .getString("KEY_ENABLE_LINK_TITLE_SAVE", "yes")
-                                    .equalsIgnoreCase("yes"))
-                            {
-                                Date now = new Date();
-                                DB_page dB_page = new DB_page(act, Pref.getPref_focusView_page_tableId(act));
-                                long row_id;
-                                if(isAddedToTop)
-                                    row_id = dB_page.getNoteId(0,true);
-                                else
-                                    row_id = dB_page.getNoteId(count-1,true);
+                    pref_show_note_attribute = act.getSharedPreferences("add_new_note_option", 0);
+                    if(pref_show_note_attribute
+                            .getString("KEY_ENABLE_LINK_TITLE_SAVE", "yes")
+                            .equalsIgnoreCase("yes"))
+                    {
+                        Date now = new Date();
+                        dB_page = new DB_page(act, Pref.getPref_focusView_page_tableId(act));
+                        long row_id;
+                        if(isAddedToTop)
+                            row_id = dB_page.getNoteId(0,true);
+                        else
+                            row_id = dB_page.getNoteId(count-1,true);
 
-                                dB_page.updateNote(row_id, titleReceived, "",  link,  0, now.getTime(), true); // update note
-                            }
-
-                            Toast.makeText(act,
-                                    act.getResources().getText(R.string.add_new_note_option_title) + titleReceived,
-                                    Toast.LENGTH_SHORT)
-                                    .show();
-                            CustomWebView.pauseWebView(web);
-                            CustomWebView.blankWebView(web);
-
-                            title = titleReceived;
-                        }
+                        dB_page.updateNote(row_id, titleReceived, "",  link,  0, now.getTime(), true); // update note
                     }
-                });
+
+                    Toast.makeText(act,
+                            act.getResources().getText(R.string.add_new_note_option_title) + titleReceived,
+                            Toast.LENGTH_SHORT)
+                            .show();
+                }
+
+                // kill activity
+                if(!isAdded_onNewIntent)
+                    act.finish();
             }
             else // other
             {

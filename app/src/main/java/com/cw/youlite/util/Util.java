@@ -1383,51 +1383,38 @@ public class Util
 		String str = String.format(Locale.US,"%2d:%02d:%02d", hour, min, sec);
 		return str;
 	}
-	
+
+	// is YouTube link or not
 	public static boolean isYouTubeLink(String strLink)
 	{
 		boolean is = false;
-		
+
 		if(Util.isEmptyString(strLink) || (!strLink.startsWith("http")))
-			return is;
-		
-//		//check if single string
-//		String strArr[] = strLink.split("\\s"); // \s: A whitespace character, short for [ \t\n\x0b\r\f]
-//		int cnt = 0;
-//		for(int i=0; i < strArr.length; i++ )
-//		{
-//			System.out.println("strArr [" + i + "] = " + strArr[i]);
-//			cnt++;
-//		}
-//		
-//		//check if youTube keyword
-//		if( (cnt == 1) &&
-//			(strLink.contains("youtube") ||
-//			 strLink.contains("youtu.be")  )&&
-//			strLink.contains("//")) 
-//		{
-//			is = true;
-//		}
-		
+			return false;
+
 		//check if single string
 		String strArr[] = strLink.split("/");
-//		for(int i=0; i < strArr.length; i++ )
-//		{
-//			System.out.println("YouTube strArr [" + i + "] = " + strArr[i]);
-//		}
-		
+
 		if(strArr.length >= 2)
 		{
 			if(	strArr[2].contains("youtube") ||
-				strArr[2].contains("youtu.be")  ) 		
+				strArr[2].contains("youtu.be")  )
 			{
 				is = true;
-			}		
+			}
 		}
-		
+
 		return is;
 	}
-	
+
+	// is web link or not
+	public static boolean isWebLink(String path)
+	{
+		return !Util.isEmptyString(path) &&
+				path.startsWith("http")   &&
+				!Util.isYouTubeLink(path);
+	}
+
     @TargetApi(Build.VERSION_CODES.KITKAT)
 	public static Intent chooseMediaIntentByType(Activity act,String type)
     {
@@ -1658,10 +1645,10 @@ public class Util
 	}
 
 
-    // Request YouTube title via Volley and save it tot DB
+    // Request YouTube title via Volley and save it to DB
     // cf: https://stackoverflow.com/questions/44941341/how-to-get-the-title-of-youtube-video-through-the-youtube-api
     public static String title;
-	public static void request_and_save_youTubeTitle(String youtubeUrl,boolean isAdded_onNewIntent){
+	public static String request_and_save_youTubeTitle(String youtubeUrl,boolean isAdded_onNewIntent){
 		System.out.println("Util / _request_and_save_youTubeTitle / youtubeUrl = " + youtubeUrl);
 
 		String idStr = Util.getYoutubeId(youtubeUrl);
@@ -1729,6 +1716,7 @@ public class Util
 
 		// Request with RequestHandler (Singleton: if created)
 //		Request.getInstance(MainAct.mAct).addToRequestQueue(stringRequest);
+		return title;
 	}
 
 	// Request, Save and Edit youtube title

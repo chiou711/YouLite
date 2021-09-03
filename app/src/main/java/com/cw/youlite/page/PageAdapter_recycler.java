@@ -297,7 +297,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 			else if( (linkUri != null) && (linkUri.startsWith("http")))
 			{
 				holder.textTitle.setVisibility(View.VISIBLE);
-				Util.setHttpTitle(linkUri, mAct,holder.textTitle);
+				Util.setHttpTitle(linkUri, mAct,holder.textTitle); //todo Check DB first for title
 			}
 			else
 			{

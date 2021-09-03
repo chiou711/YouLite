@@ -40,10 +40,10 @@ public class Define {
 
     public static void setAppBuildMode( ) {
         /* 1 debug, download */
-//        app_build_mode = DEBUG_DEFAULT_BY_DOWNLOAD;
+        app_build_mode = DEBUG_DEFAULT_BY_DOWNLOAD;
 
         /* 2 release, download */
-        app_build_mode = RELEASE_DEFAULT_BY_DOWNLOAD;
+//        app_build_mode = RELEASE_DEFAULT_BY_DOWNLOAD;
 
         switch (app_build_mode)
         {
