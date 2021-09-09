@@ -298,7 +298,8 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
     }
 
     @Override
-    public void onTabReselected(TabLayout.Tab tab) { doOnTabReselected(tab);
+    public void onTabReselected(TabLayout.Tab tab) {
+//        doOnTabReselected(tab); //todo Need this?
     }
 
     public void doOnTabReselected(TabLayout.Tab tab) {
@@ -360,6 +361,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
         new Handler().postDelayed(
                 new Runnable() {
                     @Override public void run() {
+                        //todo How to skip tab 0?
                         if(mTabLayout.getTabAt(getFocus_tabPos()) != null)
                             mTabLayout.getTabAt(getFocus_tabPos()).select();
                     }

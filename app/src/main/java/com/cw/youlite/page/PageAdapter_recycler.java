@@ -188,11 +188,13 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(ViewHolder holder, int _position) {
 
 //        System.out.println("PageAdapter_recycler / _onBindViewHolder / position = " + position);
 
-        // style
+	    int position = holder.getAdapterPosition();
+
+	    // style
         style = dbFolder.getPageStyle(page_pos, true);
 
         ((CardView)holder.itemView).setCardBackgroundColor(ColorSet.mBG_ColorArray[style]);
@@ -213,19 +215,22 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
 		    // get duration
 		    isGotDuration = false;
-		    getDuration(Util.getYoutubeId(linkUri));
-		    //wait for buffering
-		    int time_out_count = 0;
-		    while ((!isGotDuration) && time_out_count< 10)
-		    {
-			    try {
-				    Thread.sleep(100);
-			    } catch (InterruptedException e) {
-				    e.printStackTrace();
+
+		    if(Util.isYouTubeLink(linkUri)) {
+			    getDuration(Util.getYoutubeId(linkUri));
+
+			    //wait for buffering
+			    int time_out_count = 0;
+			    while ((!isGotDuration) && time_out_count < 10) {
+				    try {
+					    Thread.sleep(100);
+				    } catch (InterruptedException e) {
+					    e.printStackTrace();
+				    }
+				    time_out_count++;
 			    }
-			    time_out_count++;
+			    duration = acquiredDuration;
 		    }
-		    duration = acquiredDuration;
 	    } else  {
 		    strTitle ="";
 			pictureUri = "";
@@ -686,7 +691,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 					parameters.put("part", "contentDetails");
 					String stringsList = youtubeId;
 
-					System.out.println("PageAdapter_recycler / _getDuration/ run /stringsList = "+ stringsList);
+//					System.out.println("PageAdapter_recycler / _getDuration/ run /stringsList = "+ stringsList);
 					parameters.put("id", stringsList);
 
 					YouTube.Videos.List videosListMultipleIdsRequest = youtube.videos().list(parameters.get("part").toString());
@@ -699,7 +704,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
 					String duration = response.getItems().get(0).getContentDetails().getDuration();
 					acquiredDuration = YouTubeTimeConvert.convertYouTubeDuration(duration);
-					System.out.println("PageAdapter_recycler / _getDurations / runnable / duration" + "(" + 0 + ") = " + duration);
+//					System.out.println("PageAdapter_recycler / _getDurations / runnable / duration" + "(" + 0 + ") = " + duration);
 
 					isGotDuration = true;
 				} catch (GoogleJsonResponseException e) {
