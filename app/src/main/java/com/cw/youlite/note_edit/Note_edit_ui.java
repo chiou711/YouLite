@@ -36,7 +36,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.text.Html;
 import android.view.MotionEvent;
 import android.view.View;
@@ -47,7 +46,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 public class Note_edit_ui {
 
@@ -360,10 +358,8 @@ public class Note_edit_ui {
 	}
 
     // populate all fields
-	void populateFields_all(Long rowId)
-    {
-    	if (rowId != null) 
-    	{
+	void populateFields_all(Long rowId){
+    	if (rowId != null){
 			populateFields_text(rowId);
 
     		// for picture block
@@ -386,17 +382,14 @@ public class Note_edit_ui {
 						    UilCommon.optionsForFadeIn,
 						    act);
 			    }
-		    }
-			else
-			{
+		    } else {
 	    		picImageView.setImageResource(style %2 == 1 ?
 		    			R.drawable.btn_radio_off_holo_light:
 		    			R.drawable.btn_radio_off_holo_dark);
 			}
 			
 			// set listeners for closing image view 
-	    	if(!Util.isEmptyString(pictureUriInDB))
-	    	{
+	    	if(!Util.isEmptyString(pictureUriInDB)){
 	    		setCloseImageListeners(linkEditText);
 	    		setCloseImageListeners(titleEditText);
 	    	}
@@ -410,10 +403,8 @@ public class Note_edit_ui {
 			String strTitleEdit = dB_page.getNoteTitle_byId(rowId);
 			final String curLinkStr = linkEditText.getText().toString();
 			if( Util.isEmptyString(strTitleEdit) &&
-				Util.isEmptyString(titleEditText.getText().toString()) )
-			{
-				if(Util.isYouTubeLink(curLinkStr) )
-				{
+				Util.isEmptyString(titleEditText.getText().toString())){
+				if(Util.isYouTubeLink(curLinkStr)){
 					final String hint = "";//Util.getYouTubeTitle(curLinkStr);
 
 					titleEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -436,19 +427,13 @@ public class Note_edit_ui {
 							return false;
 						}
 					});
-				}
-				else if(curLinkStr.startsWith("http"))
-				{
-					Util.setHttpTitle(curLinkStr, act, titleEditText);
-				}
+				} else if(Util.isWebLink(curLinkStr))
+					Util.setHttpTitle_editText(curLinkStr, act, titleEditText);
 			}
-        }
-    	else
-    	{
+        } else {
             // renew link
 			String strLinkEdit = "";
-			if(linkEditText != null)
-			{
+			if(linkEditText != null) {
 	            linkEditText.setText(strLinkEdit);
 	            linkEditText.setSelection(strLinkEdit.length());
 	            linkEditText.requestFocus();

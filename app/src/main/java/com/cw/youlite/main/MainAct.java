@@ -215,7 +215,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         }
         else {
             if(Pref.getPref_DB_ready(this))
-                doCreate(savedInstanceState);
+                doCreate();
         }
 
         isEdited_link = false;
@@ -223,7 +223,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     }
 
     // Do major create operation
-    void doCreate(Bundle savedInstanceState)
+    void doCreate()
     {
         System.out.println("MainAct / _doCreate");
 
@@ -437,9 +437,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         if(isEdited_link) {
             System.out.println("MainAct / _onNewIntent / call Edited link");
             mMainUi.editNote_IntentLink(intent, mAct, isAdded_onNewIntent,edit_position);
-        }
-        else if(!isAdded_onNewIntent)
-        {
+        } else {
             if(Build.VERSION.SDK_INT >= O)//API26
                 isAdded_onNewIntent = true; // fix 2 times _onNewIntent on API26
 

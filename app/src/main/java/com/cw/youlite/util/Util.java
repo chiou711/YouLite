@@ -1793,9 +1793,9 @@ public class Util
 //		Request.getInstance(MainAct.mAct).addToRequestQueue(stringRequest);
 	}
 
-	// Set Http title
+	// Set Http title in edit text
 	static String httpTitle;
-	public static void setHttpTitle(String httpUrl, Activity act, final EditText editText) {
+	public static void setHttpTitle_editText(String httpUrl, Activity act, final EditText editText) {
 		if (!isEmptyString(httpUrl)) {
 			try {
 				WebView wv = new WebView(act);
@@ -1816,10 +1816,14 @@ public class Util
 					@Override
 					public void onReceivedTitle(WebView view, String title) {
 						super.onReceivedTitle(view, title);
+
 						httpTitle = title;
-						editText.setHint(Html.fromHtml("<small style=\"text-color: gray;\"><i>" +
-								httpTitle +
-								"</i></small>"));
+//						editText.setHint(Html.fromHtml("<small style=\"text-color: red;\"><i>" +
+//								httpTitle +
+//								"</i></small>"));
+						editText.setText(title);
+						editText.setTextColor(Color.GRAY);
+
 						editText.setSelection(0);
 
 						editText.setOnTouchListener(new View.OnTouchListener() {
@@ -1837,46 +1841,6 @@ public class Util
 			}
 		}
 	}
-
-	// Set Http title
-	public static void setHttpTitle(String httpUrl, Activity act, final TextView textView)
-	{
-		if(!isEmptyString(httpUrl))
-		{
-			try
-			{
-				WebView wv = new WebView(act);
-				wv.loadUrl(httpUrl);
-				isTimeUp = false;
-				setupLongTimeout(1000);
-
-				//Add for non-stop showing of full screen web view
-				wv.setWebViewClient(new WebViewClient() {
-					@Override
-					public boolean shouldOverrideUrlLoading(WebView view, String url)
-					{
-						view.loadUrl(url);
-						return true;
-					}
-				});
-
-				wv.setWebChromeClient(new WebChromeClient() {
-					@Override
-					public void onReceivedTitle(WebView view, String title) {
-						super.onReceivedTitle(view, title);
-						textView.setText(title);
-						textView.setTextColor(Color.GRAY);
-						System.out.println("Util / _setHttpTitle / title = " +title);
-					}
-				});
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-	}
-
 
 	public static boolean isTimeUp;
 	public static Timer longTimer;

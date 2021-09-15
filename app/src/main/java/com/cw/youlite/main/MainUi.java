@@ -80,6 +80,7 @@ public class MainUi {
                 }
             }
 
+            // case example: Google news, title is within URL
             if(Util.isWebLink(path)){
                 String[] str = pathOri.split("http");
                 titleReceived = str[0];
@@ -97,7 +98,7 @@ public class MainUi {
                 return null;
             }
 
-            System.out.println("MainUi / _addNote_IntentLink / path = " + path);
+            System.out.println("MainUi / _addNote_IntentLink / titleReceived = " + titleReceived);
 
             // insert link
             DB_page dB_page = new DB_page(act,Pref.getPref_focusView_page_tableId(act));
@@ -118,15 +119,14 @@ public class MainUi {
                 title = Util.request_and_save_youTubeTitle(path, isAdded_onNewIntent);
             // update title: Web page
             else if(Util.isWebLink(path)){
-                System.out.println("MainUi / _addNote_IntentLink / Web page / titleReceived = " + titleReceived);
-                if (!TextUtils.isEmpty(titleReceived)){
-                    title = titleReceived;
+                System.out.println("MainUi / _addNote_IntentLink / Web page / path = " + path);
 
+                if(!TextUtils.isEmpty(titleReceived)){
+                    // update DB
                     pref_show_note_attribute = act.getSharedPreferences("add_new_note_option", 0);
                     if(pref_show_note_attribute
                             .getString("KEY_ENABLE_LINK_TITLE_SAVE", "yes")
-                            .equalsIgnoreCase("yes"))
-                    {
+                            .equalsIgnoreCase("yes")) {
                         Date now = new Date();
                         dB_page = new DB_page(act, Pref.getPref_focusView_page_tableId(act));
                         long row_id;

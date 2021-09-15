@@ -69,6 +69,7 @@ import com.google.api.services.youtube.model.VideoListResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -208,7 +209,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 		    (listCache.size() > 0) &&
 		    (position!=listCache.size()) )
 	    {
-            strTitle =  listCache.get(position).title;;
+            strTitle =  listCache.get(position).title;
             pictureUri = listCache.get(position).pictureUri;
             linkUri = listCache.get(position).linkUri;
 		    marking = listCache.get(position).marking;
@@ -246,16 +247,12 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         holder.rowId.setText(String.valueOf(position+1));
         holder.rowId.setTextColor(ColorSet.mText_ColorArray[style]);
 
-
         // show marking check box
-        if(marking == 1)
-        {
+        if(marking == 1){
             holder.btnMarking.setBackgroundResource(style % 2 == 1 ?
                     R.drawable.btn_check_on_holo_light :
                     R.drawable.btn_check_on_holo_dark);
-        }
-        else
-        {
+        } else {
             holder.btnMarking.setBackgroundResource(style % 2 == 1 ?
                     R.drawable.btn_check_off_holo_light :
                     R.drawable.btn_check_off_holo_dark);
@@ -291,21 +288,17 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
         }
 
 		// show text title
-		if( Util.isEmptyString(strTitle) )
-		{
+		if( Util.isEmptyString(strTitle)){
 			if(Util.isYouTubeLink(linkUri)) {
 				strTitle = "";//Util.getYouTubeTitle(linkUri);
 				holder.textTitle.setVisibility(View.VISIBLE);
 				holder.textTitle.setText(strTitle);
 				holder.textTitle.setTextColor(Color.GRAY);
-			}
-			else if( (linkUri != null) && (linkUri.startsWith("http")))
-			{
+			} else if( Util.isWebLink(linkUri)){
+				strTitle = "";
 				holder.textTitle.setVisibility(View.VISIBLE);
-				Util.setHttpTitle(linkUri, mAct,holder.textTitle); //todo Check DB first for title
-			}
-			else
-			{
+				holder.textTitle.setText(strTitle);
+			} else {
 				// make sure empty title is empty after scrolling
 				holder.textTitle.setVisibility(View.VISIBLE);
 				holder.textTitle.setText("");
@@ -350,10 +343,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 			}
 		}
 		// case 2: set web title and web view thumb nail for general HTTP link
-		else if(!Util.isEmptyString(linkUri) &&
-                linkUri.startsWith("http")   &&
-				!Util.isYouTubeLink(linkUri)   )
-		{
+		else if(Util.isWebLink(linkUri)){
 			// reset web view
 			CustomWebView.pauseWebView(holder.thumbWeb);
 			CustomWebView.blankWebView(holder.thumbWeb);
@@ -397,10 +387,35 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 					public void onReceivedTitle(WebView view, String title) {
 						super.onReceivedTitle(view, title);
 						if (!TextUtils.isEmpty(title) &&
-								!title.equalsIgnoreCase("about:blank")) {
+							!title.equalsIgnoreCase("about:blank")) {
+
+							// title : for 1st time
 							holder.textTitle.setVisibility(View.VISIBLE);
+							holder.textTitle.setText(title);
+//							holder.textTitle.setTextColor(Color.GRAY);
+
+							// row Id
 							holder.rowId.setText(String.valueOf(position + 1));
 							holder.rowId.setTextColor(ColorSet.mText_ColorArray[style]);
+
+							// Also save received strTitle to DB
+							SharedPreferences pref_show_note_attribute = mAct.getSharedPreferences("add_new_note_option", 0);
+							boolean isAddedToTop = pref_show_note_attribute.getString("KEY_ADD_NEW_NOTE_TO","bottom").equalsIgnoreCase("top");
+							if(pref_show_note_attribute
+									.getString("KEY_ENABLE_LINK_TITLE_SAVE", "yes")
+									.equalsIgnoreCase("yes")) {
+								Date now = new Date();
+								DB_page dB_page = new DB_page(mAct, Pref.getPref_focusView_page_tableId(mAct));
+								int count = dB_page.getNotesCount(true);
+
+								long row_id;
+								if(isAddedToTop)
+									row_id = dB_page.getNoteId(0,true);
+								else
+									row_id = dB_page.getNoteId(count-1,true);
+
+								dB_page.updateNote(row_id, title, "",  linkUri,  0, now.getTime(), true); // update note
+							}
 						}
 					}
 				});

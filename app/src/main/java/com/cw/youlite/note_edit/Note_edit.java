@@ -96,9 +96,8 @@ public class Note_edit extends AppCompatActivity
     	linkUri = extras.getString(DB_page.KEY_NOTE_LINK_URI);
     	title = extras.getString(DB_page.KEY_NOTE_TITLE);
     	createdTime = extras.getLong(DB_page.KEY_NOTE_CREATED);
-        
 
-        //initialization
+		//initialization
         note_edit_ui = new Note_edit_ui(this, dB, noteId, title, picUriStr, linkUri,  createdTime);
         note_edit_ui.UI_init();
 
