@@ -36,7 +36,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.text.Html;
 import android.view.MotionEvent;
 import android.view.View;
@@ -47,7 +46,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 public class Note_edit_ui {
 
@@ -126,72 +124,72 @@ public class Note_edit_ui {
 	    final InputMethodManager imm = (InputMethodManager) act.getSystemService(Context.INPUT_METHOD_SERVICE);
 
 		// set thumb nail listener
-        picImageView.setOnClickListener(new OnClickListener()
-        {
-            @Override
-            public void onClick(View view) {
-            	if(bShowEnlargedImage)
-            	{
-            		closeEnlargedImage();
-            		// show soft input
+//        picImageView.setOnClickListener(new OnClickListener()
+//        {
+//            @Override
+//            public void onClick(View view) {
+//            	if(bShowEnlargedImage)
+//            	{
+//            		closeEnlargedImage();
+//            		// show soft input
+////            		if (act.getCurrentFocus() != null)
+////            		    imm.showSoftInput(act.getCurrentFocus(), 0);
+//            	}
+//            	else
+//                {
+//            		// hide soft input
 //            		if (act.getCurrentFocus() != null)
-//            		    imm.showSoftInput(act.getCurrentFocus(), 0);
-            	}
-            	else
-                {
-            		// hide soft input
-            		if (act.getCurrentFocus() != null)
-            			imm.hideSoftInputFromWindow(act.getCurrentFocus().getWindowToken(), 0);
-
-                	System.out.println("Note_edit_ui / pictureUriInDB = " + pictureUriInDB);
-                	if( (!Util.isEmptyString(pictureUriInDB))  )
-                	{
-                		bRemovePictureUri = false;
-                		System.out.println("picImageView.setOnClickListener / pictureUriInDB = " + pictureUriInDB);
-
-                		// check if pictureUri has scheme
-                		if(Util.isUriExisted(pictureUriInDB, act) )
-                		{
-	                		if(Uri.parse(pictureUriInDB).isAbsolute())
-	                		{
-//	                			int style =  Util.getCurrentPageStyle(TabsHost.getFocus_tabPos());
-	                			new UtilImage_bitmapLoader(enlargedImage,
-                                                           pictureUriInDB,
-                                                           progressBarExpand,
-//	                					                   (style % 2 == 1 ?
-//                                                            UilCommon.optionsForRounded_light:
-//                                                            UilCommon.optionsForRounded_dark),
-                                                           UilCommon.optionsForFadeIn,
-                                                           act);
-	                			bShowEnlargedImage = true;
-	                		}
-	                		else
-	                		{
-	                			System.out.println("pictureUriInDB is not Uri format");
-	                		}
-                		}
-                		else
-                			Toast.makeText(act,R.string.file_not_found,Toast.LENGTH_SHORT).show();
-                	}
-                	else
-            			Toast.makeText(act,R.string.file_is_not_created,Toast.LENGTH_SHORT).show();
-
-				}
-            }
-        });
+//            			imm.hideSoftInputFromWindow(act.getCurrentFocus().getWindowToken(), 0);
+//
+//                	System.out.println("Note_edit_ui / pictureUriInDB = " + pictureUriInDB);
+//                	if( (!Util.isEmptyString(pictureUriInDB))  )
+//                	{
+//                		bRemovePictureUri = false;
+//                		System.out.println("picImageView.setOnClickListener / pictureUriInDB = " + pictureUriInDB);
+//
+//                		// check if pictureUri has scheme
+//                		if(Util.isUriExisted(pictureUriInDB, act) )
+//                		{
+//	                		if(Uri.parse(pictureUriInDB).isAbsolute())
+//	                		{
+////	                			int style =  Util.getCurrentPageStyle(TabsHost.getFocus_tabPos());
+//	                			new UtilImage_bitmapLoader(enlargedImage,
+//                                                           pictureUriInDB,
+//                                                           progressBarExpand,
+////	                					                   (style % 2 == 1 ?
+////                                                            UilCommon.optionsForRounded_light:
+////                                                            UilCommon.optionsForRounded_dark),
+//                                                           UilCommon.optionsForFadeIn,
+//                                                           act);
+//	                			bShowEnlargedImage = true;
+//	                		}
+//	                		else
+//	                		{
+//	                			System.out.println("pictureUriInDB is not Uri format");
+//	                		}
+//                		}
+//                		else
+//                			Toast.makeText(act,R.string.file_not_found,Toast.LENGTH_SHORT).show();
+//                	}
+//                	else
+//            			Toast.makeText(act,R.string.file_is_not_created,Toast.LENGTH_SHORT).show();
+//
+//				}
+//            }
+//        });
 
 		// set thumb nail long click listener
-        picImageView.setOnLongClickListener(new View.OnLongClickListener()
-        {
-            @Override
-            public boolean onLongClick(View view) {
-            	if(bEditPicture) {
-					if(!Util.isEmptyString(pictureUriInDB) )
-						openSetPictureDialog();
-				}
-                return false;
-            }
-        });
+//        picImageView.setOnLongClickListener(new View.OnLongClickListener()
+//        {
+//            @Override
+//            public boolean onLongClick(View view) {
+//            	if(bEditPicture) {
+//					if(!Util.isEmptyString(pictureUriInDB) )
+//						openSetPictureDialog();
+//				}
+//                return false;
+//            }
+//        });
     }
 
 	private void UI_init_text()
@@ -360,10 +358,8 @@ public class Note_edit_ui {
 	}
 
     // populate all fields
-	void populateFields_all(Long rowId)
-    {
-    	if (rowId != null) 
-    	{
+	void populateFields_all(Long rowId){
+    	if (rowId != null){
 			populateFields_text(rowId);
 
     		// for picture block
@@ -371,7 +367,7 @@ public class Note_edit_ui {
 			System.out.println("Note_edit_ui /  _populateFields_all / pictureUriInDB = " + pictureUriInDB);
     		
 			// load bitmap to image view
-		    if(pictureUriInDB == null)
+		    if(Util.isEmptyString(pictureUriInDB))
 		    {
 			    String thumbUri ="";
 			    System.out.println("populateFields_all / oriLinkUri = " + oriLinkUri);
@@ -386,17 +382,14 @@ public class Note_edit_ui {
 						    UilCommon.optionsForFadeIn,
 						    act);
 			    }
-		    }
-			else
-			{
+		    } else {
 	    		picImageView.setImageResource(style %2 == 1 ?
 		    			R.drawable.btn_radio_off_holo_light:
 		    			R.drawable.btn_radio_off_holo_dark);
 			}
 			
 			// set listeners for closing image view 
-	    	if(!Util.isEmptyString(pictureUriInDB))
-	    	{
+	    	if(!Util.isEmptyString(pictureUriInDB)){
 	    		setCloseImageListeners(linkEditText);
 	    		setCloseImageListeners(titleEditText);
 	    	}
@@ -410,11 +403,9 @@ public class Note_edit_ui {
 			String strTitleEdit = dB_page.getNoteTitle_byId(rowId);
 			final String curLinkStr = linkEditText.getText().toString();
 			if( Util.isEmptyString(strTitleEdit) &&
-				Util.isEmptyString(titleEditText.getText().toString()) )
-			{
-				if(Util.isYouTubeLink(curLinkStr) )
-				{
-					final String hint = Util.getYouTubeTitle(curLinkStr);
+				Util.isEmptyString(titleEditText.getText().toString())){
+				if(Util.isYouTubeLink(curLinkStr)){
+					final String hint = "";//Util.getYouTubeTitle(curLinkStr);
 
 					titleEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
                         @Override
@@ -436,19 +427,13 @@ public class Note_edit_ui {
 							return false;
 						}
 					});
-				}
-				else if(curLinkStr.startsWith("http"))
-				{
-					Util.setHttpTitle(curLinkStr, act, titleEditText);
-				}
+				} else if(Util.isWebLink(curLinkStr))
+					Util.setHttpTitle_editText(curLinkStr, act, titleEditText);
 			}
-        }
-    	else
-    	{
+        } else {
             // renew link
 			String strLinkEdit = "";
-			if(linkEditText != null)
-			{
+			if(linkEditText != null) {
 	            linkEditText.setText(strLinkEdit);
 	            linkEditText.setSelection(strLinkEdit.length());
 	            linkEditText.requestFocus();

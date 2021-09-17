@@ -18,13 +18,11 @@ package com.cw.youlite.note_edit;
 
 import com.cw.youlite.R;
 import com.cw.youlite.db.DB_page;
+import com.cw.youlite.main.MainAct;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.image.TouchImageView;
-import com.cw.youlite.util.ColorSet;
 import com.cw.youlite.util.Util;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.AlertDialog.Builder;
@@ -41,18 +39,23 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class Note_edit extends Activity 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+public class Note_edit extends AppCompatActivity
 {
 
     private Long noteId, createdTime;
     private String title, picUriStr,  linkUri;
     Note_edit_ui note_edit_ui;
     private boolean enSaveDb = true;
-    boolean bUseCameraImage;
     DB_page dB;
     TouchImageView enlargedImage;
     int position;
     final int EDIT_LINK = 1;
+	static final int CHANGE_LINK = R.id.ADD_LINK;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) 
     {
@@ -74,9 +77,17 @@ public class Note_edit extends Activity
         
 		enlargedImage = (TouchImageView)findViewById(R.id.expanded_image);
 
-		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setBackgroundDrawable(new ColorDrawable(ColorSet.getBarColor(this)));
+	    Toolbar toolbar = (Toolbar) findViewById(R.id.recorder_toolbar);
+	    toolbar.setPopupTheme(R.style.ThemeOverlay_AppCompat_Light);
+	    if (toolbar != null)
+		    setSupportActionBar(toolbar);
+
+	    ActionBar actionBar = getSupportActionBar();
+	    if (actionBar != null) {
+		    actionBar.setTitle(R.string.edit_note_title);
+		    actionBar.setDisplayHomeAsUpEnabled(true);
+		    actionBar.setDisplayShowHomeEnabled(true);
+	    }
 
     	Bundle extras = getIntent().getExtras();
     	position = extras.getInt("list_view_position");
@@ -85,12 +96,10 @@ public class Note_edit extends Activity
     	linkUri = extras.getString(DB_page.KEY_NOTE_LINK_URI);
     	title = extras.getString(DB_page.KEY_NOTE_TITLE);
     	createdTime = extras.getLong(DB_page.KEY_NOTE_CREATED);
-        
 
-        //initialization
+		//initialization
         note_edit_ui = new Note_edit_ui(this, dB, noteId, title, picUriStr, linkUri,  createdTime);
         note_edit_ui.UI_init();
-        bUseCameraImage = false;
 
         if(savedInstanceState != null)
         {
@@ -247,22 +256,11 @@ public class Note_edit extends Activity
         super.onSaveInstanceState(outState);
 
         System.out.println("Note_edit / onSaveInstanceState / enSaveDb = " + enSaveDb);
-        System.out.println("Note_edit / onSaveInstanceState / bUseCameraImage = " + bUseCameraImage);
+//        System.out.println("Note_edit / onSaveInstanceState / bUseCameraImage = " + bUseCameraImage);
 
         if(note_edit_ui.bRemovePictureUri)
     	    outState.putBoolean("removeOriginalPictureUri",true);
 
-        if(bUseCameraImage)
-        {
-        	outState.putBoolean("UseCameraImage",true);
-        	outState.putString("showCameraImageUri", picUriStr);
-        }
-        else
-        {
-        	outState.putBoolean("UseCameraImage",false);
-        	outState.putString("showCameraImageUri", "");
-        }
-        
         noteId = note_edit_ui.saveStateInDB(noteId, enSaveDb, picUriStr);
         outState.putSerializable(DB_page.KEY_NOTE_ID, noteId);
         
@@ -274,8 +272,6 @@ public class Note_edit extends Activity
     {
     	super.onRestoreInstanceState(savedInstanceState);
 
-    	bUseCameraImage = savedInstanceState.getBoolean("UseCameraImage");
-    	
     	System.out.println("Note_edit / onRestoreInstanceState / savedInstanceState.getBoolean removeOriginalPictureUri =" +
     							savedInstanceState.getBoolean("removeOriginalPictureUri"));
         if(savedInstanceState.getBoolean("removeOriginalPictureUri"))
@@ -314,9 +310,6 @@ public class Note_edit extends Activity
 	    }
     }
     
-    static final int CHANGE_LINK = R.id.ADD_LINK;
-	private Uri picUri;
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -379,9 +372,12 @@ public class Note_edit extends Activity
 			@Override
 			public void onClick(DialogInterface dialog, int which) 
 			{
+				System.out.println("Note_edit  / onClick:  select YouTube link");
 	        	Intent intent_youtube_link = new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.youtube.com"));
 	        	startActivityForResult(intent_youtube_link,EDIT_LINK);
 	        	enSaveDb = false;
+				MainAct.isEdited_link = true;
+				MainAct.edit_position = position;
 			}
 		});
 		// None
@@ -406,54 +402,18 @@ public class Note_edit extends Activity
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent)
 	{
-		// take picture
-		if (requestCode == Util.ACTIVITY_TAKE_PICTURE)
-		{
-			if (resultCode == Activity.RESULT_OK)
-			{
-				picUri = Uri.parse(note_edit_ui.currPictureUri);
-//				String str = getResources().getText(R.string.note_take_picture_OK ).toString();
-//	            Toast.makeText(Note_edit.this, str + " " + imageUri.toString(), Toast.LENGTH_SHORT).show();
-				note_edit_ui.populateFields_all(noteId);
-	            bUseCameraImage = true;
-			}
-			else if (resultCode == RESULT_CANCELED)
-			{
-				bUseCameraImage = false;
-				{
-					// skip new Uri, roll back to original one
-					note_edit_ui.currPictureUri = note_edit_ui.oriPictureUri;
-			    	picUriStr = note_edit_ui.oriPictureUri;
-					Toast.makeText(Note_edit.this, R.string.note_cancel_add_new, Toast.LENGTH_LONG).show();
-				}
-				
-				enSaveDb = true;
-				note_edit_ui.saveStateInDB(noteId, enSaveDb, picUriStr);
-				note_edit_ui.populateFields_all(noteId);
-			}
-		}
-		
-		// choose picture
-        if(requestCode == Util.CHOOSER_SET_PICTURE && resultCode == Activity.RESULT_OK)
-        {
-			String pictureUri = Util.getPicturePathOnActivityResult(this,returnedIntent);
-        	System.out.println("Note_edit / _onActivityResult / picUri = " + pictureUri);
-        	
-        	noteId = note_edit_ui.saveStateInDB(noteId,true,pictureUri );
+		super.onActivityResult(requestCode,resultCode,returnedIntent);
 
-			note_edit_ui.populateFields_all(noteId);
-			
-            // set for Rotate any times
-            bUseCameraImage = true;
-            picUriStr = note_edit_ui.currPictureUri; // for pause
-        }
-        
+		//todo Why this is not called when Share link
+		System.out.println("Note_edit / _onActivityResult");
         // choose link
-		if(requestCode == EDIT_LINK)
+		if( (requestCode == EDIT_LINK) && (resultCode == RESULT_CANCELED))
 		{
+			System.out.println("Note_edit / _onActivityResult / canceled");
 			Toast.makeText(Note_edit.this, R.string.note_cancel_add_new, Toast.LENGTH_LONG).show();
             setResult(RESULT_CANCELED, getIntent());
             enSaveDb = true;
+			MainAct.isEdited_link = false;
             return; // must add this
 		}
 

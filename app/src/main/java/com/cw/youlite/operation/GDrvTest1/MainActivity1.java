@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.cw.youlite.R;
 import com.cw.youlite.util.Util;
@@ -356,15 +357,15 @@ public class MainActivity1 extends AppCompatActivity {
 
             mDriveServiceHelper.saveJsonFile(mOpenFileId, fileName, fileContent)
                     .addOnFailureListener(exception ->
-                            Log.e(TAG, "Unable to save file via REST.", exception));
-        } else if(mDriveServiceHelper != null && mOpenFileId == null) {
-            Log.d(TAG, "Saving mOpenFileId = null");
-            // todo Overwrite
-        } else {
-            Log.d(TAG, "mDriveServiceHelper = null ,Saving mOpenFileId = null");
+                            Log.e(TAG, "Unable to save file via REST.", exception))
+                    .addOnSuccessListener(nameAndContent -> exportJsonSuccess());
         }
     }
 
+    // toast for Export JSON successfully
+    private void exportJsonSuccess() {
+        Toast.makeText(this,"Export JSON file successfully",Toast.LENGTH_SHORT).show();
+    }
 
     /**
      * Queries the Drive REST API for files visible to this app and lists them in the content view.

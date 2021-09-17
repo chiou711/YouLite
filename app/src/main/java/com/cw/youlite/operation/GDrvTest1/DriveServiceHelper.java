@@ -147,7 +147,7 @@ public class DriveServiceHelper {
 
                 // Convert content to an AbstractInputStreamContent instance.
 //            ByteArrayContent contentStream = ByteArrayContent.fromString("text/plain", content);
-            ByteArrayContent contentStream = ByteArrayContent.fromString("application/json", content);
+                ByteArrayContent contentStream = ByteArrayContent.fromString("application/json", content);
 
                 // Update the metadata and contents.
                 mDriveService.files().update(fileId, metadata, contentStream).execute();

@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.cw.youlite"
-    android:versionCode="10309"
-    android:versionName="1.03.09">
+    android:versionCode="10312"
+    android:versionName="1.03.12">
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -54,7 +54,8 @@
                 android:value="com.cw.youlite.main.MainAct" />
         </activity>
         <activity android:name="com.cw.youlite.note_edit.Note_edit"
-                  android:windowSoftInputMode="adjustPan"/>
+                 android:theme="@style/MyTheme"
+                 android:windowSoftInputMode="adjustPan"/>
         <activity android:name="com.cw.youlite.note.Note"
                   android:theme="@style/MyTheme"
             	  android:configChanges="orientation|keyboard|keyboardHidden|screenSize|screenLayout|uiMode">

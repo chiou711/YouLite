@@ -127,6 +127,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     public final static int STATE_PAUSED = 0;
     public final static int STATE_PLAYING = 1;
     public boolean bEULA_accepted;
+    public static boolean isEdited_link;
+    public static int edit_position;
 
 	// Main Act onCreate
     @Override
@@ -213,27 +215,29 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         }
         else {
             if(Pref.getPref_DB_ready(this))
-                doCreate(savedInstanceState);
+                doCreate();
         }
 
+        isEdited_link = false;
+        edit_position = 0;
     }
 
     // Do major create operation
-    void doCreate(Bundle savedInstanceState)
+    void doCreate()
     {
         System.out.println("MainAct / _doCreate");
 
         mFolderTitles = new ArrayList<>();
 
-        //Add note with the link which got from other App
-        String intentLink = mMainUi.addNote_IntentLink(getIntent(), mAct);
-        if (!Util.isEmptyString(intentLink)) {
-            System.out.println("MainAct / _doCreate / will do finish");
-            finish(); // YouLite not running at first, keep closing
-            return;
-        } else {
+        // Add link from other App
+        isAdded_onNewIntent = false; // for judging YouLite is running or not when doing YouTube Share
+
+        String intentExtras;
+        intentExtras = mMainUi.addNote_IntentLink(getIntent(), mAct, isAdded_onNewIntent);
+
+        if(intentExtras == null) {
             // check DB
-            final boolean ENABLE_DB_CHECK = false;//true;//false
+            final boolean ENABLE_DB_CHECK = false;
             if (ENABLE_DB_CHECK) {
                 // list all folder tables
                 FolderUi.listAllFolderTables(mAct);
@@ -241,7 +245,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 // recover focus
                 DB_folder.setFocusFolder_tableId(Pref.getPref_focusView_folder_tableId(this));
                 DB_page.setFocusPage_tableId(Pref.getPref_focusView_page_tableId(this));
-            }//if(ENABLE_DB_CHECK)
+            }
 
             mContext = getBaseContext();
 
@@ -249,12 +253,10 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             mFragmentManager = getSupportFragmentManager();
             mOnBackStackChangedListener = this;
             mFragmentManager.addOnBackStackChangedListener(mOnBackStackChangedListener);
+
+            if (bEULA_accepted)
+                configLayoutView(); //createAssetsFile inside
         }
-
-        isAddedOnNewIntent = false;
-
-        if(bEULA_accepted)
-            configLayoutView(); //createAssetsFile inside
     }
 
 
@@ -424,21 +426,23 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
      *
      *********************************************************************************/
 
-    boolean isAddedOnNewIntent;
+    boolean isAdded_onNewIntent;
     // if one YouLite Intent is already running, call it again in YouTube or Browser will run into this
     @Override
     protected void onNewIntent(Intent intent)
     {
         super.onNewIntent(intent);
+        System.out.println("MainAct / _onNewIntent ");
 
-        if(!isAddedOnNewIntent)
-        {
-            String intentTitle = mMainUi.addNote_IntentLink(intent, mAct);
-            if (!Util.isEmptyString(intentTitle))
-                TabsHost.reloadCurrentPage();
-
+        if(isEdited_link) {
+            System.out.println("MainAct / _onNewIntent / call Edited link");
+            mMainUi.editNote_IntentLink(intent, mAct, isAdded_onNewIntent,edit_position);
+        } else {
             if(Build.VERSION.SDK_INT >= O)//API26
-                isAddedOnNewIntent = true; // fix 2 times _onNewIntent on API26
+                isAdded_onNewIntent = true; // fix 2 times _onNewIntent on API26
+
+            // Add link from new intent
+            mMainUi.addNote_IntentLink(intent, mAct, isAdded_onNewIntent);//todo How to judge Add or Edit?
         }
     }
 
@@ -447,7 +451,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         super.onPause();
         System.out.println("MainAct / _onPause");
     }
-
 
     private FetchServiceResponseReceiver responseReceiver;
     LocalBroadcastManager localBroadcastMgr;
@@ -609,11 +612,22 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     {
         System.out.println("MainAct / _openFolder");
         DB_drawer dB_drawer = new DB_drawer(mAct);
-        if (dB_drawer.getFoldersCount(true) > 0) {
-            System.out.println("MainAct / _openFolder / getFocus_folderPos() = " + FolderUi.getFocus_folderPos());
+        int folders_count = dB_drawer.getFoldersCount(true);
 
-            int focus_folderPos = FolderUi.getFocus_folderPos();
-            FolderUi.selectFolder(mAct, focus_folderPos);
+        if (folders_count > 0) {
+            int pref_focus_table_id = Pref.getPref_focusView_folder_tableId(MainAct.mAct);
+            for(int folder_pos=0; folder_pos<folders_count; folder_pos++)
+            {
+                if(dB_drawer.getFolderTableId(folder_pos,true) == pref_focus_table_id) {
+                    // select folder
+                    FolderUi.selectFolder(mAct, folder_pos);
+
+                    // set focus folder position
+                    FolderUi.setFocus_folderPos(folder_pos);
+                }
+            }
+            // set focus table Id
+            DB_folder.setFocusFolder_tableId(pref_focus_table_id);
 
             if (mAct.getSupportActionBar() != null)
                 mAct.getSupportActionBar().setTitle(mFolderTitle);
@@ -818,7 +832,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             (requestCode == Util.ADD_NEW_LINK_INTENT)    )
         {
             if(Build.VERSION.SDK_INT >= O)//API26
-                isAddedOnNewIntent = false;
+                isAdded_onNewIntent = false;
         }
     }
 
@@ -1085,11 +1099,13 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
         switch (item.getItemId())
         {
+            // for landscape layout
             case MenuId.ADD_NEW_FOLDER:
                 FolderUi.renewFirstAndLast_folderId();
                 FolderUi.addNewFolder(this, FolderUi.mLastExist_folderTableId +1, mFolder.getAdapter());
                 return true;
 
+            // for landscape layout
             case MenuId.ENABLE_FOLDER_DRAG_AND_DROP:
                 if(MainAct.mPref_show_note_attribute.getString("KEY_ENABLE_FOLDER_DRAGGABLE", "no")
                         .equalsIgnoreCase("yes"))
@@ -1118,6 +1134,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
                 return true;
 
+            // for landscape layout
             case MenuId.DELETE_FOLDERS:
                 mMenu.setGroupVisible(R.id.group_folders, false);
 
