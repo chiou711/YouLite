@@ -2127,7 +2127,11 @@ public class Util
 				intent = YouTubeIntents.createPlayPlaylistIntent(act, playListIdStr);
             }
 
-	        if (intent.resolveActivity(act.getPackageManager()) != null) {
+	        PackageManager pm = act.getPackageManager();
+	        String strRes = intent.resolveActivity(pm).toString();
+	        System.out.println("Util / _openLink_YouTube / strRes = " + strRes);
+
+	        if (strRes != null) {
 		        if(Pref.getPref_is_autoPlay_YouTubeApi(act))
 			        act.startActivityForResult(intent, YOUTUBE_LINK_INTENT);
 		        else
