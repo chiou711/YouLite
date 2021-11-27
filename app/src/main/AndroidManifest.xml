@@ -11,6 +11,14 @@
 	<uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <!-- option 1-->
+    <!--    <queries>-->
+    <!--        <intent>-->
+    <!--            <action android:name="com.google.android.youtube.api.service.START" />-->
+    <!--        </intent>-->
+    <!--    </queries>-->
+
+    <!-- option 2-->
     <!--    https://stackoverflow.com/questions/66983878/android-11-api-30-open-youtube-link-->
     <queries>
         <intent>
