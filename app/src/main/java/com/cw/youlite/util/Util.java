@@ -134,17 +134,14 @@ public class Util
     public static String NEW_LINE = "\r" + System.getProperty("line.separator");
 
 	private static int STYLE_DEFAULT = 1;
-    
-    public static int ACTIVITY_TAKE_PICTURE = 3;
-    public static int CHOOSER_SET_PICTURE = 4;
 
-	private int defaultBgClr;
 	private int defaultTextClr;
 
 	public static final int PERMISSIONS_REQUEST_STORAGE = 10;
 	public static final int PERMISSIONS_REQUEST_STORAGE_EXPORT_ONE = 13;
 	public static final int PERMISSIONS_REQUEST_STORAGE_EXPORT_ALL = 14;
 	public static final int PERMISSIONS_REQUEST_STORAGE_IMPORT = 15;
+	public static final int STORAGE_MANAGER_PERMISSION = 96;
 
 	public Util(){}
     
@@ -527,7 +524,6 @@ public class Util
 	            else
 	            {
 		        	textView.setTypeface(null, Typeface.NORMAL);
-		            textView.setBackgroundColor(defaultBgClr);
 		            textView.setTextColor(defaultTextClr);
 		            textView.setCheckMarkDrawable(R.drawable.btn_radio_off_holo_dark);
 	            }

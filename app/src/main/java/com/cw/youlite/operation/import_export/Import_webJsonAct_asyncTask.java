@@ -94,7 +94,6 @@ class Import_webJsonAct_asyncTask extends AsyncTask<Void, Integer, Void> {
         }
     }
 
-    ParseJsonToDB importObject;
     private void insertSelectedFileContentToDB(boolean enableInsertDB)
     {
         ParseJsonToDB importObject = new ParseJsonToDB(filePath, act);
@@ -104,6 +103,8 @@ class Import_webJsonAct_asyncTask extends AsyncTask<Void, Integer, Void> {
         else
             importObject.handleViewJson();
 
+        // Note:
+        // keep paring wrong JSON will hang up system
         while (ParseJsonToDB.isParsing) {
             try { Thread.sleep(100); } catch (InterruptedException e) {}
         }

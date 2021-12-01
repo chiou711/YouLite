@@ -17,14 +17,15 @@
 package com.cw.youlite.operation.import_export;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
@@ -46,12 +47,12 @@ import androidx.core.app.ActivityCompat;
 
 public class Import_webJsonAct extends AppCompatActivity
 {
-    String content=null;
+    String content = null;
     WebView webView;
     Button btn_import;
     // TODO Website path customization: input path, website rule for Import
     String homeUrl = "https://youlite-app.blogspot.com/2019/09/json.html";
-    String downloadUrl ;
+    boolean isReady;
 
     // issue:
     //     java.lang.RuntimeException:
@@ -69,23 +70,34 @@ public class Import_webJsonAct extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
 
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)//API23
-        {
-            // check permission
+        //Add API30 permission check
+        if(Build.VERSION.SDK_INT >= 30)
+            checkStorageManagerPermission();
+        else if(Build.VERSION.SDK_INT >= 23){
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED)
-            {
+                    != PackageManager.PERMISSION_GRANTED){
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                                                   new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                                                Manifest.permission.READ_EXTERNAL_STORAGE},
                                                   Util.PERMISSIONS_REQUEST_STORAGE);
-            }
-            else
+            } else
                 doCreate();
-        }
-        else
+        } else
+            doCreate();
+    }
+
+    public void checkStorageManagerPermission() {
+        if (!Environment.isExternalStorageManager()) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+            startActivityForResult(intent,Util.STORAGE_MANAGER_PERMISSION);
+
+            // flow of this query:
+            // Act / _onPause / _onStop
+            // this query UI
+            // onActivityResult
+            // Act / _onStart / _onResume
+        } else
             doCreate();
     }
 
@@ -118,43 +130,7 @@ public class Import_webJsonAct extends AppCompatActivity
             public void onClick(View view)
             {
                 setResult(RESULT_OK);
-
-                // import
-                // save text in a file
-                String dirName = "Download";
-                String fileName = "temp.json";
-                String dirPath = Environment.getExternalStorageDirectory().toString() +
-                        "/" +
-                        dirName;
-                File file = new File(dirPath, fileName);
-
-                try
-                {
-                    try {
-                        file.createNewFile();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    FileOutputStream fOut = new FileOutputStream(file);
-                    OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
-                    if(content != null) {
-                        content = content.replaceAll("(?m)^[ \t]*\r?\n", "");
-                    }
-                    myOutWriter.append(content);
-                    myOutWriter.close();
-
-                    fOut.flush();
-                    fOut.close();
-                }
-                catch (IOException e)
-                {
-                    Log.e("Exception", "File write failed: " + e.toString());
-                }
-
-                // import file content to DB
-                Import_webJsonAct_asyncTask task = new Import_webJsonAct_asyncTask(Import_webJsonAct.this,file.getPath());
-                task.enableSaveDB(true);// import
-                task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                webView.loadUrl("javascript:window.YouLite.processContent(document.getElementsByTagName('body')[0].innerText);");
             }
 
         });
@@ -165,8 +141,10 @@ public class Import_webJsonAct extends AppCompatActivity
         // create instance
         final ImportInterface import_interface = new ImportInterface(webView);
 
-        // load web content
-        webView.addJavascriptInterface(import_interface, "INTERFACE");
+        // load first web content
+        // keyword YouLite will be used in javascript:window.YouLite.processContent(...
+        webView.addJavascriptInterface(import_interface, "YouLite");
+
         webView.setWebViewClient(new WebViewClient() {
 
             @Override
@@ -179,21 +157,24 @@ public class Import_webJsonAct extends AppCompatActivity
             public void onPageFinished(WebView view, String url)
             {
                 System.out.println("Import_webJsonAct / _setWebViewClient / url = " + url);
-                String homeHost = Uri.parse(homeUrl).getHost();
-                view.loadUrl("javascript:window.INTERFACE.processContent(document.getElementsByTagName('body')[0].innerText);");
-                if(!url.contains(homeHost))
-                    downloadUrl = url;
-                else
-                    downloadUrl = "";
+
+                // todo: Need to modify the keyword below when json file destination changed
+                String keywordStr = "drive.google.com/file";
+                // enable Import if url path is directed to json file folder
+                if(url.contains(keywordStr)){
+                    btn_import.setVisibility(View.VISIBLE);
+                    isReady = true;
+                }
+
             }
 
         });
 
-        // show toast
-        webView.addJavascriptInterface(import_interface, "YouLite");
-
         // load content to web view
         webView.loadUrl(homeUrl);
+
+        // init isReady flag
+        isReady = false;
     }
 
     // callback of granted permission
@@ -213,6 +194,13 @@ public class Import_webJsonAct extends AppCompatActivity
                 else
                     finish();
             }//case
+            break;
+
+            case Util.STORAGE_MANAGER_PERMISSION:
+                    if(Environment.isExternalStorageManager()){
+                        doCreate();
+                    }
+            break;
         }//switch
     }
 
@@ -239,6 +227,8 @@ public class Import_webJsonAct extends AppCompatActivity
         }
 
         Runnable run;
+
+        // process HTML content: save file, parsing, save DB
         @SuppressWarnings("unused")
         @android.webkit.JavascriptInterface
         public void processContent(final String _content)
@@ -249,21 +239,57 @@ public class Import_webJsonAct extends AppCompatActivity
                     content = _content;
                     int size = content.length();
                     System.out.println("Import_webJsonAct / content size = "+ size);
+                    System.out.println("Import_webJsonAct / content = "+ content);
 
-                    // workaround: test result is 15
-                    if(size < 20) {
-                        webView.loadUrl("javascript:window.INTERFACE.processContent(document.getElementsByTagName('body')[0].innerText);");
-                    }
-                    else
+                    if(!isReady)
+                        return;
+
+                    // load web view content to update content string
+                    webView.loadUrl("javascript:window.YouLite.processContent(document.getElementsByTagName('body')[0].innerText);");
+
+                    // import
+                    // save text in a file
+                    String dirName = "Download";
+                    String fileName = "temp.json";
+                    String dirPath = Environment.getExternalStorageDirectory().toString() +
+                            "/" +
+                            dirName;
+                    File file = new File(dirPath, fileName);
+
+                    try
                     {
-                        String homeHost = Uri.parse(homeUrl).getHost();
-                        if(!Util.isEmptyString(downloadUrl) && !downloadUrl.contains(homeHost)  )
-                            btn_import.setVisibility(View.VISIBLE);
+                        try {
+                            file.createNewFile();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        FileOutputStream fOut = new FileOutputStream(file);
+                        OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
+
+                        if(content != null) {
+                            content = content.replaceAll("(?m)^[ \t]*\r?\n", "");
+                        }
+                        myOutWriter.append(content);
+                        myOutWriter.close();
+
+                        fOut.flush();
+                        fOut.close();
                     }
+                    catch (IOException e)
+                    {
+                        Log.e("Exception", "File write failed: " + e.toString());
+                    }
+
+                    // import file content to DB
+                    Import_webJsonAct_asyncTask task = new Import_webJsonAct_asyncTask(Import_webJsonAct.this,file.getPath());
+                    task.enableSaveDB(true);// import
+                    task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                    // import done, reset isReady flag
+                    isReady = false;
                 }
             };
 
-//            webView.postDelayed(run,1000);
             webView.post(run);
         }
 

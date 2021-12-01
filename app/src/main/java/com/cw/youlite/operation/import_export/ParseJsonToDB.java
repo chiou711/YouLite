@@ -72,6 +72,8 @@ public class ParseJsonToDB {
     private void parseJsonFileAndInsertDB(String filePath) throws JSONException
     {
         final String jsonString = getJsonStringByFile(filePath);
+//        System.out.println("ParseJsonToDB / _parseJsonFileAndInsertDB / filePath = " + filePath);
+//        System.out.println("ParseJsonToDB / _parseJsonFileAndInsertDB / jsonString = " + jsonString);
         JSONObject jsonObj = new JSONObject(jsonString);
         parseJsonAndInsertDB(jsonObj);
     }
@@ -220,8 +222,9 @@ public class ParseJsonToDB {
     }
 
 
-    private String getJsonStringByFile(String filePath)
-    {
+    private String getJsonStringByFile(String filePath) {
+//        System.out.println("ParseJsonToDB / _getJsonString / filePath = " + filePath);
+
         File file = new File(filePath);
 
         FileInputStream fileInputStream = null;
