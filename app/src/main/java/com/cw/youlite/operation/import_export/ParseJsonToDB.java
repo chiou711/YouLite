@@ -52,12 +52,20 @@ public class ParseJsonToDB {
     public static boolean isParsing;
     public String fileBody = "";
     String filePath;
+    String content;
 
     ParseJsonToDB(String filePath, Context context)
     {
         mContext = context;
         this.filePath = filePath;
         isParsing = true;
+    }
+
+    ParseJsonToDB(Context context,String _content)
+    {
+        mContext = context;
+        isParsing = true;
+        content = _content;
     }
 
     public ParseJsonToDB(Context context)
@@ -72,6 +80,23 @@ public class ParseJsonToDB {
     private void parseJsonFileAndInsertDB(String filePath) throws JSONException
     {
         final String jsonString = getJsonStringByFile(filePath);
+//        System.out.println("ParseJsonToDB / _parseJsonFileAndInsertDB / filePath = " + filePath);
+//        System.out.println("ParseJsonToDB / _parseJsonFileAndInsertDB / jsonString = " + jsonString);
+        JSONObject jsonObj = new JSONObject(jsonString);
+        parseJsonAndInsertDB(jsonObj);
+    }
+
+    //
+    // parse JSON string and insert content to DB tables
+    //
+    private void parseJsonStringAndInsertDB(String content) throws JSONException
+    {
+        if(content != null) {
+            content = content.replaceAll("(?m)^[ \t]*\r?\n", "");
+        }
+
+        final String jsonString = content;//getJsonStringByFile(filePath);
+
 //        System.out.println("ParseJsonToDB / _parseJsonFileAndInsertDB / filePath = " + filePath);
 //        System.out.println("ParseJsonToDB / _parseJsonFileAndInsertDB / jsonString = " + jsonString);
         JSONObject jsonObj = new JSONObject(jsonString);
@@ -270,6 +295,26 @@ public class ParseJsonToDB {
                 try
                 {
                    parseJsonFileAndInsertDB(filePath);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+    }
+
+    void handleParseJsonStringAndInsertDB(String intent)
+    {
+        Thread thread = new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    parseJsonStringAndInsertDB(intent);
                 }
                 catch (Exception e)
                 {

@@ -24,10 +24,6 @@ import android.widget.Toast;
 import com.cw.youlite.R;
 import com.cw.youlite.util.Util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 /**
@@ -40,11 +36,10 @@ class Import_webJsonAct_asyncTask extends AsyncTask<Void, Integer, Void> {
     private ProgressBar progressBar;
     private boolean enableSaveDB;
     private AppCompatActivity act;
-    private File file;
     private View contentBlock;
-    String filePath;
+    String content;
 
-    Import_webJsonAct_asyncTask(AppCompatActivity _act, String _filePath)
+    Import_webJsonAct_asyncTask(AppCompatActivity _act, String _content)
     {
         act = _act;
         Util.lockOrientation(act);
@@ -55,8 +50,7 @@ class Import_webJsonAct_asyncTask extends AsyncTask<Void, Integer, Void> {
         progressBar = (ProgressBar) act.findViewById(R.id.import_progress);
         progressBar.setVisibility(View.VISIBLE);
 
-//        file = new File(_filePath);
-        filePath = _filePath;
+        content = _content;
     }
 
     void enableSaveDB(boolean enable)
@@ -73,9 +67,20 @@ class Import_webJsonAct_asyncTask extends AsyncTask<Void, Integer, Void> {
     }
 
     @Override
-    protected Void doInBackground(Void... params)
-    {
-        insertSelectedFileContentToDB(enableSaveDB);
+    protected Void doInBackground(Void... params){
+        ParseJsonToDB importObject = new ParseJsonToDB(act,content);
+
+        if(enableSaveDB)
+            importObject.handleParseJsonStringAndInsertDB(content);
+        else
+            importObject.handleViewJson();
+
+        // Note:
+        // keep paring wrong JSON will hang up system
+        while (ParseJsonToDB.isParsing) {
+            try { Thread.sleep(100); } catch (InterruptedException e) {}
+        }
+
         return null;
     }
 
@@ -94,20 +99,5 @@ class Import_webJsonAct_asyncTask extends AsyncTask<Void, Integer, Void> {
         }
     }
 
-    private void insertSelectedFileContentToDB(boolean enableInsertDB)
-    {
-        ParseJsonToDB importObject = new ParseJsonToDB(filePath, act);
-
-        if(enableInsertDB)
-            importObject.handleParseJsonFileAndInsertDB();
-        else
-            importObject.handleViewJson();
-
-        // Note:
-        // keep paring wrong JSON will hang up system
-        while (ParseJsonToDB.isParsing) {
-            try { Thread.sleep(100); } catch (InterruptedException e) {}
-        }
-    }
 }
 

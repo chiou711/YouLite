@@ -156,6 +156,9 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             System.setOut(new PrintStream(nullDev));
         }
 
+        // filter unimportant log
+        System.setOut(new FilteringPrintStream(System.out));
+
         System.out.println("================start application ==================");
         System.out.println("MainAct / _onCreate");
 
@@ -220,6 +223,21 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
         isEdited_link = false;
         edit_position = 0;
+    }
+
+    // filter unimportant log
+    public class FilteringPrintStream extends PrintStream {
+
+        public FilteringPrintStream(OutputStream out)  {
+            super(out);
+        }
+
+        @Override
+        public void println(String x) {
+            if (x==null || !x.contains("isSBSettingEnabled")) {
+                super.println(x);
+            }
+        }
     }
 
     // Do major create operation
