@@ -64,7 +64,7 @@ public class MailNotes {
         builder1 = new AlertDialog.Builder(act);
 
         // get default email address
-        mDefaultEmailAddr = mPref_email.getString("KEY_DEFAULT_EMAIL_ADDR","@");
+        mDefaultEmailAddr = mPref_email.getString("KEY_DEFAULT_EMAIL_ADDR","");
         editEMailAddrText.setText(mDefaultEmailAddr);
 
         builder1.setTitle(R.string.mail_notes_dlg_title)

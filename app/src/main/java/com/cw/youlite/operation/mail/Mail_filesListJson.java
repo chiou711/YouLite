@@ -82,10 +82,7 @@ public class Mail_filesListJson extends ListFragment
         renewButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 // source dir: Download
-                String srcDirName = "Download";//todo Could be empty
-                String srcDirPath = Environment.getExternalStorageDirectory().toString() +
-                        "/" +
-                        srcDirName;
+                String srcDirPath = getActivity().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString();
                 System.out.println("srcDirPath = " + srcDirPath);
 
                 /**
@@ -98,9 +95,7 @@ public class Mail_filesListJson extends ListFragment
                  * that is distinct from the protected internal storage and can be mounted as a filesystem on a computer.
                  */
                 // target dir
-                String targetDirPath = Environment.getExternalStorageDirectory().toString() +
-                        "/" +
-                        Util.getStorageDirName(getActivity());
+                String targetDirPath = getActivity().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString();
 
                 // copy source files to target directory
                 File srcDir = new File(srcDirPath);
@@ -140,9 +135,8 @@ public class Mail_filesListJson extends ListFragment
     public void onResume() {
         super.onResume();
         listView = getListView();
-        String dirString = Environment.getExternalStorageDirectory().toString() +
-                "/" +
-                Util.getStorageDirName(getActivity());
+        String dirString = getActivity().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString();
+
         getFiles(new File(dirString).listFiles());
     }
 
@@ -160,6 +154,7 @@ public class Mail_filesListJson extends ListFragment
         else
         {
             currFilePath = filePathArray.get(selectedRow);
+
             final File file = new File(currFilePath);
             if(file.isDirectory())
             {

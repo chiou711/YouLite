@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -42,10 +43,13 @@ import com.cw.youlite.operation.import_export.Import_fileViewJson_asyncTask;
 import com.cw.youlite.util.ColorSet;
 import com.cw.youlite.util.Util;
 
+import org.json.JSONException;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 
@@ -71,7 +75,7 @@ public class Mail_fileViewJson extends Fragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		rootView = inflater.inflate(R.layout.import_sd_json_file_view,container, false);
-		System.out.println("Import_fileViewJson / onCreate");
+		System.out.println("Mail_fileViewJson / onCreate");
 
 		mTitleViewText = (TextView) rootView.findViewById(R.id.view_title);
 		mBodyViewText = (TextView) rootView.findViewById(R.id.view_body);
@@ -148,7 +152,7 @@ public class Mail_fileViewJson extends Fragment
 		builder1 = new AlertDialog.Builder(getActivity());
 
 		// get default email address
-		mDefaultEmailAddr = mPref_email.getString("KEY_DEFAULT_EMAIL_ADDR","@");
+		mDefaultEmailAddr = mPref_email.getString("KEY_DEFAULT_EMAIL_ADDR","");
 		editEMailAddrText.setText(mDefaultEmailAddr);
 
 		builder1.setTitle(R.string.mail_notes_dlg_title)
@@ -200,6 +204,7 @@ public class Mail_fileViewJson extends Fragment
 		public void onClick(View v) {
 
 			System.out.println("Mail_fileViewJson / CustomListener / _onClick / filePath = " + filePath);
+
 			String[] attachmentFileName={""};
 			String strEMailAddr = editEMailAddrText.getText().toString();
             if(strEMailAddr.length() > 0)
@@ -239,6 +244,15 @@ public class Mail_fileViewJson extends Fragment
 	               String[] picFileNameArray) // attachment picture file name
 	{
 		mAttachmentFileName = attachmentFileName;
+
+		Util util = new Util(getActivity());
+		mEMailBodyString = mBodyViewText.getText().toString();
+		try {
+			mEMailBodyString = util.trimJsonTag(mEMailBodyString);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
 		// new ACTION_SEND intent
 		mEMailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE); // for multiple attachments
 
@@ -253,8 +267,9 @@ public class Mail_fileViewJson extends Fragment
 		// attachment: message
 		List<String> filePaths = new ArrayList<String>();
 		for(int i=0;i<attachmentFileName.length;i++) {
-			String messagePath = "file:///" + Environment.getExternalStorageDirectory().getPath() +
-					"/" + Util.getStorageDirName(mContext) + "/" +
+			String messagePath =
+					getActivity().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString() +
+					"/" +
 					attachmentFileName[i];// message file name
 			filePaths.add(messagePath);
 		}
@@ -271,9 +286,19 @@ public class Mail_fileViewJson extends Fragment
 		ArrayList<Uri> uris = new ArrayList<Uri>();
 		for (String file : filePaths)
 		{
-			Uri uri = Uri.parse(file);
+			Uri uri = null;
+
+			if (mEMailIntent.resolveActivity(getContext().getPackageManager()) != null) {
+				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+					uri = Uri.fromFile(new File(file));
+				} else {
+					uri = FileProvider.getUriForFile(getContext(), getContext().getPackageName() + ".Mail_fileViewJson", new File(file));
+				}
+			}
+
 			uris.add(uri);
-			System.out.println("Mail_fileViewJson / _sendEMail / uri to string" + uri.toString());
+			System.out.println("Mail_fileViewJson / _sendEMail / uri to string : " + uri.toString());
+			//example: content://com.cw.youlite.Mail_fileViewJson/external_files/Documents/%E6%B2%89%E9%9D%9C.json
 		}
 
 		// eMail extra

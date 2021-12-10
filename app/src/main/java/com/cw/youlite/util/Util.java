@@ -98,7 +98,6 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.provider.MediaStore;
 import androidx.appcompat.app.AppCompatActivity;
-import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -117,12 +116,15 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static com.cw.youlite.data.DbBuilder_video.TAG_LINKS;
+import static com.cw.youlite.data.DbBuilder_video.TAG_LINK_PAGE;
+import static com.cw.youlite.data.DbBuilder_video.TAG_TITLE;
 
 public class Util 
 {
@@ -138,10 +140,7 @@ public class Util
 	private int defaultTextClr;
 
 	public static final int PERMISSIONS_REQUEST_STORAGE = 10;
-	public static final int PERMISSIONS_REQUEST_STORAGE_EXPORT_ONE = 13;
-	public static final int PERMISSIONS_REQUEST_STORAGE_EXPORT_ALL = 14;
 	public static final int PERMISSIONS_REQUEST_STORAGE_IMPORT = 15;
-	public static final int STORAGE_MANAGER_PERMISSION = 96;
 
 	public Util(){}
     
@@ -231,39 +230,46 @@ public class Util
 	// Export data to be SD Card file
 	public void exportToSdCardFile(String filename,String data)
 	{
-	    // SD card path + "/" + directory path
-	    String dirString = Environment.getExternalStorageDirectory().toString() +
-	    		              "/" +
-	    		              Util.getStorageDirName(mContext);
+		String dirString = mContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+				.toString();
 
 		File dir = new File(dirString);
+
+		// create directory
 		if(!dir.isDirectory())
 			dir.mkdir();
-		File file = new File(dir, filename);
-		file.setReadOnly();
 
-//		FileWriter fw = null;
-//		try {
-//			fw = new FileWriter(file);
-//		} catch (IOException e1) {
-//			System.out.println("_FileWriter error");
-//			e1.printStackTrace();
-//		}
-//		BufferedWriter bw = new BufferedWriter(fw);
+		// create file
+		File file = new File(dir, filename);
+
+		if(!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+//		file.setReadOnly();
 
 		BufferedWriter bw = null;
 		OutputStreamWriter osw = null;
 
 		int BUFFER_SIZE = 8192;
-		try {
-			osw = new OutputStreamWriter(new FileOutputStream(file.getPath()), "UTF-8");
-			bw = new BufferedWriter(osw,BUFFER_SIZE);
 
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(file.getPath());
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		}
+
+		try {
+			osw = new OutputStreamWriter(fos, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+
+		bw = new BufferedWriter(osw,BUFFER_SIZE);
 
 		try {
 			bw.write(data);
@@ -271,7 +277,9 @@ public class Util
 			osw.close();
 			bw.close();
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -356,7 +364,7 @@ public class Util
 		//	JSONObject: link , page (= links + title), category (= pages + category_name) , client ( = categories + clientName)
 		//	JSONArray: links, pages, categories
 
-		DB_drawer dB_drawer = new DB_drawer(mAct);
+		DB_drawer dB_drawer = new DB_drawer(mContext);
 		int foldersCount = dB_drawer.getFoldersCount(true);
 
 		JSONArray categories = new JSONArray();
@@ -816,14 +824,14 @@ public class Util
 	 */
 	public static JSONArray getAllJson(int folder_table_id, int tabPos, long noteId) throws JSONException
 	{
-		DB_folder mDb_folder = new DB_folder(mAct, folder_table_id);
+		DB_folder mDb_folder = new DB_folder(mContext, folder_table_id);
 		int pageTableId = mDb_folder.getPageTableId(tabPos,true);
 
 		System.out.println("Util / _getJson / pageTableId = " + pageTableId );
 
 		List<Long> noteIdArray = new ArrayList<>();
 
-		DB_page dbPage = new DB_page(mAct, pageTableId);
+		DB_page dbPage = new DB_page(mContext, pageTableId);
 		dbPage.open();
 
 		int count = dbPage.getNotesCount(false);
@@ -931,8 +939,64 @@ public class Util
 		string = string.trim();
 		return string;
 	}
-	
-	
+
+	public String trimJsonTag(String string) throws JSONException {
+
+		String tabStr = "    ";
+		String bodyStr = "";
+		JSONObject jsonObj = new JSONObject(string);
+
+		// start parsing
+		JSONArray contentArray = jsonObj.getJSONArray("content");
+
+		// Three levels content list:
+		// level 1: category title and folder table Id (in drawer table)
+		// level 2: page title, page table Id and page style (in folder table)
+		// level 3: link title and link Uri (in page table)
+
+		//----------------------------
+		// level 1
+		//----------------------------
+		for (int h = 0; h < contentArray.length(); h++) {
+			JSONObject cateObj = contentArray.getJSONObject(h);
+
+			// get category content
+			String category_name = cateObj.getString("category");
+
+			bodyStr = bodyStr.concat(category_name);
+
+			//----------------------------
+			// level 2
+			//----------------------------
+			JSONArray pageArray = cateObj.getJSONArray(TAG_LINK_PAGE);
+			//           System.out.println("ParseJsonToDB / _parseJsonAndInsertDB / pageArray.length() = " + pageArray.length());
+			for (int i = 0; i < pageArray.length(); i++) {
+
+				// get page content
+				JSONObject page = pageArray.getJSONObject(i);
+				String pageTitle = page.getString(TAG_TITLE);
+				bodyStr = bodyStr.concat("\n").concat(tabStr).concat(pageTitle);
+
+				//----------------------------
+				// level 3
+				//----------------------------
+				JSONArray linksArray = page.getJSONArray(TAG_LINKS);
+
+				// get links content
+				for (int j = 0; j < linksArray.length(); j++) {
+					JSONObject link = linksArray.getJSONObject(j);
+
+					String linkTitle = link.optString("note_title");
+					bodyStr = bodyStr.concat("\n").concat(tabStr).concat(tabStr).concat(linkTitle);
+
+					String linkUrl = (String) link.opt("note_link_uri"); // Get the first link only.
+					bodyStr = bodyStr.concat("\n").concat(tabStr).concat(tabStr).concat(linkUrl);
+				}
+			}
+		}
+		return bodyStr;
+	}
+
 	// get local real path from URI
 	public static String getLocalRealPathByUri(Context context, Uri contentUri) {
 		  Cursor cursor = null;
