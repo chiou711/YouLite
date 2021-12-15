@@ -23,6 +23,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -34,8 +35,13 @@ import android.widget.Toast;
 import com.cw.youlite.R;
 import com.cw.youlite.util.Util;
 
+import org.json.JSONException;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.core.content.FileProvider;
 
 /**
  * Created by CW on 2016/7/21.
@@ -45,17 +51,14 @@ public class MailNotes {
     String mDefaultEmailAddr;
     SharedPreferences mPref_email;
     EditText editEMailAddrText;
-    String mEMailBodyString;
     AlertDialog mDialog;
     Activity mAct;
-    String mSentString;
-    String[] mPicFileNameArray;
+    String mMailString;
 
-    public MailNotes(final Activity act, String sentString, String[] picFileArray)
+    public MailNotes(final Activity act, String sentString)
     {
         mAct = act;
-        mSentString = sentString;
-        mPicFileNameArray = picFileArray;
+        mMailString = sentString;
 
         AlertDialog.Builder builder1;
         mPref_email = act.getSharedPreferences("email_addr", 0);
@@ -131,23 +134,26 @@ public class MailNotes {
 
                 Util util = new Util(mAct);
 
-                // XML file
+                // Json file
                 util.exportToSdCardFile(attachmentFileName[0], // attachment name
-                                        mSentString); // sent string
+                        mMailString); // sent string
 
-                mEMailBodyString = util.trimXMLtag(mSentString);
+                try {
+                    mMailString = util.trimJsonTag(mMailString);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
                 // TXT file
                 util.exportToSdCardFile(attachmentFileName[1], // attachment name
-                                        mEMailBodyString); // sent string
+                        mMailString); // sent string
 
 
                 mPref_email.edit().putString("KEY_DEFAULT_EMAIL_ADDR", strEMailAddr).apply();
 
                 // call next dialog
                 sendEMail(strEMailAddr,  // eMail address
-                          attachmentFileName, // attachment file name
-                          mPicFileNameArray); // picture file name array. For page selection, this is null
+                          attachmentFileName); // picture file name array. For page selection, this is null
                 dialog.dismiss();
             }
             else
@@ -163,8 +169,7 @@ public class MailNotes {
     public static String[] mAttachmentFileName;
     public final static int EMAIL = 101;
     void sendEMail(String strEMailAddr,  // eMail address
-                   String[] attachmentFileName, // attachment name
-                   String[] picFileNameArray) // attachment picture file name
+                   String[] attachmentFileName) // attachment name
     {
         mAttachmentFileName = attachmentFileName;
         // new ACTION_SEND intent
@@ -176,32 +181,35 @@ public class MailNotes {
         // open issue: cause warning for Key android.intent.extra.TEXT expected ArrayList
         String text_body = mAct.getResources().getString(R.string.eMail_body)// eMail text (body)
                 + " " + Util.getStorageDirName(mAct) + " (UTF-8)" + Util.NEW_LINE
-                + mEMailBodyString;
+                + mMailString;
 
         // attachment: message
         List<String> filePaths = new ArrayList<String>();
 
         for(int i=0;i<attachmentFileName.length;i++) {
-            String messagePath = "file:///" + Environment.getExternalStorageDirectory().getPath() +
-                    "/" + Util.getStorageDirName(mAct) + "/" +
-                    attachmentFileName[i];// message file name
+            String messagePath =
+                    mAct.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString() +
+                            "/" +
+                            attachmentFileName[i];// message file name
             filePaths.add(messagePath);
-        }
-
-        // attachment: pictures
-        if(picFileNameArray != null)
-        {
-            for(int i=0;i<picFileNameArray.length;i++)
-            {
-                filePaths.add(picFileNameArray[i]);
-            }
         }
 
         ArrayList<Uri> uris = new ArrayList<Uri>();
         for (String file : filePaths)
         {
-            Uri uri = Uri.parse(file);
+            Uri uri = null;
+
+            if (mEMailIntent.resolveActivity(mAct.getPackageManager()) != null) {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    uri = Uri.fromFile(new File(file));
+                } else {
+                    uri = FileProvider.getUriForFile(mAct, mAct.getPackageName() + ".Mail_fileViewJson", new File(file));
+                }
+            }
+
             uris.add(uri);
+            System.out.println("MailNotes / _sendEMail / uri to string : " + uri.toString());
+            //example: content://com.cw.youlite.Mail_fileViewJson/external_files/Documents/%E6%B2%89%E9%9D%9C.json
         }
 
         mEMailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{strEMailAddr}) // eMail address

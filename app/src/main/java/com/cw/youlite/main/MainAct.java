@@ -127,7 +127,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     public final static int STATE_PAUSED = 0;
     public final static int STATE_PLAYING = 1;
     public boolean bEULA_accepted;
-    public static boolean isEdited_link;
+    public static boolean isEdited_YouTube_link;
+    public static boolean isEdited_Web_link;
     public static int edit_position;
 
 	// Main Act onCreate
@@ -221,7 +222,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 doCreate();
         }
 
-        isEdited_link = false;
         edit_position = 0;
     }
 
@@ -249,6 +249,9 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
         // Add link from other App
         isAdded_onNewIntent = false; // for judging YouLite is running or not when doing YouTube Share
+
+        MainAct.isEdited_Web_link = false;
+        MainAct.isEdited_YouTube_link = false;
 
         String intentExtras;
         intentExtras = mMainUi.addNote_IntentLink(getIntent(), mAct, isAdded_onNewIntent);
@@ -336,36 +339,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     private boolean isStorageRequestedImport = false;
     private boolean isStorageRequested = false;
 
-    // callback of granted permission
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
-    {
-        System.out.println("MainAct / _onRequestPermissionsResult / grantResults.length =" + grantResults.length);
-
-        if ( (grantResults.length > 0) &&
-             ( (grantResults[0] == PackageManager.PERMISSION_GRANTED) &&
-               (grantResults[1] == PackageManager.PERMISSION_GRANTED)   ) )
-        {
-            switch (requestCode)
-            {
-                case Util.PERMISSIONS_REQUEST_STORAGE:
-                    isStorageRequested = true;
-                    break;
-
-                case Util.PERMISSIONS_REQUEST_STORAGE_IMPORT:
-                    isStorageRequestedImport = true;
-                    break;
-            }
-        }
-        else
-        {
-            recreate();
-        }
-
-        //normally, will go to _resume
-    }
-
-
     @Override
     public void setTitle(CharSequence title) {
         super.setTitle(title);
@@ -434,7 +407,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
      *
      *********************************************************************************/
 
-    boolean isAdded_onNewIntent;
+    public static boolean isAdded_onNewIntent;
     // if one YouLite Intent is already running, call it again in YouTube or Browser will run into this
     @Override
     protected void onNewIntent(Intent intent)
@@ -442,7 +415,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         super.onNewIntent(intent);
         System.out.println("MainAct / _onNewIntent ");
 
-        if(isEdited_link) {
+        if(isEdited_Web_link || isEdited_YouTube_link) {
             System.out.println("MainAct / _onNewIntent / call Edited link");
             mMainUi.editNote_IntentLink(intent, mAct, isAdded_onNewIntent,edit_position);
         } else {

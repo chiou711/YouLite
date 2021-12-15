@@ -216,14 +216,11 @@ public class Mail_fileViewJson extends Fragment
 
 
                 // for page selection
-                String[] picFileNameArr = null;
-
                 mPref_email.edit().putString("KEY_DEFAULT_EMAIL_ADDR", strEMailAddr).apply();
 
                 // call next dialog
                 sendEMail(strEMailAddr,  // eMail address
-                        attachmentFileName, // attachment file name
-		                picFileNameArr ); // picture file name array. For page selection, this is null
+                        attachmentFileName); // attachment file name
                 dialog.dismiss();
             }
             else
@@ -240,8 +237,7 @@ public class Mail_fileViewJson extends Fragment
 	public final static int EMAIL_JSON = 103;
 	public static String[] mAttachmentFileName;
 	void sendEMail(String strEMailAddr,  // eMail address
-	               String[] attachmentFileName, // attachment name
-	               String[] picFileNameArray) // attachment picture file name
+	               String[] attachmentFileName) // attachment name
 	{
 		mAttachmentFileName = attachmentFileName;
 
@@ -272,15 +268,6 @@ public class Mail_fileViewJson extends Fragment
 					"/" +
 					attachmentFileName[i];// message file name
 			filePaths.add(messagePath);
-		}
-
-		// attachment: pictures
-		if(picFileNameArray != null)
-		{
-			for(int i=0;i<picFileNameArray.length;i++)
-			{
-				filePaths.add(picFileNameArray[i]);
-			}
 		}
 
 		ArrayList<Uri> uris = new ArrayList<Uri>();

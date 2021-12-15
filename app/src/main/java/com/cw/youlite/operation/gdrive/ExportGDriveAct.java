@@ -69,12 +69,10 @@ import androidx.appcompat.app.AppCompatActivity;
  * The main {@link Activity} for the Drive API migration sample app.
  */
 public class ExportGDriveAct extends AppCompatActivity {
-    private static final String TAG = "GDrv";
+    private static final String TAG = "ExportGDriveAct";
 
     private static final int REQUEST_CODE_SIGN_IN = 1;
     private DriveServiceHelper mDriveServiceHelper;
-    private String mOpenFileId;
-
     private EditText mFileTitleEditText;
     private EditText mDocContentEditText;
     String jsonContent;
@@ -170,10 +168,8 @@ public class ExportGDriveAct extends AppCompatActivity {
      * Exit
      */
     private void exit() {
-        if (mDriveServiceHelper != null) {
-            Log.d(TAG, "Exit Export Json.");
-            finish();
-        }
+        Log.d(TAG, "Exit Export Json.");
+        finish();
     }
 
     // open file with SAF, without using file Id

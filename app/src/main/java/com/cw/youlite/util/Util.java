@@ -139,8 +139,7 @@ public class Util
 
 	private int defaultTextClr;
 
-	public static final int PERMISSIONS_REQUEST_STORAGE = 10;
-	public static final int PERMISSIONS_REQUEST_STORAGE_IMPORT = 15;
+//	public static final int PERMISSIONS_REQUEST_STORAGE = 10;
 
 	public Util(){}
     
@@ -169,24 +168,6 @@ public class Util
     	}
 	}
 	
-	// export to SD card: for checked pages
-	public String exportToSdCard(String filename, List<Boolean> checkedTabs)
-	{   
-		//first row text
-		String data ="";
-
-		//get data from DB
-		data = queryDB(data,checkedTabs);
-		
-		// sent data
-		data = addXmlTag(data);
-		mEMailString = data;
-
-        exportToSdCardFile(filename,data);
-
-		return mEMailString;
-	}
-
 	// export to SD card Json: for checked pages
 	public String exportToSdCardJson(String filename, List<Boolean> checkedTabs) throws JSONException
 	{
@@ -1447,6 +1428,7 @@ public class Util
 	// is YouTube link or not
 	public static boolean isYouTubeLink(String strLink)
 	{
+//		System.out.println("Util / _isYouTubeLink / strLink = " + strLink);
 		boolean is = false;
 
 		if(Util.isEmptyString(strLink) || (!strLink.startsWith("http")))
@@ -1561,11 +1543,6 @@ public class Util
         // OK to put extra
         CharSequence charSeq = "";
         
-        if(type.startsWith("image"))
-        	charSeq = act.getResources().getText(R.string.add_new_chooser_image);
-        else if(type.startsWith("video"))
-        	charSeq = act.getResources().getText(R.string.add_new_chooser_video);
-
 		openInChooser = Intent.createChooser(intentList.remove(intentList.size()-1), charSeq);//remove duplicated item
 		LabeledIntent[] extraIntentsFinal = intentList.toArray(new LabeledIntent[intentList.size()]);
         openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntentsFinal);
@@ -1824,12 +1801,14 @@ public class Util
 						}
 
 						Toast.makeText(MainAct.mAct,
-								MainAct.mAct.getResources().getText(R.string.add_new_note_option_title) + title,
+								MainAct.mAct.getResources().getText(R.string.toast_saved) + ":" + title,
 								Toast.LENGTH_SHORT)
 								.show();
 
 			            Long rowId = dB_page.getNoteId(position,true);
 
+//						System.out.println("---------- position = " + position);
+//						System.out.println("---------- rowId = " + rowId);
 			            Intent i = new Intent(MainAct.mAct, Note_edit.class);
 			            i.putExtra("list_view_position", position);
 			            i.putExtra(DB_page.KEY_NOTE_ID, rowId);

@@ -239,25 +239,6 @@ public class Checked_notes_option {
             case MAIL_CHECKED_NOTE:
                 if(!noItemChecked())
                 {
-                    // set Sent string Id
-                    List<Long> noteIdArray = new ArrayList<>();
-                    List<String> pictureFileNameList = new ArrayList<>();
-                    int j=0;
-                    mDb_page.open();
-                    int count = mDb_page.getNotesCount(false);
-                    for(int i=0; i<count; i++)
-                    {
-                        if(mDb_page.getNoteMarking(i,false) == 1)
-                        {
-                            j++;
-
-                            String picFile = mDb_page.getNotePictureUri_byId(mDb_page.getNoteId(i,false),false,false);
-                            if((picFile != null) && (picFile.length() > 0))
-                                pictureFileNameList.add(picFile);
-                        }
-                    }
-                    mDb_page.close();
-
                     // message
                     String sentString = null;
                     try {
@@ -269,14 +250,7 @@ public class Checked_notes_option {
                             sentString +
                             "}]}]}";
 
-                    // picture array
-                    int cnt = pictureFileNameList.size();
-                    String pictureFileNameArr[] = new String[cnt];
-                    for(int i=0; i < cnt ; i++ )
-                    {
-                        pictureFileNameArr[i] = pictureFileNameList.get(i);
-                    }
-                    new MailNotes(mAct,sentString,pictureFileNameArr);
+                    new MailNotes(mAct,sentString);
                 }
                 else
                     Toast.makeText(act,

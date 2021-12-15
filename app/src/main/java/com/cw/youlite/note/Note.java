@@ -108,26 +108,26 @@ public class Note extends AppCompatActivity
 	} //onCreate end
 
 	// callback of granted permission
-	@Override
-	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
-	{
-		System.out.println("grantResults.length =" + grantResults.length);
-		switch (requestCode)
-		{
-			case Util.PERMISSIONS_REQUEST_STORAGE:
-			{
-				View_note_option option = new View_note_option();
-				option.note_option(act,mNoteId);
-				// If request is cancelled, the result arrays are empty.
-				if ( (grantResults.length > 0) &&
-						( (grantResults[0] == PackageManager.PERMISSION_GRANTED) &&
-					      (grantResults[1] == PackageManager.PERMISSION_GRANTED)       )) {
-					option.doMailNote(act);
-				}
-				option.dlgAddNew.dismiss();
-			}//case
-		}//switch
-	}
+//	@Override
+//	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
+//	{
+//		System.out.println("grantResults.length =" + grantResults.length);
+//		switch (requestCode)
+//		{
+//			case Util.PERMISSIONS_REQUEST_STORAGE:
+//			{
+//				View_note_option option = new View_note_option();
+//				option.note_option(act,mNoteId);
+//				// If request is cancelled, the result arrays are empty.
+//				if ( (grantResults.length > 0) &&
+//						( (grantResults[0] == PackageManager.PERMISSION_GRANTED) &&
+//					      (grantResults[1] == PackageManager.PERMISSION_GRANTED)       )) {
+//					option.doMailNote(act);
+//				}
+//				option.dlgAddNew.dismiss();
+//			}//case
+//		}//switch
+//	}
 
 
 	// Add to prevent resizing full screen picture,

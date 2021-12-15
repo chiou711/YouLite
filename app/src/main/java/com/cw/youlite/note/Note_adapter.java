@@ -535,7 +535,7 @@ public class Note_adapter extends FragmentStatePagerAdapter
 	        {
 	            public void onProgressChanged(WebView view, int progress)
 	            {
-                    System.out.println("---------------- spinner progress = " + progress);
+//                    System.out.println("---------------- spinner progress = " + progress);
 
                     if(spinner != null )
 	            	{

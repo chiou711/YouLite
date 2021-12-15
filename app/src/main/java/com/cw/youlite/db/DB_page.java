@@ -204,6 +204,8 @@ public class DB_page
     public boolean updateNote(long rowId, String title, String pictureUri,
     						  String linkUri, long marking, long createTime,boolean enDbOpenClose)
     {
+//	    System.out.println("DB_page / _updateNote / rowId = " + rowId);
+//	    System.out.println("DB_page / _updateNote / title = " + title);
     	if(enDbOpenClose)
     		this.open();
 

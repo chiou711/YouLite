@@ -386,6 +386,14 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 					@Override
 					public void onReceivedTitle(WebView view, String title) {
 						super.onReceivedTitle(view, title);
+
+//						System.out.println("-------------- MainAct.isEdited_YouTube_link = " +
+//								MainAct.isEdited_YouTube_link);
+//						System.out.println("-------------- MainAct.isEdited_Web_link = " +
+//								MainAct.isEdited_Web_link);
+//						System.out.println("-------------- MainAct.isAdded_onNewIntent = " +
+//								MainAct.isAdded_onNewIntent );
+
 						if (!TextUtils.isEmpty(title) &&
 							!title.equalsIgnoreCase("about:blank")) {
 

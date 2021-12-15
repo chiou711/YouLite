@@ -60,7 +60,10 @@ public class Note_edit extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
-        
+
+	    MainAct.isEdited_Web_link = false;
+	    MainAct.isEdited_YouTube_link = false;
+
         // check note count first
 	    dB = new DB_page(this, TabsHost.getCurrentPageTableId());
 
@@ -292,22 +295,15 @@ public class Note_edit extends AppCompatActivity
     
     @Override
     public void onBackPressed() {
-	    if(note_edit_ui.bShowEnlargedImage)
-	    {
-            note_edit_ui.closeEnlargedImage();
-	    }
-	    else
-	    {
-	    	if(note_edit_ui.isNoteModified())
-	    	{
-	    		confirmToUpdateDlg();
-	    	}
-	    	else
-	    	{
-	            enSaveDb = false;
-	            finish();
-	    	}
-	    }
+        if(note_edit_ui.isNoteModified())
+        {
+            confirmToUpdateDlg();
+        }
+        else
+        {
+            enSaveDb = false;
+            finish();
+        }
     }
     
 	@Override
@@ -361,8 +357,10 @@ public class Note_edit extends AppCompatActivity
 			public void onClick(DialogInterface dialog, int which) 
 			{
 	    		Intent intent_web_link = new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.google.com"));
-	    		startActivityForResult(intent_web_link,EDIT_LINK);	
+	    		startActivityForResult(intent_web_link,EDIT_LINK);
+				MainAct.isEdited_Web_link = true;
 	    		enSaveDb = false;
+				MainAct.edit_position = position;
 			}
 		});
 		
@@ -376,7 +374,7 @@ public class Note_edit extends AppCompatActivity
 	        	Intent intent_youtube_link = new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.youtube.com"));
 	        	startActivityForResult(intent_youtube_link,EDIT_LINK);
 	        	enSaveDb = false;
-				MainAct.isEdited_link = true;
+				MainAct.isEdited_YouTube_link = true;
 				MainAct.edit_position = position;
 			}
 		});
@@ -413,7 +411,8 @@ public class Note_edit extends AppCompatActivity
 			Toast.makeText(Note_edit.this, R.string.note_cancel_add_new, Toast.LENGTH_LONG).show();
             setResult(RESULT_CANCELED, getIntent());
             enSaveDb = true;
-			MainAct.isEdited_link = false;
+			MainAct.isEdited_Web_link = false;
+			MainAct.isEdited_YouTube_link = false;
             return; // must add this
 		}
 

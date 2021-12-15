@@ -24,7 +24,6 @@ import com.cw.youlite.R;
 import com.cw.youlite.db.DB_page;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.MyEditText;
-import com.cw.youlite.util.image.TouchImageView;
 import com.cw.youlite.util.image.UtilImage_bitmapLoader;
 import com.cw.youlite.util.ColorSet;
 import com.cw.youlite.util.preferences.Pref;
@@ -55,26 +54,21 @@ public class Note_edit_ui {
 	private MyEditText titleEditText;
 	private String oriTitle;
 
-	private Long noteId;
 	private Long oriCreatedTime;
 	private Long oriMarking;
 
 	boolean bRollBackData;
 	boolean bRemovePictureUri = false;
-	private boolean bEditPicture = false;
 
     private DB_page dB_page;
 	private Activity act;
 	private int style;
 	private ProgressBar progressBar;
-	private ProgressBar progressBarExpand;
-	private TouchImageView enlargedImage;
 
 	Note_edit_ui(Activity act, DB_page _db, Long noteId, String strTitle, String pictureUri, String linkUri, Long createdTime)
     {
     	this.act = act;
-    	this.noteId = noteId;
-    			
+
     	oriTitle = strTitle;
 	    oriPictureUri = pictureUri;
 	    oriLinkUri = linkUri;
@@ -87,8 +81,6 @@ public class Note_edit_ui {
 	    oriMarking = dB_page.getNoteMarking_byId(noteId);
 		
 	    bRollBackData = false;
-		bEditPicture = true;
-		bShowEnlargedImage = false;
     }
 
 	void UI_init()
@@ -100,12 +92,9 @@ public class Note_edit_ui {
         picImageView = (ImageView) act.findViewById(R.id.edit_picture);
 
         progressBar = (ProgressBar) act.findViewById(R.id.edit_progress_bar);
-        progressBarExpand = (ProgressBar) act.findViewById(R.id.edit_progress_bar_expand);
 
 		DB_folder dbFolder = new DB_folder(act, Pref.getPref_focusView_folder_tableId(act));
 		style = dbFolder.getPageStyle(TabsHost.getFocus_tabPos(), true);
-
-		enlargedImage = (TouchImageView)act.findViewById(R.id.expanded_image);
 
 		//set link color
 		if(linkEditText != null)
@@ -146,8 +135,6 @@ public class Note_edit_ui {
     	{   @Override
 			public void onClick(View v) 
 			{
-				if(bShowEnlargedImage)
-					closeEnlargedImage();
 			}
 		});
     	
@@ -155,20 +142,10 @@ public class Note_edit_ui {
     	{   @Override
             public void onFocusChange(View v, boolean hasFocus) 
     		{
-    				if(bShowEnlargedImage)
-    					closeEnlargedImage();
-            } 
+            }
     	});   
     }
 
-
-	boolean bShowEnlargedImage;
-	void closeEnlargedImage()
-    {
-    	System.out.println("closeExpandImage");
-		enlargedImage.setVisibility(View.GONE);
-		bShowEnlargedImage = false;
-    }
 
 	void deleteNote(Long rowId)
     {
@@ -362,7 +339,7 @@ public class Note_edit_ui {
 			        	linkUri = oriLinkUri;
 	        			title = oriTitle;
 	        			Long time = oriCreatedTime;
-	        			dB_page.updateNote(rowId, title, pictureUri,  linkUri,  oriMarking, time,true);
+				        dB_page.updateNote(rowId, title, pictureUri,  linkUri,  oriMarking, time,true);
 	        		}
 	        		else // update new
 	        		{
@@ -377,7 +354,7 @@ public class Note_edit_ui {
                             marking = oriMarking;
 
                         boolean isOK;
-	        			isOK = dB_page.updateNote(rowId, title, pictureUri,  linkUri,
+				        isOK = dB_page.updateNote(rowId, title, pictureUri,  linkUri,
 												marking, now.getTime(),true); // update note
 	        		}
 	        		currPictureUri = pictureUri;
@@ -399,7 +376,7 @@ public class Note_edit_ui {
 
 	// for confirmation condition
 	void removePictureStringFromOriginalNote(Long rowId) {
-    	dB_page.updateNote(rowId,
+		dB_page.updateNote(rowId,
 				oriTitle,
     				   "",
 				oriLinkUri,
@@ -407,20 +384,8 @@ public class Note_edit_ui {
 				oriCreatedTime, true );
 	}
 
-	private void removePictureStringFromCurrentEditNote(Long rowId) {
-        String linkUri = linkEditText.getText().toString();
-        String title = titleEditText.getText().toString();
-
-    	dB_page.updateNote(rowId,
-    				   title,
-    				   "",
-    				   linkUri,
-				oriMarking,
-				oriCreatedTime, true );
-	}
-
 	void removeLinkUriFromCurrentEditNote(Long rowId) {
-        String title = titleEditText.getText().toString();
+		String title = titleEditText.getText().toString();
         dB_page.updateNote(rowId,
     				   title,
 				oriPictureUri,

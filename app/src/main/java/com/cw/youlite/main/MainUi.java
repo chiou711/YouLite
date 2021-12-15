@@ -173,7 +173,7 @@ public class MainUi {
      */
     String editNote_IntentLink(Intent intent,final AppCompatActivity act,boolean isEdited_onNewIntent,int position)
     {
-        System.out.println("MainUi / _editNote_IntentLink /  ");
+        System.out.println("MainUi / _editNote_IntentLink / position = " + position);
 
         Bundle extras = intent.getExtras();
         String pathOri = null;
@@ -220,14 +220,15 @@ public class MainUi {
             // update link title: YouTube
             if( Util.isYouTubeLink(path))
                 Util.request_save_and_edit_youTubeTitle(path,isEdited_onNewIntent,position);
-
-                // update title: Web page
+            // update title: Web page
             else if(!Util.isEmptyString(path) &&
                     path.startsWith("http")   &&
                     !Util.isYouTubeLink(path)   )
             {
-//                System.out.println("MainUi / _editNote_IntentLink / Web page");
+                System.out.println("MainUi / _editNote_IntentLink / Web page");
                 title = path; //set default
+
+                // invisible web view
                 final CustomWebView web = new CustomWebView(act);
                 web.loadUrl(path);
                 web.setVisibility(View.INVISIBLE);
@@ -236,9 +237,9 @@ public class MainUi {
                     @Override
                     public void onReceivedTitle(WebView view, String titleReceived) {
                         super.onReceivedTitle(view, titleReceived);
-//                        System.out.println("MainUi / _editNote_IntentLink / Web page / onReceivedTitle");
+                        System.out.println("MainUi / _editNote_IntentLink / Web page / onReceivedTitle / titleReceived = " + titleReceived);
                         if (!TextUtils.isEmpty(titleReceived) &&
-                                !titleReceived.equalsIgnoreCase("about:blank"))
+                            !titleReceived.equalsIgnoreCase("about:blank"))
                         {
                             SharedPreferences pref_show_note_attribute = act.getSharedPreferences("add_new_note_option", 0);
                             if(pref_show_note_attribute
@@ -253,13 +254,16 @@ public class MainUi {
                             }
 
                             Toast.makeText(act,
-                                    act.getResources().getText(R.string.add_new_note_option_title) + titleReceived,
+                                    act.getResources().getText(R.string.toast_saved) + ":" + titleReceived,
                                     Toast.LENGTH_SHORT)
                                     .show();
                             CustomWebView.pauseWebView(web);
                             CustomWebView.blankWebView(web);
 
                             title = titleReceived;
+
+                            // MainAct recreate
+                            act.recreate();
                         }
                     }
                 });

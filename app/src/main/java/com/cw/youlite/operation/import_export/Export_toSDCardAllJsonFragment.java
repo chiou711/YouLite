@@ -81,7 +81,7 @@ public class Export_toSDCardAllJsonFragment extends Fragment {
 			@Override
 			public void onClick(View v)
 			{
-				System.out.println("Export_toSDCardFragment / cancel button");
+				System.out.println("Export_toSDCardAllJsonFragment / cancel button");
 				getActivity().getSupportFragmentManager().popBackStack();
 			}
 		});

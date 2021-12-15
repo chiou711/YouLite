@@ -504,7 +504,8 @@ public class FolderUi
 	        boolean isScreenOn = Objects.requireNonNull(pm).isScreenOn();
 	        if( isScreenOn) {
 		        System.out.println("FolderUi / _selectFolder / screen ON");
-		        startTabsHostRun();
+		        if(!MainAct.isEdited_Web_link && !MainAct.isEdited_YouTube_link)
+		            startTabsHostRun();
 	        } else
 		        System.out.println("FolderUi / _selectFolder / screen OFF");
         }
