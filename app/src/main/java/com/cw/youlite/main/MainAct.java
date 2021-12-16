@@ -702,7 +702,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     Handler handler;
     int count;
     String countStr;
-    String nextLinkTitle;
+    String nextLink;
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -744,16 +744,16 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 if(Page_recycler.mCurrPlayPosition >= TabsHost.getCurrentPage().getNotesCountInPage(mAct))
                     TabsHost.getCurrentPage().mCurrPlayPosition = 0; //back to first index
 
-                nextLinkTitle = mMainUi.getYouTubeLink(this,TabsHost.getCurrentPage().mCurrPlayPosition);
+                nextLink = mMainUi.getYouTubeLink(this,TabsHost.getCurrentPage().mCurrPlayPosition);
             }
-            while (!Util.isYouTubeLink(nextLinkTitle));
+            while (!Util.isYouTubeLink(nextLink));
 
             countStr = getResources().getString(R.string.message_continue_or_stop_YouTube_message);
             countStr = countStr.replaceFirst("[0-9]",String.valueOf(count));
 
             builder.setTitle(R.string.message_continue_or_stop_YouTube_title)
-                    .setMessage(nextLinkTitle +"\n\n" + countStr)
-                    .setNegativeButton(R.string.confirm_dialog_button_no, new DialogInterface.OnClickListener()
+                    .setMessage(countStr)
+                    .setNegativeButton(R.string.btn_Stop, new DialogInterface.OnClickListener()
                     {
                         @Override
                         public void onClick(DialogInterface dialog1, int which1)
@@ -762,7 +762,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                             mMainUi.cancelYouTubeHandler(handler,runCountDown);
                         }
                     })
-                    .setPositiveButton(R.string.confirm_dialog_button_yes, new DialogInterface.OnClickListener()
+                    .setPositiveButton(R.string.btn_Continue, new DialogInterface.OnClickListener()
                     {
                         @Override
                         public void onClick(DialogInterface dialog1, int which1) {
@@ -804,7 +804,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             count--;
             countStr = getResources().getString(R.string.message_continue_or_stop_YouTube_message);
             countStr = countStr.replaceFirst("[0-9]",String.valueOf(count));
-            messageView.setText(nextLinkTitle + "\n\n" +countStr);
+            messageView.setText( countStr);
 
             if(count>0)
                 handler.postDelayed(runCountDown,1000);
