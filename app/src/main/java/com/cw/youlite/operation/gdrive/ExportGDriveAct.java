@@ -322,7 +322,7 @@ public class ExportGDriveAct extends AppCompatActivity {
 
     // toast for Export JSON successfully
     private void exportGDriveJsonSuccess() {
-        Toast.makeText(this,"Export JSON file successfully",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,R.string.exported_successfully,Toast.LENGTH_SHORT).show();
     }
 
     // save Json file

@@ -19,7 +19,7 @@
     <string name="config_set_style_title">New page background color:</string>
     <string name="config_add_new_note_location">Add new note location</string>
     <string name="config_delete_DB_title">Delete all pages</string>
-    <string name="config_recover_all_settings">Recover all settings to default</string>
+    <string name="config_recover_all_settings">Recover all data and settings to default</string>
     <string name="config_delete_DB_btn">delete</string>
     <string name="config_delete_DB_confirm_content">Are you sure to delete all pages?</string>
     <string name="config_delete_DB_toast">All pages have been deleted.</string>

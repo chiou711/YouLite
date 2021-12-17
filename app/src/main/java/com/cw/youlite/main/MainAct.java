@@ -734,7 +734,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         {
             // preference of delay
             SharedPreferences pref_delay = getSharedPreferences("youtube_launch_delay", 0);
-            count = Integer.valueOf(pref_delay.getString("KEY_YOUTUBE_LAUNCH_DELAY","10"));
+            count = Integer.valueOf(pref_delay.getString("KEY_YOUTUBE_LAUNCH_DELAY","5"));
 
             builder = new AlertDialog.Builder(this);
 

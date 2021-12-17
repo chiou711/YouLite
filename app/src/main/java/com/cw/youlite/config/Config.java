@@ -235,7 +235,7 @@ public class Config extends Fragment
 		SharedPreferences pref_sw_time = getActivity().getSharedPreferences("youtube_launch_delay", 0);
 		View swTimeView = mRootView.findViewById(R.id.youtube_launch_delay);
 		TextView slideshow_text_view = (TextView)mRootView.findViewById(R.id.youtube_launch_delay_setting);
-		String strSwTime = pref_sw_time.getString("KEY_YOUTUBE_LAUNCH_DELAY","10");
+		String strSwTime = pref_sw_time.getString("KEY_YOUTUBE_LAUNCH_DELAY","5");
 		slideshow_text_view.setText(strSwTime +"s");
 
 		// switch time picker
@@ -257,7 +257,8 @@ public class Config extends Fragment
 		mPref_vibration = getActivity().getSharedPreferences("vibration", 0);
 		View viewVibration = mRootView.findViewById(R.id.vibrationSetting);
 		mTextViewVibration = (TextView)mRootView.findViewById(R.id.TextViewVibrationSetting);
-	    String strVibTime = mPref_vibration.getString("KEY_VIBRATION_TIME","25");
+	    String strVibTime = mPref_vibration.getString("KEY_VIBRATION_TIME","75");
+	    System.out.println("------------ Config / _setVibrationTimeLength / strVibTime = " + strVibTime);
 		if(strVibTime.equalsIgnoreCase("00"))
 			mTextViewVibration.setText(getResources().getText(R.string.config_status_disabled).toString());
 		else
@@ -287,7 +288,7 @@ public class Config extends Fragment
 		d.setView(dialogView);
 
 		final SharedPreferences pref_sw_time = getActivity().getSharedPreferences("youtube_launch_delay", 0);
-		final String strSwitchTime = pref_sw_time.getString("KEY_YOUTUBE_LAUNCH_DELAY","10");
+		final String strSwitchTime = pref_sw_time.getString("KEY_YOUTUBE_LAUNCH_DELAY","5");
 
 		final NumberPicker numberPicker = (NumberPicker) dialogView.findViewById(R.id.dialog_number_picker);
 		numberPicker.setMaxValue(20);
@@ -321,11 +322,12 @@ public class Config extends Fragment
 
 	private void selectVibrationLengthDialog()
 	{
+		   // todo ? different machine has different vibration strength
 		   final String[] items = new String[]{getResources().getText(R.string.config_status_disabled).toString(),
-				   		    				"15ms","25ms","35ms","45ms"};
+				   		    				"25ms","50ms","75ms","100ms","125ms"};
 		   AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		   
-		   String strVibTime = mPref_vibration.getString("KEY_VIBRATION_TIME","25");
+		   String strVibTime = mPref_vibration.getString("KEY_VIBRATION_TIME","75");
 		   
 		   if(strVibTime.equalsIgnoreCase("00"))
 		   {
@@ -335,7 +337,7 @@ public class Config extends Fragment
 		   {
 			   for(int i=1;i< items.length;i++)
 			   {
-				   if(strVibTime.equalsIgnoreCase((String) items[i].subSequence(0,2)))
+				   if(strVibTime.equalsIgnoreCase((String) items[i].replace("ms","")))
 					   items[i] += " *";
 			   }
 		   }
@@ -349,14 +351,15 @@ public class Config extends Fragment
 					if(which ==0)
 						len = "00";
 					else
-						len = (String) items[which].subSequence(0,2);
+						len = (String) items[which].replace("ms","");
+
 					mPref_vibration.edit().putString("KEY_VIBRATION_TIME",len).apply();
 					// change the length directly
 					if(len.equalsIgnoreCase("00"))
 						mTextViewVibration.setText(getResources().getText(R.string.config_status_disabled).toString());
 					else
-						mTextViewVibration.setText(len + "ms");					
-					
+						mTextViewVibration.setText(len + "ms");
+
 					//end
 					dialog.dismiss();
 				}
@@ -383,6 +386,10 @@ public class Config extends Fragment
     }
 
 	private void confirmDeleteDB(View view) {
+		//vibration warning
+		Util util = new Util(getActivity());
+		util.vibrate();
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(R.string.confirm_dialog_title)
 	           .setMessage(R.string.config_delete_DB_confirm_content)
@@ -432,6 +439,11 @@ public class Config extends Fragment
 	}
 
 	private void confirmRecoverDefault(View view) {
+
+		//vibration warning
+		Util util = new Util(getActivity());
+		util.vibrate();
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(R.string.confirm_dialog_title)
 				.setMessage(R.string.config_recover_all_settings)

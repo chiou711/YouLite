@@ -19,7 +19,7 @@
     <string name="config_set_style_title">新頁面背景顏色:</string>
     <string name="config_add_new_note_location">新增筆記的位置</string>
     <string name="config_delete_DB_title">刪除所有的記事頁面</string>
-    <string name="config_recover_all_settings">將所有設置恢復為默認設置</string>
+    <string name="config_recover_all_settings">將所有資料和設定恢復成原始預設</string>
     <string name="config_delete_DB_btn">刪除</string>
     <string name="config_delete_DB_confirm_content">您確定要刪除所有的記事頁面?</string>
     <string name="config_delete_DB_toast">所有的記事頁面已被刪除.</string>

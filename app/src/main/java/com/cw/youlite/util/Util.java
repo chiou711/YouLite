@@ -159,9 +159,9 @@ public class Util
     	if(mPref_vibration.getString("KEY_ENABLE_VIBRATION","yes").equalsIgnoreCase("yes"))
     	{
 			Vibrator mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-			if(!mPref_vibration.getString("KEY_VIBRATION_TIME","25").equalsIgnoreCase(""))
+			if(!mPref_vibration.getString("KEY_VIBRATION_TIME","75").equalsIgnoreCase(""))
 			{
-				int vibLen = Integer.valueOf(mPref_vibration.getString("KEY_VIBRATION_TIME","25"));
+				int vibLen = Integer.valueOf(mPref_vibration.getString("KEY_VIBRATION_TIME","75"));
 				mVibrator.vibrate(vibLen); //length unit is milliseconds
 				System.out.println("vibration len = " + vibLen);
 			}

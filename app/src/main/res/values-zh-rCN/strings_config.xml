@@ -19,7 +19,7 @@
     <string name="config_set_style_title">新页面背景色：</string>
     <string name="config_add_new_note_location">新增笔记的位置</string>
     <string name="config_delete_DB_title">删除所有的网页</string>
-    <string name="config_recover_all_settings">将所有设置恢复为默认设置</string>
+    <string name="config_recover_all_settings">将所有数据和设置恢复为默认</string>
     <string name="config_delete_DB_btn">删除</string>
     <string name="config_delete_DB_confirm_content">您确定要删除所有的网页？</string>
     <string name="config_delete_DB_toast">所有页面已被删除。</string>
