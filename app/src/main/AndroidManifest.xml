@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.cw.youlite"
-    android:versionCode="10401"
-    android:versionName="1.04.01">
+    android:versionCode="10403"
+    android:versionName="1.04.03">
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -47,7 +47,8 @@
             android:theme="@style/MyTheme"
             android:launchMode="singleTop"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize|screenLayout|uiMode"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -90,7 +91,9 @@
             android:theme="@style/MyTheme"/>
         <activity android:name="com.cw.youlite.operation.gdrive.ImportGDriveAct"
             android:theme="@style/MyTheme"/>
-        <activity android:name="com.cw.youlite.operation.gdrive.ExportGDriveAct"
+        <activity android:name="com.cw.youlite.operation.gdrive.ExportSelGDriveAct"
+            android:theme="@style/MyTheme"/>
+        <activity android:name="com.cw.youlite.operation.gdrive.ExportAllGDriveAct"
             android:theme="@style/MyTheme"/>
         <activity android:name="com.cw.youlite.operation.gallery.GalleryGridAct"/>
         <activity android:name="com.cw.youlite.operation.gallery.GalleryPagerAct"/>

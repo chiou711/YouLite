@@ -172,12 +172,10 @@ public class Util
 	public String exportToSdCardJson(String filename, List<Boolean> checkedTabs) throws JSONException
 	{
 		//first row text
-		String data ="";
-
 		System.out.println("Util / _exportToSdCardJson / checkedTabs = " + checkedTabs);
 
 		//get data from DB
-		data = queryJsonDB(filename.replace(".json",""),data,checkedTabs);
+		String data = queryJsonDB(filename.replace(".json",""),checkedTabs);
 		exportToSdCardFile(filename,data);
 		return data;
 	}
@@ -292,9 +290,9 @@ public class Util
 	 *
 	 */
 
-	private String queryJsonDB(String catName,String data, List<Boolean> checkedTabs) throws JSONException
+	public String queryJsonDB(String catName, List<Boolean> checkedTabs) throws JSONException
 	{
-		String curData = data;
+		String curData;
 
 		// from small to large:
 		//	JSONObject: link , page (= links + title), category (= pages + category_name) , client ( = categories + clientName)

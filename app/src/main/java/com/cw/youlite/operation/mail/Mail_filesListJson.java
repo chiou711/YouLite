@@ -198,8 +198,8 @@ public class Mail_filesListJson extends ListFragment
     {
         if(files == null)
         {
-        	Toast.makeText(getActivity(),R.string.toast_import_SDCard_no_file,Toast.LENGTH_SHORT).show();
-            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
+        	Toast.makeText(getActivity(),R.string.toast_import_SDCard_select_file,Toast.LENGTH_SHORT).show();
+//            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
         }
         else
         {
@@ -207,7 +207,8 @@ public class Mail_filesListJson extends ListFragment
             filePathArray = new ArrayList<>();
             fileNames = new ArrayList<>();
             filePathArray.add("");
-            fileNames.add("ROOT");
+//            fileNames.add("ROOT");
+            fileNames.add("..");
 
             // sort by alphabetic
             Arrays.sort(files, new FileNameComparator());
@@ -268,6 +269,7 @@ public class Mail_filesListJson extends ListFragment
 
             TextView tv = (TextView)convertView.findViewById(R.id.text1);
             String appName = getString(R.string.app_name);
+            tv.setTextSize(12F);
             tv.setText(fileNames.get(position));
             if(fileNames.get(position).equalsIgnoreCase("sdcard")   ||
                fileNames.get(position).equalsIgnoreCase(appName)    ||

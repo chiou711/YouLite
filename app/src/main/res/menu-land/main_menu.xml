@@ -130,20 +130,26 @@
                     android:title="@string/config_export_SDCard_all_JSON_title"
                     android:icon="@android:drawable/ic_menu_save"/>
                 <item
-                    android:id="@+id/EXPORT_TO_GDrive_ALL_JSON"
+                    android:id="@+id/EXPORT_SEL_TO_GDrive_JSON"
                     android:orderInCategory="6"
+                    app:showAsAction="never"
+                    android:title="@string/config_export_GDrive_sel_JSON_title"
+                    android:icon="@drawable/google_drive"/>
+                <item
+                    android:id="@+id/EXPORT_ALL_TO_GDrive_JSON"
+                    android:orderInCategory="7"
                     app:showAsAction="never"
                     android:title="@string/config_export_GDrive_all_JSON_title"
                     android:icon="@drawable/google_drive"/>
                 <item
                     android:id="@+id/SEND_JSON"
-                    android:orderInCategory="7"
+                    android:orderInCategory="8"
                     app:showAsAction="never"
                     android:title="@string/mail_json_title"
                     android:icon="@android:drawable/ic_menu_send"/>
                 <item
                     android:id="@+id/IMPORT_RENEW"
-                    android:orderInCategory="8"
+                    android:orderInCategory="9"
                     app:showAsAction="never"
                     android:title="@string/config_import_renew"
                     android:icon="@drawable/perm_group_sync_settings"/>

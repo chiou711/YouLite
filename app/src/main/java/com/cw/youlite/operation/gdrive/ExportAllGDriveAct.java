@@ -68,7 +68,7 @@ import androidx.appcompat.app.AppCompatActivity;
 /**
  * The main {@link Activity} for the Drive API migration sample app.
  */
-public class ExportGDriveAct extends AppCompatActivity {
+public class ExportAllGDriveAct extends AppCompatActivity {
     private static final String TAG = "ExportGDriveAct";
 
     private static final int REQUEST_CODE_SIGN_IN = 1;

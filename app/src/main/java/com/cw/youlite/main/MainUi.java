@@ -94,7 +94,7 @@ public class MainUi {
 
             if((folders_count == 0) || (pages_count == 0))
             {
-                Toast.makeText(act,"No folder or no page yet, please add a new one in advance.",Toast.LENGTH_LONG).show();
+                Toast.makeText(act,R.string.toast_no_folder_or_no_page_yet,Toast.LENGTH_LONG).show();
                 return null;
             }
 
@@ -208,7 +208,7 @@ public class MainUi {
 
             if((folders_count == 0) || (pages_count == 0))
             {
-                Toast.makeText(act,"No folder or no page yet, please add a new one in advance.",Toast.LENGTH_LONG).show();
+                Toast.makeText(act,R.string.toast_no_folder_or_no_page_yet,Toast.LENGTH_LONG).show();
                 return null;
             }
 

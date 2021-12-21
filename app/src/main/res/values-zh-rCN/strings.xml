@@ -6,8 +6,6 @@
     <string name="btn_Continue">继续</string>
     <string name="btn_Stop">停止</string>
     <string name="btn_Renew">更新</string>
-    <string name="title_playing_audio">还在播放音频</string>
-    <string name="message_continue_or_stop">继续或是停止播放音频？</string>
     <string name="message_continue_or_stop_YouTube_title">继续下一个</string>
     <string name="message_continue_or_stop_YouTube_message">倒计时 5 秒</string>
     <string name="btn_Finish">完成</string>
@@ -27,8 +25,7 @@
     <string name="confirm_dialog_button_yes">是</string>
     <string name="footer_checked">勾选</string>
     <string name="footer_total">总计</string>
-    <string name="mail_notes_title">发送笔记页(文字)</string>
-    <string name="mail_json_title">发送JSON</string>
+    <string name="mail_json_title">发送</string>
     <string name="mail_notes_btn">发送</string>
     <string name="mail_notes_dlg_title">发送笔记</string>
     <string name="mail_notes_dlg_message">收件人的电子邮件地址:</string>
@@ -47,7 +44,7 @@
     <string name="folder_operation">文件夹操作</string>
     <string name="page_operation">笔记页操作</string>
     <string name="note_operation">笔记操作</string>
-    <string name="backup_operation">备份操作</string>
+    <string name="backup_operation">备份操作(JSON)</string>
     <string name="settings_operation">设置</string>
     <string name="set_enable">启用</string>
     <string name="set_disable">停用</string>
@@ -55,7 +52,6 @@
     <string name="blank_page">空白页</string>
     <string name="blank_folder">空白文件夹</string>
     <string name="sample_notes_title">笔记样本</string>
-    <string name="sample_notes_message">你想创建笔记样本吗？ 如果是，则需要允许在下一个对话框中访问设备上的照片，媒体和文件。</string>
     <string name="exported_successfully">导出成功</string>
     <string name="catalog_url_1">
         https://drive.google.com/uc?export=download&amp;id=1rmE2Vm3F0bBWRWOWy-_HzAE-MAFd88F-

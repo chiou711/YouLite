@@ -6,12 +6,14 @@
     <string name="toast_rightmost">Rightmost</string>
     <string name="toast_no_email_address">No e-Mail address</string>
     <string name="toast_import_SDCard_no_file">No file yet, please export one first</string>
+    <string name="toast_import_SDCard_select_file">Please select a file</string>
     <string name="toast_import_finished">The selected file has been imported</string>
     <string name="toast_input_filename">Please input a file name</string>
     <string name="toast_saved">Saved</string>
     <string name="toast_pause">Pause</string>
     <string name="toast_play">Play</string>
     <string name="toast_no_link_found">No link is found</string>
+    <string name="toast_no_folder_or_no_page_yet">No folder or no page yet, please add a new one in advance.</string>
     <string name="toast_edit_drawing_to_landscape">For viewing whole image,please rotate your device orientation to landscape</string>
     <string name="toast_edit_drawing_to_portrait">For viewing whole image,please rotate your device orientation to portrait</string>
     <string name="toast_update_database">Update database</string>

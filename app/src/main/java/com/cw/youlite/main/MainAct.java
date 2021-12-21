@@ -35,7 +35,8 @@ import com.cw.youlite.folder.FolderUi;
 import com.cw.youlite.note_add.Add_note_option;
 import com.cw.youlite.operation.delete.DeleteFolders;
 import com.cw.youlite.operation.delete.DeletePages;
-import com.cw.youlite.operation.gdrive.ExportGDriveAct;
+import com.cw.youlite.operation.gdrive.ExportAllGDriveAct;
+import com.cw.youlite.operation.gdrive.ExportSel_toGDriveJsonFragment;
 import com.cw.youlite.operation.gdrive.ImportGDriveAct;
 import com.cw.youlite.operation.import_export.Export_toSDCardAllJsonFragment;
 import com.cw.youlite.operation.import_export.Export_toSDCardJsonFragment;
@@ -877,8 +878,11 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             // EXPORT TO SD CARD ALL JSON
             mMenu.findItem(R.id.EXPORT_TO_SD_CARD_ALL_JSON).setVisible(foldersCnt >0);
 
+            // EXPORT TO SD Google Drive JSON
+            mMenu.findItem(R.id.EXPORT_SEL_TO_GDrive_JSON).setVisible(foldersCnt >0);
+
             // EXPORT TO Google Drive ALL JSON
-            mMenu.findItem(R.id.EXPORT_TO_GDrive_ALL_JSON).setVisible(foldersCnt >0);
+            mMenu.findItem(R.id.EXPORT_ALL_TO_GDrive_JSON).setVisible(foldersCnt >0);
 
             if(foldersCnt>0)
             {
@@ -1261,12 +1265,21 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 mFragmentTransaction.replace(R.id.content_frame, exportFragment, "export").addToBackStack(null).commit();
                 return true;
 
-            case MenuId.EXPORT_TO_GDRIVE_ALL_JSON:
+            case MenuId.EXPORT_SEL_TO_GDRIVE_JSON:
                 //hide the menu
                 mMenu.setGroupVisible(R.id.group_notes, false);
                 mMenu.setGroupVisible(R.id.group_pages_and_more, false);
-                Intent intnt = new Intent(this, ExportGDriveAct.class);
-                startActivity(intnt);
+                ExportSel_toGDriveJsonFragment exportSelFragment = new ExportSel_toGDriveJsonFragment();
+                mFragmentTransaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_left, R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_right);
+                mFragmentTransaction.replace(R.id.content_frame, exportSelFragment,"export").addToBackStack(null).commit();
+                return true;
+
+            case MenuId.EXPORT_ALL_TO_GDRIVE_JSON:
+                //hide the menu
+                mMenu.setGroupVisible(R.id.group_notes, false);
+                mMenu.setGroupVisible(R.id.group_pages_and_more, false);
+                Intent intAll = new Intent(this, ExportAllGDriveAct.class);
+                startActivity(intAll);
                 return true;
 
             case MenuId.SEND_JSON:

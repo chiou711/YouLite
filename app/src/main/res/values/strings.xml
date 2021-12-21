@@ -6,8 +6,6 @@
     <string name="btn_Continue">Continue</string>
     <string name="btn_Stop">Stop</string>
     <string name="btn_Renew">Renew</string>
-    <string name="title_playing_audio">Still playing audio.</string>
-    <string name="message_continue_or_stop">Continue or stop audio playing?</string>
     <string name="message_continue_or_stop_YouTube_title">Continue next</string>
     <string name="message_continue_or_stop_YouTube_message">Countdown 5 seconds</string>
     <string name="btn_Finish">Finish</string>
@@ -27,8 +25,7 @@
     <string name="confirm_dialog_button_yes">Yes</string>
     <string name="footer_checked">Selected</string>
     <string name="footer_total">Total</string>
-    <string name="mail_notes_title">Mail note pages (text))</string>
-    <string name="mail_json_title">Mail JSON</string>
+    <string name="mail_json_title">Mail</string>
     <string name="mail_notes_btn">Send</string>
     <string name="mail_notes_dlg_title">Mail notes</string>
     <string name="mail_notes_dlg_message">Receiver e-Mail address:</string>
@@ -47,7 +44,7 @@
     <string name="folder_operation">Folder operation</string>
     <string name="page_operation">Page operation</string>
     <string name="note_operation">Note operation</string>
-    <string name="backup_operation">Backup operation</string>
+    <string name="backup_operation">Backup operation (JSON)</string>
     <string name="settings_operation">Settings</string>
     <string name="set_enable">Enable</string>
     <string name="set_disable">Disable</string>
@@ -55,7 +52,6 @@
     <string name="blank_page">Blank page</string>
     <string name="blank_folder">Blank folder</string>
     <string name="sample_notes_title">Sample of notes</string>
-    <string name="sample_notes_message">Do you want to create sample of notes? If yes, you need to allow the access of photos,media, and files on your device in next dialog.</string>
     <string name="exported_successfully">Exported successfully</string>
     <string name="catalog_url_1">
         https://drive.google.com/uc?export=download&amp;id=1rmE2Vm3F0bBWRWOWy-_HzAE-MAFd88F-
