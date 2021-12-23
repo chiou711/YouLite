@@ -53,6 +53,8 @@
     <string name="blank_folder">Blank folder</string>
     <string name="sample_notes_title">Sample of notes</string>
     <string name="exported_successfully">Exported successfully</string>
+    <string name="renew_title">Renew database?</string>
+    <string name="renew_confirm">Select \"OK\" to renew all links in database, or select \"Cancel\" to ignore this.</string>
     <string name="catalog_url_1">
         https://drive.google.com/uc?export=download&amp;id=1rmE2Vm3F0bBWRWOWy-_HzAE-MAFd88F-
     </string>

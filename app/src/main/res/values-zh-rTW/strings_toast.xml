@@ -13,6 +13,7 @@
     <string name="toast_pause">暫停</string>
     <string name="toast_play">播放</string>
     <string name="toast_no_link_found">找不到連結</string>
+    <string name="toast_no_json_found">未找到JSON字串！</string>
     <string name="toast_no_folder_or_no_page_yet">沒有文件夾或沒有頁面，請提前添加一個新的。</string>
     <string name="toast_edit_drawing_to_landscape">要查看整個圖像，請將您的設備方向旋轉為橫向</string>
     <string name="toast_edit_drawing_to_portrait">要查看整個圖像，請將您的設備方向旋轉為縱向</string>

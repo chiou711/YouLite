@@ -53,6 +53,8 @@
     <string name="blank_folder">空白文件夹</string>
     <string name="sample_notes_title">笔记样本</string>
     <string name="exported_successfully">导出成功</string>
+    <string name="renew_title">更新数据库?</string>
+    <string name="renew_confirm">选择“确定”更新数据库中的所有链接，或选择“取消”忽略此项。</string>
     <string name="catalog_url_1">
         https://drive.google.com/uc?export=download&amp;id=1rmE2Vm3F0bBWRWOWy-_HzAE-MAFd88F-
     </string>

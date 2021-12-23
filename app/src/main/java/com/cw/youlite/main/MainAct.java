@@ -131,6 +131,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     public static boolean isEdited_YouTube_link;
     public static boolean isEdited_Web_link;
     public static int edit_position;
+    public DialogInterface.OnClickListener clickListener_renew;
+    public DialogInterface.OnClickListener clickListener_no_renew;
 
 	// Main Act onCreate
     @Override
@@ -205,7 +207,22 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             // Ok button listener
             dialog_EULA.clickListener_Ok = (DialogInterface dialog, int i) -> {
                 dialog_EULA.applyPreference();
-                new RenewDB(this);
+
+                if(Pref.getPref_DB_ready(this)) {
+                    //vibration warning
+                    Util util = new Util(this);
+                    util.vibrate();
+
+                    bEULA_accepted = true;
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mAct)
+                            .setTitle(R.string.renew_title)
+                            .setMessage(R.string.renew_confirm)
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.btn_OK, clickListener_renew)
+                            .setNegativeButton(android.R.string.cancel, clickListener_no_renew);
+                    builder.create().show();
+                } else
+                    new RenewDB(this);
             };
 
             // No button listener
@@ -214,6 +231,16 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 // the EULA
                 dialog.dismiss();
                 mAct.finish();
+            };
+
+            // do renew
+            clickListener_renew = (DialogInterface dialog, int i) -> {
+                new RenewDB(this);
+            };
+
+            // don't renew
+            clickListener_no_renew = (DialogInterface dialog, int i) -> {
+                doCreate();
             };
 
             dialog_EULA.show();

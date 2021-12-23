@@ -21,15 +21,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cw.youlite.R;
 import com.cw.youlite.folder.FolderUi;
 import com.cw.youlite.main.MainAct;
 import com.cw.youlite.operation.import_export.ParseJsonToDB;
+import com.cw.youlite.util.Util;
 import com.cw.youlite.util.preferences.Pref;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -68,7 +72,7 @@ public class ImportGDriveAct extends AppCompatActivity {
     private DriveServiceHelper mDriveServiceHelper;
 
     private EditText mFileTitleEditText;
-    private EditText mDocContentEditText;
+    private TextView mJsonText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +82,9 @@ public class ImportGDriveAct extends AppCompatActivity {
 
         // Store the EditText boxes to be updated when files are opened/created/modified.
         mFileTitleEditText = findViewById(R.id.file_title_edittext);
-        mDocContentEditText = findViewById(R.id.doc_content_edittext);
+
+        mJsonText = findViewById(R.id.json_text);
+        mJsonText.setMovementMethod(new ScrollingMovementMethod());
 
         // Set the onClick listeners for the button bar.
         findViewById(R.id.cancel_btn).setOnClickListener(view -> exit());
@@ -94,6 +100,13 @@ public class ImportGDriveAct extends AppCompatActivity {
 
     // Import Confirm
     void importConfirm(){
+
+        if(Util.isEmptyString(jsonContent)) {
+            Toast.makeText(this,R.string.toast_no_json_found, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
         // dialog for confirming
         AlertDialog.Builder dlgBuilder = new AlertDialog.Builder(this);
 
@@ -277,7 +290,7 @@ public class ImportGDriveAct extends AppCompatActivity {
                             jsonContent = content;
 
                             mFileTitleEditText.setText(name);
-                            mDocContentEditText.setText(content);
+                            mJsonText.setText(content);
 
                             // Files opened through SAF cannot be modified.
                             //setReadOnlyMode();
@@ -294,7 +307,7 @@ public class ImportGDriveAct extends AppCompatActivity {
      */
     private void setReadOnlyMode() {
         mFileTitleEditText.setEnabled(false);
-        mDocContentEditText.setEnabled(false);
+        mJsonText.setEnabled(false);
     }
 
 }
