@@ -16,16 +16,12 @@
 
 package com.cw.youlite.note;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
-import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -38,11 +34,11 @@ import android.widget.Toast;
 
 import com.cw.youlite.R;
 import com.cw.youlite.db.DB_page;
+import com.cw.youlite.note_edit.Note_edit;
 import com.cw.youlite.operation.mail.MailNotes;
 import com.cw.youlite.operation.youtube.SearchYouTube;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.Util;
-import com.cw.youlite.util.preferences.Pref;
 
 import org.json.JSONException;
 
@@ -74,7 +70,7 @@ class View_note_option {
     static List<View_note_option> option_list;
 
     private final static int ID_OPTION_MAIL = 0;
-    private final static int ID_OPTION_AUTO_PLAY = 1;
+    private final static int ID_OPTION_EDIT = 1;
     private final static int ID_OPTION_SEARCH_YOUTUBE = 2;
     private final static int ID_OPTION_BACK = 9;
     private static long noteId;
@@ -98,6 +94,11 @@ class View_note_option {
         option_list.add(new View_note_option(ID_OPTION_SEARCH_YOUTUBE ,
                 R.drawable.ic_youtube,
                 R.string.search_youtube));
+
+        // edit
+        option_list.add(new View_note_option(ID_OPTION_EDIT ,
+                android.R.drawable.ic_menu_edit,
+                R.string.view_note_button_edit));
 
         // Back
         option_list.add(new View_note_option(ID_OPTION_BACK,
@@ -161,7 +162,6 @@ class View_note_option {
             break;
 
             case ID_OPTION_SEARCH_YOUTUBE:
-            {
                 dlgAddNew.dismiss();
 
                 DB_page dB_page = new DB_page(act, TabsHost.getCurrentPageTableId());
@@ -169,14 +169,27 @@ class View_note_option {
                 Intent intent = new Intent(act,SearchYouTube.class);
                 intent.putExtra("search_keywords", keyWord );
                 act.startActivity(intent);
-            }
+            break;
 
+            case ID_OPTION_EDIT:
+                dlgAddNew.dismiss();
+
+                int position = NoteUi.getFocus_notePos();
+                DB_page db_page = new DB_page(act, TabsHost.getCurrentPageTableId());
+                Long rowId = db_page.getNoteId(position,true);
+
+                Intent i = new Intent(act, Note_edit.class);
+                i.putExtra("list_view_position", position);
+                i.putExtra(DB_page.KEY_NOTE_ID, rowId);
+                i.putExtra(DB_page.KEY_NOTE_TITLE, db_page.getNoteTitle_byId(rowId));
+                i.putExtra(DB_page.KEY_NOTE_PICTURE_URI , db_page.getNotePictureUri_byId(rowId));
+                i.putExtra(DB_page.KEY_NOTE_LINK_URI , db_page.getNoteLinkUri_byId(rowId));
+                i.putExtra(DB_page.KEY_NOTE_CREATED, db_page.getNoteCreatedTime_byId(rowId));
+                act.startActivity(i);
             break;
 
             case ID_OPTION_BACK:
-            {
                 dlgAddNew.dismiss();
-            }
             break;
 
             // default
