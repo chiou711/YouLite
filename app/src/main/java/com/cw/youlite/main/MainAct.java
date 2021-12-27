@@ -16,6 +16,7 @@
 
 package com.cw.youlite.main;
 
+import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
@@ -25,6 +26,7 @@ import java.util.List;
 import com.cw.youlite.R;
 import com.cw.youlite.config.About;
 import com.cw.youlite.config.Config;
+import com.cw.youlite.data.DbHelper;
 import com.cw.youlite.data.FetchService_category;
 import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.db.DB_page;
@@ -50,7 +52,7 @@ import com.cw.youlite.page.Page_recycler;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.DeleteFileAlarmReceiver;
 import com.cw.youlite.db.DB_drawer;
-import com.cw.youlite.util.Dialog_EULA;
+import com.cw.youlite.util.Dialog_DB;
 import com.cw.youlite.operation.slideshow.SlideshowInfo;
 import com.cw.youlite.util.image.UtilImage;
 import com.cw.youlite.define.Define;
@@ -127,17 +129,14 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     public static int mCurrentState;
     public final static int STATE_PAUSED = 0;
     public final static int STATE_PLAYING = 1;
-    public boolean bEULA_accepted;
+    public boolean isDbSync;
     public static boolean isEdited_YouTube_link;
     public static boolean isEdited_Web_link;
     public static int edit_position;
-    public DialogInterface.OnClickListener clickListener_renew;
-    public DialogInterface.OnClickListener clickListener_no_renew;
 
 	// Main Act onCreate
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         /**
@@ -197,57 +196,36 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
         UtilImage.getDefaultScaleInPercent(MainAct.this);
 
-        // EULA
-        Dialog_EULA dialog_EULA = new Dialog_EULA(this);
-        bEULA_accepted = dialog_EULA.isEulaAlreadyAccepted();
+        // check DB file existence
+        File dbFile = getDatabasePath(DbHelper.DATABASE_NAME);
+//        System.out.println("MainAct / _onCreate / dbFile.exists().getPath() = " + dbFile.getPath() );
+        if (dbFile.exists()) {
 
-        // Show dialog of EULA
-        if (!bEULA_accepted)
-        {
-            // Ok button listener
-            dialog_EULA.clickListener_Ok = (DialogInterface dialog, int i) -> {
-                dialog_EULA.applyPreference();
+            // DB
+            Dialog_DB dialog_db = new Dialog_DB(this);
+            isDbSync = Pref.getDB_versionSyncReady(this);
 
-                if(Pref.getPref_DB_ready(this)) {
-                    //vibration warning
-                    Util util = new Util(this);
-                    util.vibrate();
-
-                    bEULA_accepted = true;
-                    AlertDialog.Builder builder = new AlertDialog.Builder(mAct)
-                            .setTitle(R.string.renew_title)
-                            .setMessage(R.string.renew_confirm)
-                            .setCancelable(false)
-                            .setPositiveButton(R.string.btn_OK, clickListener_renew)
-                            .setNegativeButton(android.R.string.cancel, clickListener_no_renew);
-                    builder.create().show();
-                } else
+            if (!isDbSync) {
+                // Ok button listener
+                dialog_db.clickListener_Ok = (DialogInterface dialog, int i) -> {
                     new RenewDB(this);
-            };
+                };
 
-            // No button listener
-            dialog_EULA.clickListener_No = (DialogInterface dialog, int which) -> {
-                // Close the activity as they have declined
-                // the EULA
-                dialog.dismiss();
-                mAct.finish();
-            };
+                // No button listener
+                dialog_db.clickListener_No = (DialogInterface dialog, int which) -> {
+                    dialog.dismiss();
+                    Pref.setDB_versionSyncReady(this,false);
+                    doCreate();
+                };
 
-            // do renew
-            clickListener_renew = (DialogInterface dialog, int i) -> {
-                new RenewDB(this);
-            };
-
-            // don't renew
-            clickListener_no_renew = (DialogInterface dialog, int i) -> {
+                // Show dialog of DB
+                dialog_db.show();
+            } else
                 doCreate();
-            };
 
-            dialog_EULA.show();
         }
         else {
-            if(Pref.getPref_DB_ready(this))
-                doCreate();
+            new RenewDB(this);
         }
 
         edit_position = 0;
@@ -303,8 +281,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             mOnBackStackChangedListener = this;
             mFragmentManager.addOnBackStackChangedListener(mOnBackStackChangedListener);
 
-            if (bEULA_accepted)
-                configLayoutView(); //createAssetsFile inside
+            configLayoutView(); //createAssetsFile inside
         }
     }
 
@@ -472,21 +449,19 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     	mAct = this;
 
         // Sync the toggle state after onRestoreInstanceState has occurred.
-        if(bEULA_accepted) {
-        	if(drawer != null)
-                drawer.drawerToggle.syncState();
+        if(drawer != null)
+            drawer.drawerToggle.syncState();
 
-            //   get folder table id by preference
-            DB_drawer dbDrawer = new DB_drawer(mAct);
-            int foldersCnt = dbDrawer.getFoldersCount(true);
-            int focus_folder_tableId =  Pref.getPref_focusView_folder_tableId(mAct);
+        //   get folder table id by preference
+        DB_drawer dbDrawer = new DB_drawer(mAct);
+        int foldersCnt = dbDrawer.getFoldersCount(true);
+        int focus_folder_tableId =  Pref.getPref_focusView_folder_tableId(mAct);
 
-            // select focus folder view by preference
-            for (int pos=0;pos< foldersCnt;pos++)
-            {
-                if(focus_folder_tableId == dbDrawer.getFolderTableId(pos,true))
-                    FolderUi.setFocus_folderPos(pos);
-            }
+        // select focus folder view by preference
+        for (int pos=0;pos< foldersCnt;pos++)
+        {
+            if(focus_folder_tableId == dbDrawer.getFolderTableId(pos,true))
+                FolderUi.setFocus_folderPos(pos);
         }
 
         // receiver for fetch category service
@@ -516,6 +491,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                     localBroadcastMgr.unregisterReceiver(responseReceiver);
                     responseReceiver = null;
 
+                    Pref.setDB_versionSyncReady(MainAct.this,true);
                     Pref.setPref_DB_ready(MainAct.this,true);
 
                     System.out.println("MainFragment / _FetchServiceResponseReceiver / will start new main activity");
@@ -579,17 +555,14 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         }
 		// fix: home button failed after power off/on in Config fragment
         else {
+            if(mFragmentManager != null)
+                mFragmentManager.popBackStack();
 
-            if (bEULA_accepted) {
-                if(mFragmentManager != null)
-                    mFragmentManager.popBackStack();
-
-                if (!mAct.isDestroyed()) {
-                    System.out.println("MainAct / _onResumeFragments / mAct is not Destroyed()");
-                    openFolder();
-                } else
-                    System.out.println("MainAct / _onResumeFragments / mAct is Destroyed()");
-            }
+            if (!mAct.isDestroyed()) {
+                System.out.println("MainAct / _onResumeFragments / mAct is not Destroyed()");
+                openFolder();
+            } else
+                System.out.println("MainAct / _onResumeFragments / mAct is Destroyed()");
         }
     }
 
@@ -863,7 +836,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     public boolean onPrepareOptionsMenu(android.view.Menu menu) {
         System.out.println("MainAct / _onPrepareOptionsMenu");
 
-        if((drawer == null) || (drawer.drawerLayout == null) || (!bEULA_accepted))
+        if((drawer == null) || (drawer.drawerLayout == null))
             return false;
 
         DB_drawer db_drawer = new DB_drawer(this);

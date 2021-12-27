@@ -23,7 +23,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 // Data Base Helper 
 class DatabaseHelper extends SQLiteOpenHelper
 {
-    static final String DB_NAME = "youlite.db";
+    static final String DB_NAME = "YouLite.db";
     private static int DB_VERSION = 1;
     
     DatabaseHelper(Context context)

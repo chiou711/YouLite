@@ -51,6 +51,7 @@ public class RenewDB {
 			else
 				client.release();
 
+			Pref.setDB_versionSyncReady(act,false);
 			Pref.setPref_DB_ready(act,false);
 		} catch (Exception e) {
 			e.printStackTrace();

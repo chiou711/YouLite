@@ -60,6 +60,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTabSelectedListener
@@ -266,7 +267,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
         System.out.println("TabsHost / _onTabSelected: " + tab.getPosition());
 //        System.out.println("TabsHost / _onTabSelected:  / Pref.getPref_DB_ready(getActivity()) = " + Pref.getPref_DB_ready(getActivity()));
 
-        if( !Pref.getPref_DB_ready(getActivity()))
+        if( !Pref.getPref_DB_ready(Objects.requireNonNull(getActivity())))
             return;
 
         setFocus_tabPos(tab.getPosition());
@@ -471,7 +472,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
             tabStrip.getChildAt(tabPos).setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    if(Pref.getPref_DB_ready(getActivity())) // add for Renew DB exception
+                    if(Pref.getPref_DB_ready(Objects.requireNonNull(getActivity()))) // add for Renew DB exception
                         editPageTitle(tabPos,MainAct.mAct);
                     return false;
                 }

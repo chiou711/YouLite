@@ -19,6 +19,9 @@ package com.cw.youlite.util.preferences;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 
 
 /**
@@ -41,6 +44,36 @@ public class Pref
         SharedPreferences pref = context.getSharedPreferences("db_ready", 0);
         String keyName = "KEY_DB_READY";
         return pref.getBoolean(keyName, false); // default: not ready
+    }
+
+    static public void setDB_versionSyncReady(Activity act, boolean ready)
+    {
+        String DB_KEY_PREFIX = "VersionSyncDB";
+        SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(act);
+        SharedPreferences.Editor editor = prefs.edit();
+        PackageInfo versionInfo = getPackageInfo(act);
+        String dbKey = DB_KEY_PREFIX + versionInfo.versionCode;
+        editor.putBoolean(dbKey, ready);
+        editor.apply();
+    }
+
+    static public boolean getDB_versionSyncReady(Activity act) {
+        String DB_KEY_PREFIX = "VersionSyncDB";
+        PackageInfo versionInfo = getPackageInfo(act);
+        SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(act);
+        String dbKey = DB_KEY_PREFIX + versionInfo.versionCode;
+        return prefs.getBoolean(dbKey, false);
+    }
+
+    static public PackageInfo getPackageInfo(Activity act) {
+        PackageInfo info = null;
+        try {
+            info = act.getPackageManager().getPackageInfo(
+                    act.getPackageName(), PackageManager.GET_ACTIVITIES);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return info;
     }
 
     // set folder table id of focus view

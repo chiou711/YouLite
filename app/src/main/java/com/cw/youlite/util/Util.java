@@ -129,9 +129,9 @@ import static com.cw.youlite.data.DbBuilder_video.TAG_TITLE;
 public class Util 
 {
     SharedPreferences mPref_vibration;
+    //todo Following statics could cause memory leak
     private static Context mContext;
 	private static Activity mAct;
-	private String mEMailString;
     private static DB_folder mDbFolder;
     public static String NEW_LINE = "\r" + System.getProperty("line.separator");
 

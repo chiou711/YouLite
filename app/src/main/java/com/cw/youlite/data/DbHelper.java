@@ -31,10 +31,10 @@ import com.cw.youlite.db.DB_page;
 public class DbHelper extends SQLiteOpenHelper {
 
     // Change this when you change the database schema.
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 1;
 
     // The name of our database.
-    public static final String DATABASE_NAME = "youlite.db";
+    public static final String DATABASE_NAME = "YouLite.db";
 
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
