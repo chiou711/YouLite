@@ -48,7 +48,6 @@ import com.cw.youlite.operation.mail.Mail_filesListJson;
 import com.cw.youlite.operation.mail.Mail_fileViewJson;
 import com.cw.youlite.page.Checked_notes_option;
 import com.cw.youlite.page.PageUi;
-import com.cw.youlite.page.Page_recycler;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.DeleteFileAlarmReceiver;
 import com.cw.youlite.db.DB_drawer;
@@ -742,7 +741,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             do
             {
                 TabsHost.getCurrentPage().mCurrPlayPosition++;
-                if(Page_recycler.mCurrPlayPosition >= TabsHost.getCurrentPage().getNotesCountInPage(mAct))
+                if(TabsHost.getCurrentPage().mCurrPlayPosition >= TabsHost.getCurrentPage().getNotesCountInFocusPage(mAct))
                     TabsHost.getCurrentPage().mCurrPlayPosition = 0; //back to first index
 
                 nextLink = mMainUi.getYouTubeLink(this,TabsHost.getCurrentPage().mCurrPlayPosition);

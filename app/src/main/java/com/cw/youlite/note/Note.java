@@ -264,7 +264,6 @@ public class Note extends AppCompatActivity
 				}
 				else //view all mode
 				{
-					stopVideo();
 					finish();
 				}
 			}
@@ -288,12 +287,6 @@ public class Note extends AppCompatActivity
 			mNoteId = mDb_page.getNoteId(nextPosition,true);
 			System.out.println("Note / _onPageSelected / mNoteId = " + mNoteId);
 
-			// stop video when changing note
-			String pictureUriInDB = mDb_page.getNotePictureUri_byId(mNoteId);
-			if(UtilVideo.hasVideoExtension(pictureUriInDB,act)) {
-				VideoPlayer.stopVideo();
-				NoteUi.cancel_UI_callbacks();
-			}
             setOutline(act);
 		}
 	};
@@ -447,9 +440,6 @@ public class Note extends AppCompatActivity
 			// keep play video position
 			mPlayVideoPositionOfInstance = UtilVideo.mPlayVideoPosition;
 			System.out.println("Note / _onPause / mPlayVideoPositionOfInstance = " + mPlayVideoPositionOfInstance);
-
-			if(UtilVideo.mVideoPlayer != null)
-				VideoPlayer.stopVideo();
 		}
 
 		// to stop YouTube web view running
@@ -566,7 +556,6 @@ public class Note extends AppCompatActivity
             	}
             	else if(isViewAllMode())
             	{
-					stopVideo();
 	            	finish();
             	}
                 return true;
@@ -696,7 +685,6 @@ public class Note extends AppCompatActivity
     	else
     	{
     		System.out.println("Note / _onBackPressed / view all mode");
-			stopVideo();
         	finish();
     	}
     }
@@ -865,11 +853,6 @@ public class Note extends AppCompatActivity
         else
             picUI_touch.tempShow_picViewUI(111,getCurrentPictureString());
     }
-
-	public static void stopVideo()
-	{
-		VideoPlayer.stopVideo();
-	}
 
 	public static void changeToNext(ViewPager mPager)
 	{

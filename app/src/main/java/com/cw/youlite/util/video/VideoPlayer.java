@@ -181,7 +181,6 @@ public class VideoPlayer
 				catch (Exception e) 
 				{
 					Log.e(TAG_VIDEO, "VideoPlayer / mRunPlayVideo / error: " + e.getMessage(), e);
-					VideoPlayer.stopVideo();
 				}
 			}
 		} 

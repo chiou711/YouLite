@@ -16,6 +16,8 @@ package com.cw.youlite.operation.youtube;
 
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import android.view.View;
@@ -43,8 +45,11 @@ import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Thumbnail;
 import com.google.api.services.youtube.model.VideoListResponse;
+import com.google.common.io.BaseEncoding;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -149,6 +154,10 @@ public class SearchYouTube extends ListActivity {
                 youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), new HttpRequestInitializer() {
                 public void initialize(HttpRequest request) throws IOException {
 //                    System.out.println("SearchYouTubeByKeyword / _main / Builder IOException ");
+                    String packageName = getPackageName();
+                    String SHA1 = getSHA1(packageName);
+                    request.getHeaders().set("X-Android-Package", packageName);
+                    request.getHeaders().set("X-Android-Cert",SHA1);
                 }
             }
             ).setApplicationName("youtube-cmdline-search-sample").build();
@@ -223,6 +232,23 @@ public class SearchYouTube extends ListActivity {
         } catch (Throwable t) {
             t.printStackTrace();
         }
+    }
+
+    private String getSHA1(String packageName){
+        try {
+            Signature[] signatures = getPackageManager().getPackageInfo(packageName, PackageManager.GET_SIGNATURES).signatures;
+            for (Signature signature: signatures) {
+                MessageDigest md;
+                md = MessageDigest.getInstance("SHA-1");
+                md.update(signature.toByteArray());
+                return BaseEncoding.base16().encode(md.digest());
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     boolean isGotDurations;

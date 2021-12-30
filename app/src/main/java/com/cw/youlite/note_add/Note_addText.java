@@ -152,7 +152,7 @@ public class Note_addText extends AppCompatActivity {
 					enSaveDb = true;
 					rowId = saveStateInDB(rowId, enSaveDb,"" );
 
-					int notes_count = TabsHost.getCurrentPage().getNotesCountInPage(this);
+					int notes_count = TabsHost.getCurrentPage().getNotesCountInFocusPage(this);
 
 					if( getIntent().getExtras().getString("extra_ADD_NEW_TO_TOP", "false").equalsIgnoreCase("true") &&
 							(notes_count > 0) )

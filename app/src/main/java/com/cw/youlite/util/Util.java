@@ -2118,9 +2118,6 @@ public class Util
 		// by YouTube App
 		if(linkUri.contains("youtu.be") || linkUri.contains("youtube.com"))
         {
-            // stop video if playing
-            Note.stopVideo();
-
 //            String id = Util.getYoutubeId(linkUri);
 			// option 1
 //			  Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube://" + id));

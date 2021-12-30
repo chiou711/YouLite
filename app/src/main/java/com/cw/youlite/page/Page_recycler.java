@@ -204,9 +204,9 @@ public class Page_recycler extends Fragment implements OnStartDragListener {
     }
 
 
-    public int getNotesCountInPage(AppCompatActivity act)
+    public int getNotesCountInFocusPage(AppCompatActivity act)
     {
-        DB_page db_page = new DB_page(act,page_tableId );
+        DB_page db_page = new DB_page(act,DB_page.getFocusPage_tableId() );
         int count = db_page.getNotesCount(true);
         return count;
     }
