@@ -55,11 +55,8 @@ import com.cw.youlite.page.Checked_notes_option;
 import com.cw.youlite.R;
 import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.db.DB_page;
-import com.cw.youlite.note.Note;
 import com.cw.youlite.tabs.TabsHost;
-import com.cw.youlite.util.image.UtilImage;
 import com.cw.youlite.util.preferences.Pref;
-import com.cw.youlite.util.video.UtilVideo;
 import com.cw.youlite.define.Define;
 import com.google.android.youtube.player.YouTubeIntents;
 
@@ -1318,56 +1315,6 @@ public class Util
     }    
     
 
-	// get Url array of directory files
-    public final static int IMAGE = 1;
-    public final static int VIDEO = 2;
-    public static String[] getUrlsByFiles(File[] files,int type)
-    {
-        if(files == null)
-        {
-        	return null;
-        }
-        else
-        {
-        	String path[] = new String[files.length];
-            int i=0;
-            
-	        for(File file : files)
-	        {
-		        if( ( (type == IMAGE) && (UtilImage.hasImageExtension(file)) ) ||
-		        	( (type == VIDEO) && (UtilVideo.hasVideoExtension(file)) )  )
-	            {
-		            if(i< files.length)
-		            {
-//		            	path[i] = "file:///" + file.getPath();
-		            	path[i] = "file://" + file.getAbsolutePath();
-//		            	System.out.println("Util / _getUrlsByFiles / path[i] = " + path[i]);
-		            	i++;
-		            }
-	            }
-	        }
-	        return path;
-        }
-    }		    
-    
-	// show saved file name
-	public static void showSavedFileToast(String string,Activity act)
-	{
-		final Toast toast = Toast.makeText(act,
-						string,
-						Toast.LENGTH_SHORT);
-
-        toast.show();
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                toast.cancel();
-            }
-        }, 2000);
-	}
-
 	static public boolean isLandscapeOrientation(Activity act)
 	{
 		int currentOrientation = act.getResources().getConfiguration().orientation;
@@ -1413,16 +1360,6 @@ public class Util
 	    act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 	}
 	
-	// get time format string
-	static public String getTimeFormatString(long duration)
-	{
-		long hour = TimeUnit.MILLISECONDS.toHours(duration);
-		long min = TimeUnit.MILLISECONDS.toMinutes(duration) - TimeUnit.HOURS.toMinutes(hour);
-		long sec = TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.HOURS.toSeconds(hour) - TimeUnit.MINUTES.toSeconds(min);
-		String str = String.format(Locale.US,"%2d:%02d:%02d", hour, min, sec);
-		return str;
-	}
-
 	// is YouTube link or not
 	public static boolean isYouTubeLink(String strLink)
 	{

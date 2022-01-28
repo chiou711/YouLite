@@ -977,17 +977,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                     .setIcon(R.drawable.btn_check_off_holo_light)
                     .setTitle(R.string.drag_note) ;
 
-        // enable show body
-        mPref_show_note_attribute = getSharedPreferences("show_note_attribute", 0);
-        if(mPref_show_note_attribute.getString("KEY_SHOW_BODY", "yes").equalsIgnoreCase("yes"))
-            menu.findItem(R.id.SHOW_BODY)
-                    .setIcon(R.drawable.btn_check_on_holo_light)
-                    .setTitle(R.string.preview_note_body) ;
-        else
-            menu.findItem(R.id.SHOW_BODY)
-                .setIcon(R.drawable.btn_check_off_holo_light)
-                .setTitle(R.string.preview_note_body) ;
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -1187,26 +1176,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
                 else {
                     mPref_show_note_attribute.edit().putString("KEY_ENABLE_DRAGGABLE", "yes").apply();
                     Toast.makeText(this,getResources().getString(R.string.drag_note) +
-                                        ": " +
-                                        getResources().getString(R.string.set_enable),
-                                   Toast.LENGTH_SHORT).show();
-                }
-                invalidateOptionsMenu();
-                TabsHost.reloadCurrentPage();
-                return true;
-
-            case MenuId.SHOW_BODY:
-                mPref_show_note_attribute = mContext.getSharedPreferences("show_note_attribute", 0);
-                if(mPref_show_note_attribute.getString("KEY_SHOW_BODY", "yes").equalsIgnoreCase("yes")) {
-                    mPref_show_note_attribute.edit().putString("KEY_SHOW_BODY", "no").apply();
-                    Toast.makeText(this,getResources().getString(R.string.preview_note_body) +
-                                        ": " +
-                                        getResources().getString(R.string.set_disable),
-                                    Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    mPref_show_note_attribute.edit().putString("KEY_SHOW_BODY", "yes").apply();
-                    Toast.makeText(this,getResources().getString(R.string.preview_note_body) +
                                         ": " +
                                         getResources().getString(R.string.set_enable),
                                    Toast.LENGTH_SHORT).show();

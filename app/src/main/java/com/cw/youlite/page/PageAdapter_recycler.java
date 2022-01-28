@@ -58,7 +58,6 @@ import com.cw.youlite.util.image.UtilImage;
 import com.cw.youlite.util.image.UtilImage_bitmapLoader;
 import com.cw.youlite.util.preferences.Pref;
 import com.cw.youlite.util.uil.UilCommon;
-import com.cw.youlite.util.video.UtilVideo;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -89,7 +88,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 	private String pictureUri;
 	private String linkUri;
 	private int marking;
-	private String duration;
+//	private String duration;
 	private static int style;
     DB_folder dbFolder;
 	private int page_pos;
@@ -110,11 +109,11 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 	    updateDbCache();
 
 	    // get duration
-	    youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), new HttpRequestInitializer() {
-		    public void initialize(HttpRequest request) throws IOException {
-		    }
-	    }
-	    ).setApplicationName("YouLite").build();
+//	    youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), new HttpRequestInitializer() {
+//		    public void initialize(HttpRequest request) throws IOException {
+//		    }
+//	    }
+//	    ).setApplicationName("YouLite").build();
     }
 
     /**
@@ -215,29 +214,30 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 		    marking = listCache.get(position).marking;
 
 		    // get duration
-		    isGotDuration = false;
+//		    isGotDuration = false;
 
-		    if(Util.isYouTubeLink(linkUri)) {
-			    getDuration(Util.getYoutubeId(linkUri));
-
-			    //wait for buffering
-			    int time_out_count = 0;
-			    while ((!isGotDuration) && time_out_count < 10) {
-				    try {
-					    Thread.sleep(100);
-				    } catch (InterruptedException e) {
-					    e.printStackTrace();
-				    }
-				    time_out_count++;
-			    }
-			    duration = acquiredDuration;
-		    }
+		    //todo Delay too long?
+//		    if(Util.isYouTubeLink(linkUri)) {
+//			    getDuration(Util.getYoutubeId(linkUri));
+//
+//			    //wait for buffering
+//			    int time_out_count = 0;
+//			    while ((!isGotDuration) && time_out_count < 10) {
+//				    try {
+//					    Thread.sleep(100);
+//				    } catch (InterruptedException e) {
+//					    e.printStackTrace();
+//				    }
+//				    time_out_count++;
+//			    }
+//			    duration = acquiredDuration;
+//		    }
 	    } else  {
 		    strTitle ="";
 			pictureUri = "";
 		    linkUri = "";
 		    marking = 0;
-		    duration = "n/a";
+//		    duration = "n/a";
 	    }
 
         /**
@@ -319,8 +319,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 		}
 
 		// case 1: show thumb nail if picture Uri exists
-		if(UtilImage.hasImageExtension(pictureUri, mAct ) ||
-		   UtilVideo.hasVideoExtension(pictureUri, mAct )   )
+		if(UtilImage.hasImageExtension(pictureUri, mAct ) )
 		{
 			holder.thumbBlock.setVisibility(View.VISIBLE);
 			holder.thumbPicture.setVisibility(View.VISIBLE);
@@ -435,19 +434,6 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 			holder.thumbPicture.setVisibility(View.GONE);
 			holder.thumbWeb.setVisibility(View.GONE);
 		}
-
-		// Show text body
-	  	if(pref_show_note_attribute.getString("KEY_SHOW_BODY", "yes").equalsIgnoreCase("yes"))
-	  	{
-//			holder.rowDivider.setVisibility(View.VISIBLE);
-			// duration
-            holder.textTime.setText(duration);
-			holder.textTime.setTextColor(ColorSet.mText_ColorArray[style]);
-	  	}
-	  	else
-	  	{
-            holder.textTime.setVisibility(View.GONE);
-	  	}
 
         setBindViewHolder_listeners(holder,position);
     }
@@ -714,7 +700,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 					parameters.put("part", "contentDetails");
 					String stringsList = youtubeId;
 
-//					System.out.println("PageAdapter_recycler / _getDuration/ run /stringsList = "+ stringsList);
+					System.out.println("PageAdapter_recycler / _getDuration/ run /stringsList = "+ stringsList);
 					parameters.put("id", stringsList);
 
 					YouTube.Videos.List videosListMultipleIdsRequest = youtube.videos().list(parameters.get("part").toString());
@@ -727,7 +713,7 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 
 					String duration = response.getItems().get(0).getContentDetails().getDuration();
 					acquiredDuration = YouTubeTimeConvert.convertYouTubeDuration(duration);
-//					System.out.println("PageAdapter_recycler / _getDurations / runnable / duration" + "(" + 0 + ") = " + duration);
+					System.out.println("PageAdapter_recycler / _getDurations / runnable / duration" + "(" + 0 + ") = " + duration);
 
 					isGotDuration = true;
 				} catch (GoogleJsonResponseException e) {

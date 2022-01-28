@@ -28,8 +28,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
-import com.cw.youlite.Utils;
-
 import java.util.HashMap;
 
 import androidx.annotation.NonNull;

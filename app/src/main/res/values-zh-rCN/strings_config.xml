@@ -25,7 +25,7 @@
     <string name="config_delete_DB_toast">所有页面已被删除。</string>
     <string name="config_export_SDCard_JSON_title">汇出选定: 到SD卡</string>
     <string name="config_export_SDCard_all_JSON_title">汇出全部: 到SD卡</string>
-    <string name="config_export_GDrive_sel_JSON_title">汇出选定： 到Google Drive</string>
+    <string name="config_export_GDrive_sel_JSON_title">汇出选定: 到Google Drive</string>
     <string name="config_export_GDrive_all_JSON_title">>汇出全部: 到Google Drive</string>
     <string name="config_export_SDCard_btn">汇出</string>
     <string name="config_export_SDCard_toast">汇出笔记到SD卡：OK</string>

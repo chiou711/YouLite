@@ -95,8 +95,6 @@
             android:theme="@style/MyTheme"/>
         <activity android:name="com.cw.youlite.operation.gdrive.ExportAllGDriveAct"
             android:theme="@style/MyTheme"/>
-        <activity android:name="com.cw.youlite.operation.gallery.GalleryGridAct"/>
-        <activity android:name="com.cw.youlite.operation.gallery.GalleryPagerAct"/>
 
         <!--YouTube search -->
         <activity android:name="com.cw.youlite.operation.youtube.SearchYouTube"
