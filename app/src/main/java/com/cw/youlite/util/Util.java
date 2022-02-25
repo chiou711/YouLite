@@ -2075,8 +2075,20 @@ public class Util
                 Util.isEmptyString(playListIdStr))
             {
                 System.out.println("Util / _openLink_YouTube / v= ");
+
+                // 1 YouTube: with option
                 intent = YouTubeIntents.createPlayVideoIntentWithOptions(act, idStr, false/*fullscreen*/, true/*finishOnEnd*/);
+
+	            // 2 general YouTube: without option
 //                intent = YouTubeIntents.createPlayVideoIntent(act, idStr);
+
+	            // 3 newPipe/newPipe Debug
+//	            String appPackageName = "org.schabi.newpipe";
+//	            String appPackageName = "org.schabi.newpipe.debug";
+//	            intent = act.getPackageManager().getLaunchIntentForPackage(appPackageName);
+//	            if (intent != null)
+//		            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube://" + idStr));
+
             }
             // v and list
             else if(!Util.isEmptyString(idStr) &&
@@ -2099,17 +2111,18 @@ public class Util
             }
 
 	        PackageManager pm = act.getPackageManager();
-	        String strRes = intent.resolveActivity(pm).toString();
-	        System.out.println("Util / _openLink_YouTube / strRes = " + strRes);
+            ComponentName componentName = intent.resolveActivity(pm);
+	        if (componentName == null)
+		        Toast.makeText(act,R.string.toast_check_youtube_installation,Toast.LENGTH_SHORT).show();
+	        else {
+		        String strRes = componentName.toString();
+		        System.out.println("Util / _openLink_YouTube / strRes = " + strRes);
 
-	        if (strRes != null) {
 		        if(Pref.getPref_is_autoPlay_YouTubeApi(act))
 			        act.startActivityForResult(intent, YOUTUBE_LINK_INTENT);
 		        else
 			        act.startActivity(intent);
 	        }
-	        else
-		        Toast.makeText(act,R.string.toast_check_youtube_installation,Toast.LENGTH_SHORT).show();
 		}
 		// by Chrome browser
 		else if(linkUri.contains("youtube.com"))
