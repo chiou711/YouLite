@@ -76,7 +76,8 @@
                  android:windowSoftInputMode="adjustPan"/>
         <activity android:name="com.cw.youlite.note.Note"
                   android:theme="@style/MyTheme"
-            	  android:configChanges="orientation|keyboard|keyboardHidden|screenSize|screenLayout|uiMode">
+            	  android:configChanges="orientation|keyboard|keyboardHidden|screenSize|screenLayout|uiMode"
+                  android:exported="false">
             <intent-filter android:priority="0">
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>

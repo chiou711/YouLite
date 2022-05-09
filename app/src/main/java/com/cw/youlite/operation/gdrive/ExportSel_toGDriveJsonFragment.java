@@ -174,9 +174,9 @@ public class ExportSel_toGDriveJsonFragment extends Fragment {
 		// default file name: with tab title
 		if((mList_selPage.isCheckAll) ||
 		   (mList_selPage.mListStrArr.size() == countChecked) )
-			mDefaultFileName = mList_selPage.mFolderTitle + ".json";
+			mDefaultFileName = mList_selPage.mFolderTitle;
 		else
-			mDefaultFileName = pagesName + ".json";
+			mDefaultFileName = pagesName;
 
 		editSDCardFileNameText.setText(mDefaultFileName);
 

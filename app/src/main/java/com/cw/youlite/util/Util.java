@@ -1629,7 +1629,8 @@ public class Util
 								idStr +
 								"&key=" +
 								YouTubeDeveloperKey.DEVELOPER_KEY +
-								"&part=snippet,contentDetails,statistics,status";
+//				"&part=snippet,contentDetails,statistics,status";
+		"&part=snippet";
 
 		// volley
 		StringRequest stringRequest = new StringRequest(
@@ -1680,7 +1681,7 @@ public class Util
 						e.printStackTrace();
 					}
 				},
-				error -> Toast.makeText(MainAct.mAct, error.getMessage(), Toast.LENGTH_LONG).show()){};
+				error -> Toast.makeText(MainAct.mAct, "API data request error", Toast.LENGTH_LONG).show()){};
 
 		// Request (if not using Singleton [RequestHandler]
 		 RequestQueue requestQueue = Volley.newRequestQueue(MainAct.mAct);

@@ -111,6 +111,7 @@ public class Export_toSDCardAllJsonFragment extends Fragment {
 	EditText editSDCardFileNameText;
 	AlertDialog mDialog;
 
+	// input file name dialog
 	void inputFileNameDialog()
 	{
 		AlertDialog.Builder builder1;
@@ -120,10 +121,10 @@ public class Export_toSDCardAllJsonFragment extends Fragment {
 	    							.inflate(R.layout.edit_text_dlg, null);
 		builder1 = new AlertDialog.Builder(getActivity());
 
-		int folderTableId = getPref_focusView_folder_tableId(mContext);
-		DB_drawer db_drawer = new DB_drawer(mContext);
-
+//		int folderTableId = getPref_focusView_folder_tableId(mContext);
+//		DB_drawer db_drawer = new DB_drawer(mContext);
 //		mDefaultFileName = db_drawer.getFolderTitle(folderTableId,true) + ".json";
+
 		mDefaultFileName = "g_drive_src.json";
 		editSDCardFileNameText.setText(mDefaultFileName);
 
