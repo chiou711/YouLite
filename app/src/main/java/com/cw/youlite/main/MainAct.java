@@ -78,6 +78,8 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentManager.OnBackStackChangedListener;
@@ -132,6 +134,8 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     public static boolean isEdited_YouTube_link;
     public static boolean isEdited_Web_link;
     public static int edit_position;
+    public static ActivityResultLauncher<Intent> add_YouTube_link_act_result_launcher;
+    public static ActivityResultLauncher<Intent> add_Web_link_act_result_launcher;
 
 	// Main Act onCreate
     @Override
@@ -228,6 +232,22 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         }
 
         edit_position = 0;
+
+        // register ActivityResultLauncher instance and its callback
+        add_YouTube_link_act_result_launcher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if(Build.VERSION.SDK_INT >= O)//API26
+                        isAdded_onNewIntent = false;
+                });
+
+        // register ActivityResultLauncher instance and its callback
+        add_Web_link_act_result_launcher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if(Build.VERSION.SDK_INT >= O)//API26
+                        isAdded_onNewIntent = false;
+                });
     }
 
     // filter unimportant log
@@ -785,13 +805,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             alertDlg.show();
         }
 
-        // make sure main activity is still executing
-        if( (requestCode == Util.ADD_NEW_YOUTUBE_LINK_INTENT) ||
-            (requestCode == Util.ADD_NEW_LINK_INTENT)    )
-        {
-            if(Build.VERSION.SDK_INT >= O)//API26
-                isAdded_onNewIntent = false;
-        }
     }
 
     /**

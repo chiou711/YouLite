@@ -35,7 +35,7 @@ import android.widget.Toast;
 
 import com.cw.youlite.R;
 import com.cw.youlite.folder.FolderUi;
-import com.cw.youlite.util.Util;
+import com.cw.youlite.main.MainAct;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,7 +98,7 @@ public class Add_note_option {
                 android.R.drawable.ic_menu_share,
                 R.string.note_web_link));
 
-            // Back
+        // Back
         addNoteList.add(new Add_note_option(ID_NEW_BACK,
                 R.drawable.ic_menu_back,
                 R.string.btn_Cancel));
@@ -164,7 +164,7 @@ public class Add_note_option {
             {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com"));
                 if (intent.resolveActivity(act.getPackageManager()) != null)
-                    act.startActivityForResult(intent, Util.ADD_NEW_YOUTUBE_LINK_INTENT);
+                    MainAct.add_YouTube_link_act_result_launcher.launch(intent);
                 else
                     Toast.makeText(act,R.string.toast_check_youtube_installation,Toast.LENGTH_SHORT).show();
             }
@@ -174,7 +174,7 @@ public class Add_note_option {
             {
                 Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse("https://www.google.com"));
                 if (intent.resolveActivity(act.getPackageManager()) != null)
-                    act.startActivityForResult(intent, Util.ADD_NEW_LINK_INTENT);
+                    MainAct.add_Web_link_act_result_launcher.launch(intent);
                 else
                     Toast.makeText(act,R.string.toast_check_browser_installation,Toast.LENGTH_SHORT).show();
             }
