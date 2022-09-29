@@ -16,21 +16,42 @@
 
 package com.cw.youlite.main;
 
-import java.io.File;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import android.Manifest;
+import android.app.AlertDialog;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.RemoteException;
+import android.os.StrictMode;
+import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cw.youlite.R;
 import com.cw.youlite.config.About;
 import com.cw.youlite.config.Config;
 import com.cw.youlite.data.DbHelper;
 import com.cw.youlite.data.FetchService_category;
+import com.cw.youlite.db.DB_drawer;
 import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.db.DB_page;
 import com.cw.youlite.db.RenewDB;
+import com.cw.youlite.define.Define;
 import com.cw.youlite.drawer.Drawer;
 import com.cw.youlite.folder.Folder;
 import com.cw.youlite.folder.FolderUi;
@@ -44,61 +65,39 @@ import com.cw.youlite.operation.import_export.Export_toSDCardAllJsonFragment;
 import com.cw.youlite.operation.import_export.Export_toSDCardJsonFragment;
 import com.cw.youlite.operation.import_export.Import_filesListJson;
 import com.cw.youlite.operation.import_export.Import_webJsonAct;
-import com.cw.youlite.operation.mail.Mail_filesListJson;
+import com.cw.youlite.operation.mail.MailNotes;
 import com.cw.youlite.operation.mail.Mail_fileViewJson;
+import com.cw.youlite.operation.mail.Mail_filesListJson;
+import com.cw.youlite.operation.slideshow.SlideshowInfo;
 import com.cw.youlite.page.Checked_notes_option;
 import com.cw.youlite.page.PageUi;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.DeleteFileAlarmReceiver;
-import com.cw.youlite.db.DB_drawer;
 import com.cw.youlite.util.Dialog_DB;
-import com.cw.youlite.operation.slideshow.SlideshowInfo;
-import com.cw.youlite.util.image.UtilImage;
-import com.cw.youlite.define.Define;
-import com.cw.youlite.operation.mail.MailNotes;
 import com.cw.youlite.util.OnBackPressedListener;
+import com.cw.youlite.util.PlaylistApi;
 import com.cw.youlite.util.Util;
+import com.cw.youlite.util.image.UtilImage;
 import com.cw.youlite.util.preferences.Pref;
 import com.mobeta.android.dslv.DragSortListView;
 
-import android.Manifest;
-import android.app.AlertDialog;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.os.Build;
-import android.os.Handler;
-import android.os.RemoteException;
-import android.os.StrictMode;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.os.Bundle;
+import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentManager.OnBackStackChangedListener;
 import androidx.fragment.app.FragmentTransaction;
-
-import android.support.v4.media.MediaBrowserCompat;
-import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
-import androidx.core.view.GravityCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
@@ -302,6 +301,14 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
             configLayoutView(); //createAssetsFile inside
         }
+
+    }
+
+    //todo Test
+    // show videos of a given playlist
+    void showVideosOfPlaylist(){
+        String youtubeUrl = "https://youtube.com/playlist?list=PL3LMv9ng2NJHjHTcF7353VC2rnfFHypNx";
+        PlaylistApi.request_and_save_youTubePlaylist(youtubeUrl);
     }
 
 
@@ -750,16 +757,14 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
         }
 
         // YouTube
-        if(requestCode == Util.YOUTUBE_LINK_INTENT)
-        {
+        if(requestCode == Util.YOUTUBE_LINK_INTENT) {
             // preference of delay
             SharedPreferences pref_delay = getSharedPreferences("youtube_launch_delay", 0);
             count = Integer.valueOf(pref_delay.getString("KEY_YOUTUBE_LAUNCH_DELAY","5"));
 
             builder = new AlertDialog.Builder(this);
 
-            do
-            {
+            do {
                 TabsHost.getCurrentPage().mCurrPlayPosition++;
                 if(TabsHost.getCurrentPage().mCurrPlayPosition >= TabsHost.getCurrentPage().getNotesCountInFocusPage(mAct))
                     TabsHost.getCurrentPage().mCurrPlayPosition = 0; //back to first index
@@ -847,6 +852,10 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     @Override
     public boolean onPrepareOptionsMenu(android.view.Menu menu) {
         System.out.println("MainAct / _onPrepareOptionsMenu");
+
+        ///
+        showVideosOfPlaylist();
+        ///
 
         if((drawer == null) || (drawer.drawerLayout == null))
             return false;

@@ -19,7 +19,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -34,11 +33,11 @@ import com.cw.youlite.R;
 import com.cw.youlite.util.Util;
 import com.cw.youlite.util.image.UtilImage_bitmapLoader;
 import com.cw.youlite.util.uil.UilCommon;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.ResourceId;
 import com.google.api.services.youtube.model.SearchListResponse;
@@ -55,6 +54,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executors;
+
+import androidx.annotation.Nullable;
 
 
 /**
@@ -151,7 +152,8 @@ public class SearchYouTube extends ListActivity {
 
             //https://stackoverflow.com/questions/24065065/having-trouble-importing-google-api-services-samples-youtube-cmdline-auth
 //            youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, new HttpRequestInitializer() {
-                youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), new HttpRequestInitializer() {
+//            youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(), new HttpRequestInitializer() {
+                youtube = new YouTube.Builder(new NetHttpTransport(), new AndroidJsonFactory(), new HttpRequestInitializer() {
                 public void initialize(HttpRequest request) throws IOException {
 //                    System.out.println("SearchYouTubeByKeyword / _main / Builder IOException ");
                     String packageName = getPackageName();
