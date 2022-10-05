@@ -20,7 +20,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -34,10 +33,13 @@ import com.cw.youlite.db.DB_page;
 import com.cw.youlite.page.Page_recycler;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.CustomWebView;
+import com.cw.youlite.util.playlist.PlaylistApi;
 import com.cw.youlite.util.Util;
 import com.cw.youlite.util.preferences.Pref;
 
 import java.util.Date;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by cw on 2017/10/7.
@@ -65,12 +67,28 @@ public class MainUi {
 
         path = pathOri;
 
-        if(!Util.isEmptyString(pathOri))
-        {
-            System.out.println("MainUi / _addNote_IntentLink / pathOri = " + pathOri);
+
+        String idStr = Util.getYoutubeId(pathOri);
+        String listIdStr = Util.getYoutubeListId(pathOri);
+        String playListIdStr = Util.getYoutubePlaylistId(pathOri);
+
+        // playlist
+        if(Util.isEmptyString(idStr) &&
+           Util.isEmptyString(listIdStr) &&
+           !Util.isEmptyString(playListIdStr) ){
+            System.out.println("MainUi / _addNote_IntentLink / playListIdStr = " + playListIdStr);
+            System.out.println("MainUi / _addNote_IntentLink / isAdded_onNewIntent = " + isAdded_onNewIntent);
+            PlaylistApi listApi = new PlaylistApi(act);
+            listApi.request_and_save_youTubePlaylist(pathOri,isAdded_onNewIntent);
+            return null;
+        } else if(/*!Util.isEmptyString(pathOri)*/
+            // only v
+            !Util.isEmptyString(idStr) &&
+            Util.isEmptyString(listIdStr) &&
+            Util.isEmptyString(playListIdStr) ) {
+            System.out.println("MainUi / _addNote_IntentLink / only v ");
             // for SoundCloud case, path could contain other strings before URI path
-            if(pathOri.contains("http"))
-            {
+            if(pathOri.contains("http")) {
                 String[] str = pathOri.split("http");
 
                 for(int i=0;i< str.length;i++)

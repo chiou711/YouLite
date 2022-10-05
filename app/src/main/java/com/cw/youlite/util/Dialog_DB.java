@@ -49,7 +49,7 @@ public class Dialog_DB {
                 Pref.getPackageInfo(act).versionName;
 
         // DB check message
-        message = mAct.getString(R.string.renew_title);
+        message = mAct.getString(R.string.renew_data_title);
     }
 
     public void show()

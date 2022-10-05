@@ -267,13 +267,14 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
         System.out.println("TabsHost / _onTabSelected: " + tab.getPosition());
 //        System.out.println("TabsHost / _onTabSelected:  / Pref.getPref_DB_ready(getActivity()) = " + Pref.getPref_DB_ready(getActivity()));
 
-        if( !Pref.getPref_DB_ready(Objects.requireNonNull(getActivity())))
+        if( !Pref.getPref_DB_ready(requireActivity()))
             return;
 
         setFocus_tabPos(tab.getPosition());
 
         // keep focus view page table Id
         int pageTableId = mTabsPagerAdapter.dbFolder.getPageTableId(getFocus_tabPos(), true);
+        System.out.println("TabsHost / _onTabSelected / pageTableId = " + pageTableId);
         Pref.setPref_focusView_page_tableId(MainAct.mAct, pageTableId);
 
         // current page table Id

@@ -16,6 +16,7 @@
 
 package com.cw.youlite.db;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -160,12 +161,36 @@ public class DB_page
         args.put(KEY_NOTE_MARKING,marking);
         long rowId = mSqlDb.insert(DB_PAGE_TABLE_NAME, null, args);
 
+		System.out.println("DB_page / _insertNote / DB_PAGE_TABLE_NAME = " + DB_PAGE_TABLE_NAME +
+				" & rowId = " + rowId);
         this.close();
 
         return rowId;  
-    }  
-    
-    public boolean deleteNote(long rowId,boolean enDbOpenClose) 
+    }
+
+	// without open/close
+	public long insertNote_no_openClose(String title, String pictureUri, String linkUri, int marking, Long createTime)
+	{
+		Date now = new Date();
+		ContentValues args = new ContentValues();
+		args.put(KEY_NOTE_TITLE, title);
+		args.put(KEY_NOTE_PICTURE_URI, pictureUri);
+		args.put(KEY_NOTE_LINK_URI, linkUri);
+		if(createTime == 0)
+			args.put(KEY_NOTE_CREATED, now.getTime());
+		else
+			args.put(KEY_NOTE_CREATED, createTime);
+
+		args.put(KEY_NOTE_MARKING,marking);
+		long rowId = mSqlDb.insert(DB_PAGE_TABLE_NAME, null, args);
+
+		System.out.println("DB_page / _insertNote / DB_PAGE_TABLE_NAME = " + DB_PAGE_TABLE_NAME +
+				" & rowId = " + rowId);
+		return rowId;
+	}
+
+
+	public boolean deleteNote(long rowId,boolean enDbOpenClose)
     {
     	if(enDbOpenClose)
     		this.open();
@@ -201,8 +226,9 @@ public class DB_page
 
     // update note
     // 		createTime:  0 for Don't update time
+    @SuppressLint("Range")
     public boolean updateNote(long rowId, String title, String pictureUri,
-    						  String linkUri, long marking, long createTime,boolean enDbOpenClose)
+                              String linkUri, long marking, long createTime, boolean enDbOpenClose)
     {
 //	    System.out.println("DB_page / _updateNote / rowId = " + rowId);
 //	    System.out.println("DB_page / _updateNote / title = " + title);
@@ -216,8 +242,11 @@ public class DB_page
         args.put(KEY_NOTE_MARKING, marking);
         
         Cursor cursor = queryNote(rowId);
-        if(createTime == 0)
-        	args.put(KEY_NOTE_CREATED, cursor.getLong(cursor.getColumnIndex(KEY_NOTE_CREATED)));
+        if(createTime == 0) {
+			if( (cursor!=null) && (cursor.getColumnIndex(KEY_NOTE_CREATED)>=0)) {
+				args.put(KEY_NOTE_CREATED,cursor.getLong(cursor.getColumnIndex(KEY_NOTE_CREATED)));
+			}
+        }
         else
         	args.put(KEY_NOTE_CREATED, createTime);
 
@@ -346,13 +375,17 @@ public class DB_page
 	}
 
 	// get note by position
+	@SuppressLint("Range")
 	public Long getNoteId(int position,boolean enDbOpenClose)
 	{
 		if(enDbOpenClose)
 			this.open();
 
 		mCursor_note.moveToPosition(position);
-	    Long id = mCursor_note.getLong(mCursor_note.getColumnIndex(KEY_NOTE_ID));
+		Long id = null;
+		if( (mCursor_note!=null) && (mCursor_note.getColumnIndex(KEY_NOTE_ID)>=0)) {
+			id = mCursor_note.getLong(mCursor_note.getColumnIndex(KEY_NOTE_ID));
+		}
 
 		if(enDbOpenClose)
 	    	this.close();
@@ -360,30 +393,36 @@ public class DB_page
 		return id;
 	}	
 	
-	public String getNoteTitle(int position,boolean enDbOpenClose)
+	@SuppressLint("Range")
+	public String getNoteTitle(int position, boolean enDbOpenClose)
 	{
 		String title = null;
 
 		if(enDbOpenClose)
 			this.open();
 
-		if(mCursor_note.moveToPosition(position))
-			title = mCursor_note.getString(mCursor_note.getColumnIndex(KEY_NOTE_TITLE));
-
+		if(mCursor_note.moveToPosition(position)) {
+			if ((mCursor_note != null) && (mCursor_note.getColumnIndex(KEY_NOTE_TITLE) >= 0))
+				title = mCursor_note.getString(mCursor_note.getColumnIndex(KEY_NOTE_TITLE));
+		}
 		if(enDbOpenClose)
         	this.close();
 
 		return title;
-	}	
-	
+	}
+
+	@SuppressLint("Range")
 	public String getNotePictureUri(int position,boolean enDbOpenClose)
 	{
 		if(enDbOpenClose)
 			this.open();
 
 		mCursor_note.moveToPosition(position);
-
-		String pictureUri = mCursor_note.getString(mCursor_note.getColumnIndex(KEY_NOTE_PICTURE_URI));
+		
+		String pictureUri = null;
+		if( (mCursor_note!=null) && (mCursor_note.getColumnIndex(KEY_NOTE_PICTURE_URI)>=0)) {
+			 pictureUri = mCursor_note.getString(mCursor_note.getColumnIndex(KEY_NOTE_PICTURE_URI));
+		}
 
 		if(enDbOpenClose)
         	this.close();
@@ -391,13 +430,18 @@ public class DB_page
 		return pictureUri;
 	}
 	
-	public String getNoteLinkUri(int position,boolean enDbOpenClose)
+	@SuppressLint("Range")
+	public String getNoteLinkUri(int position, boolean enDbOpenClose)
 	{
 		if(enDbOpenClose) 
 			this.open();
 
 		mCursor_note.moveToPosition(position);
-        String linkUri = mCursor_note.getString(mCursor_note.getColumnIndex(KEY_NOTE_LINK_URI));
+
+		String linkUri = null;
+		if( (mCursor_note!=null) && (mCursor_note.getColumnIndex(KEY_NOTE_LINK_URI)>=0)) {
+			linkUri = mCursor_note.getString(mCursor_note.getColumnIndex(KEY_NOTE_LINK_URI));
+		}
 
 		if(enDbOpenClose)
         	this.close();
@@ -405,29 +449,34 @@ public class DB_page
 		return linkUri;
 	}	
 	
-	public int getNoteMarking(int position,boolean enDbOpenClose)
+	@SuppressLint("Range")
+	public int getNoteMarking(int position, boolean enDbOpenClose)
 	{
 		if(enDbOpenClose)
 			this.open();
 
 		mCursor_note.moveToPosition(position);
-
-		int marking = mCursor_note.getInt(mCursor_note.getColumnIndex(KEY_NOTE_MARKING));
-
+		int marking = 0;
+		if( (mCursor_note!=null) && (mCursor_note.getColumnIndex(KEY_NOTE_MARKING)>=0)) {
+			marking = mCursor_note.getInt(mCursor_note.getColumnIndex(KEY_NOTE_MARKING));
+		}
 		if(enDbOpenClose)
 			this.close();
 
 		return marking;
 	}
 	
-	public Long getNoteCreatedTime(int position,boolean enDbOpenClose)
+	@SuppressLint("Range")
+	public Long getNoteCreatedTime(int position, boolean enDbOpenClose)
 	{
 		if(enDbOpenClose)
 			this.open();
 
 		mCursor_note.moveToPosition(position);
-		Long time = mCursor_note.getLong(mCursor_note.getColumnIndex(KEY_NOTE_CREATED));
-
+		Long time = null;
+		if( (mCursor_note!=null) && (mCursor_note.getColumnIndex(KEY_NOTE_CREATED)>=0)) {
+			time = mCursor_note.getLong(mCursor_note.getColumnIndex(KEY_NOTE_CREATED));
+		}
 		if(enDbOpenClose)
 			this.close();
 

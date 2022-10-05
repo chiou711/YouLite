@@ -18,7 +18,6 @@ package com.cw.youlite.main;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -75,7 +74,6 @@ import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.DeleteFileAlarmReceiver;
 import com.cw.youlite.util.Dialog_DB;
 import com.cw.youlite.util.OnBackPressedListener;
-import com.cw.youlite.util.PlaylistApi;
 import com.cw.youlite.util.Util;
 import com.cw.youlite.util.image.UtilImage;
 import com.cw.youlite.util.preferences.Pref;
@@ -304,36 +302,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
 
     }
 
-    //todo Test
-    // show videos of a given playlist
-    void showVideosOfPlaylist(){
-        String youtubeUrl = "https://youtube.com/playlist?list=PL3LMv9ng2NJHjHTcF7353VC2rnfFHypNx";
-        PlaylistApi.request_and_save_youTubePlaylist(youtubeUrl);
-    }
-
-
-    Intent intentReceive;
-    //The BroadcastReceiver that listens for bluetooth broadcasts
-    private BroadcastReceiver bluetooth_device_receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            System.out.println("MainAct / _BroadcastReceiver / onReceive");
-            String action = intent.getAction();
-            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
-                //Device is now connected
-                Toast.makeText(getApplicationContext(), "ACTION_ACL_CONNECTED: device is " + device, Toast.LENGTH_LONG).show();
-            }
-
-            intentReceive = intent;
-            KeyEvent keyEvent = (KeyEvent) intentReceive.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-            if(keyEvent != null)
-                onKeyDown( keyEvent.getKeyCode(),keyEvent);
-        }
-    };
-
-
     // key event: 1 from bluetooth device 2 when notification bar dose not shown
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -439,10 +407,10 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
      *********************************************************************************/
 
     public static boolean isAdded_onNewIntent;
-    // if one YouLite Intent is already running, call it again in YouTube or Browser will run into this
+    // if one YouLite Intent is already running,
+    // call it again in YouTube or Browser will run into this
     @Override
-    protected void onNewIntent(Intent intent)
-    {
+    protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         System.out.println("MainAct / _onNewIntent ");
 
@@ -852,10 +820,6 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
     @Override
     public boolean onPrepareOptionsMenu(android.view.Menu menu) {
         System.out.println("MainAct / _onPrepareOptionsMenu");
-
-        ///
-        showVideosOfPlaylist();
-        ///
 
         if((drawer == null) || (drawer.drawerLayout == null))
             return false;
