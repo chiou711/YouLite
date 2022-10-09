@@ -47,6 +47,11 @@ class PlaylistJsonAsync extends AsyncTask <String,Void,String> //Generic: Params
 	int tableId;
 	boolean isAdded_onNewIntent;
 
+	// Playlists from YouTube Mixes(合輯) had duplicated page tokens
+	// - default maxResults is 5, set maxResults to 50 to get more different links
+	// - with current algorithm test, this App got 4 pages in general
+	int MAX_RESULTS_PER_PAGE = 50;
+
 	// Video class
 	static class Video{
 		String url;
@@ -111,7 +116,8 @@ class PlaylistJsonAsync extends AsyncTask <String,Void,String> //Generic: Params
 			String apiKey = YouTubeDeveloperKey.DEVELOPER_KEY;
 			String prefixUrlStr = "https://youtube.googleapis.com/youtube/v3/playlistItems?" +
 					"part=contentDetails" +
-					"&part=snippet";
+					"&part=snippet" +
+					"&fields=nextPageToken,items(contentDetails/videoId,snippet/title)";
 //					"&part=id" +
 //					"&part=status";
 			String nextPageToken = "";
@@ -132,6 +138,7 @@ class PlaylistJsonAsync extends AsyncTask <String,Void,String> //Generic: Params
 
 				String reqStr = prefixUrlStr.concat("&playlistId=").concat(playlistIdStr)
 						.concat("&key=").concat(apiKey)
+						.concat("&maxResults=").concat(String.valueOf(MAX_RESULTS_PER_PAGE))
 						.concat("&pageToken=").concat(nextPageToken);
 
 				System.out.println("------------ reqStr = " + reqStr);
