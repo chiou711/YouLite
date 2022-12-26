@@ -87,8 +87,8 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
 
     // if ENABLE_ADMOB = true, enable the following
-    implementation 'androidx.annotation:annotation:1.5.0'
-    implementation 'com.google.android.gms:play-services-ads:21.2.0'
+//    implementation 'androidx.annotation:annotation:1.5.0'
+//    implementation 'com.google.android.gms:play-services-ads:21.2.0'
 
     // for Google Drive API
     implementation 'com.google.android.gms:play-services-auth:20.3.0'

@@ -716,6 +716,7 @@ public class MainAct extends AppCompatActivity implements OnBackStackChangedList
             Toast.makeText(mAct, R.string.mail_exit, Toast.LENGTH_SHORT).show();
 	        System.out.println("MainAct / _onActivityResult / stringFileName = " + stringFileName);
             // note: result code is always 0 (cancel), so it is not used
+            //todo Can not delete?
             new DeleteFileAlarmReceiver(mAct,
                     System.currentTimeMillis() + 1000 * 60 * 5, // formal: 300 seconds
 //					System.currentTimeMillis() + 1000 * 10, // test: 10 seconds

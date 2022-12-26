@@ -22,18 +22,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
-import com.google.android.material.tabs.TabLayout;
-import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDialogFragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +33,6 @@ import android.widget.TextView;
 import com.cw.youlite.R;
 import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.db.DB_page;
-import com.cw.youlite.define.Define;
 import com.cw.youlite.drawer.Drawer;
 import com.cw.youlite.folder.FolderUi;
 import com.cw.youlite.main.MainAct;
@@ -53,15 +40,23 @@ import com.cw.youlite.page.Page_recycler;
 import com.cw.youlite.util.ColorSet;
 import com.cw.youlite.util.Util;
 import com.cw.youlite.util.preferences.Pref;
-
-//if(Define.ENABLE_ADMOB)
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
+//if(Define.ENABLE_ADMOB)
+//import com.google.android.gms.ads.AdRequest;
+//import com.google.android.gms.ads.AdView;
+//import com.google.android.gms.ads.MobileAds;
 
 public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTabSelectedListener
 {
@@ -75,8 +70,9 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
 
     public static int firstPos_pageId;
 
-    public static boolean isDoingMarking;
-    private AdView adView;
+
+//    if(Define.ENABLE_ADMOB)
+//    private AdView adView;
 
     public TabsHost()
     {
@@ -98,23 +94,23 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
 
         // set layout by orientation
         if (Util.isLandscapeOrientation(MainAct.mAct)) {
-            if(Define.ENABLE_ADMOB) {
-                if (Define.CODE_MODE == Define.DEBUG_MODE)
-                    rootView = inflater.inflate(R.layout.tabs_host_landscape_test, container, false);
-                else
-                    rootView = inflater.inflate(R.layout.tabs_host_landscape, container, false);
-            }
-            else
+//            if(Define.ENABLE_ADMOB) {
+//                if (Define.CODE_MODE == Define.DEBUG_MODE)
+//                    rootView = inflater.inflate(R.layout.tabs_host_landscape_test, container, false);
+//                else
+//                    rootView = inflater.inflate(R.layout.tabs_host_landscape, container, false);
+//            }
+//            else
                 rootView = inflater.inflate(R.layout.tabs_host_landscape, container, false);
         }
         else {
-            if(Define.ENABLE_ADMOB) {
-                if (Define.CODE_MODE == Define.DEBUG_MODE)
-                    rootView = inflater.inflate(R.layout.tabs_host_portrait_test, container, false);
-                else
-                    rootView = inflater.inflate(R.layout.tabs_host_portrait, container, false);
-            }
-            else
+//            if(Define.ENABLE_ADMOB) {
+//                if (Define.CODE_MODE == Define.DEBUG_MODE)
+//                    rootView = inflater.inflate(R.layout.tabs_host_portrait_test, container, false);
+//                else
+//                    rootView = inflater.inflate(R.layout.tabs_host_portrait, container, false);
+//            }
+//            else
                 rootView = inflater.inflate(R.layout.tabs_host_portrait, container, false);
         }
 
@@ -174,7 +170,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
         // AdMob support
         // if ENABLE_ADMOB = true, enable the following
         // test app id
-        if(Define.ENABLE_ADMOB) {
+//        if(Define.ENABLE_ADMOB) {
 
             // old code
 //                if (Define.CODE_MODE == Define.DEBUG_MODE)
@@ -189,10 +185,10 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
 
             // new code
             // Initialize the Mobile Ads SDK.
-            MobileAds.initialize(getActivity(), new OnInitializationCompleteListener() {
-                @Override
-                public void onInitializationComplete(InitializationStatus initializationStatus) {}
-            });
+//            MobileAds.initialize(getActivity(), new OnInitializationCompleteListener() {
+//                @Override
+//                public void onInitializationComplete(InitializationStatus initializationStatus) {}
+//            });
 
             // get test ads on a physical device
 //            String android_id = Settings.Secure.getString(getActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -205,12 +201,12 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
 //                            .build());
 
             // Create an ad request.
-            AdRequest adRequest = new AdRequest.Builder().build();
+//            AdRequest adRequest = new AdRequest.Builder().build();
 
-            adView = rootView.findViewById(R.id.adView);
+//            adView = rootView.findViewById(R.id.adView);
             // Start loading the ad in the background.
-            adView.loadAd(adRequest);
-        }
+//            adView.loadAd(adRequest);
+//        }
         return rootView;
     }
 
@@ -473,7 +469,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
             tabStrip.getChildAt(tabPos).setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    if(Pref.getPref_DB_ready(Objects.requireNonNull(getActivity()))) // add for Renew DB exception
+                    if(Pref.getPref_DB_ready(getActivity())) // add for Renew DB exception
                         editPageTitle(tabPos,MainAct.mAct);
                     return false;
                 }

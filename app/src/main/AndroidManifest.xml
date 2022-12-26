@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.cw.youlite"
-    android:versionCode="10406"
-    android:versionName="1.04.06">
+    android:versionCode="10407"
+    android:versionName="1.04.07">
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -108,9 +108,10 @@
             android:enabled="true" />
 
         <!-- AdMob: formal case    -->
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/ad_mob_app_id"/>
+        <!-- if(Define.ENABLE_ADMOB)-->
+<!--        <meta-data-->
+<!--            android:name="com.google.android.gms.ads.APPLICATION_ID"-->
+<!--            android:value="@string/ad_mob_app_id"/>-->
 
         <!-- AdMob: debug case        -->
 <!--        <meta-data-->
