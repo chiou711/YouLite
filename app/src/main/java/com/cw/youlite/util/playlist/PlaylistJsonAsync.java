@@ -21,10 +21,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 
+import com.cw.youlite.R;
 import com.cw.youlite.db.DB_page;
 import com.cw.youlite.main.MainAct;
-import com.cw.youlite.operation.youtube.YouTubeDeveloperKey;
 import com.cw.youlite.util.Util;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.PlaylistItemListResponse;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
@@ -39,6 +45,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 class PlaylistJsonAsync extends AsyncTask <String,Void,String> //Generic: Params, Progress, Result
 {
@@ -74,21 +82,21 @@ class PlaylistJsonAsync extends AsyncTask <String,Void,String> //Generic: Params
 
 	@Override
 	protected String doInBackground(String... youtubeUrl) {
-		doRequest(youtubeUrl[0]);
+//		doRequest(youtubeUrl[0]);
+		doRequest2(youtubeUrl[0]);
 		return null;
 	}
 
     @Override
     protected void onPostExecute(String result) {
     	System.out.println("PlaylistJsonAsync / _onPostExecute / result (title)= " + result);
-
-	    // insert links to DB
-		DB_page dB_page = new DB_page(act, tableId);
-	    dB_page.open();
-		for(int i=0;i<videos.size();i++) {
-			dB_page.insertNote_no_openClose(videos.get(i).title, "", videos.get(i).url, 0, (long) 0);// add new note, get return row Id
-		}
-	    dB_page.close();
+//	    // insert links to DB
+//		DB_page dB_page = new DB_page(act, tableId);
+//	    dB_page.open();
+//		for(int i=0;i<videos.size();i++) {
+//			dB_page.insertNote_no_openClose(videos.get(i).title, "", videos.get(i).url, 0, (long) 0);// add new note, get return row Id
+//		}
+//	    dB_page.close();
 
 	    // make sure DB update is OK
 	    if(isAdded_onNewIntent) {
@@ -103,6 +111,7 @@ class PlaylistJsonAsync extends AsyncTask <String,Void,String> //Generic: Params
 	    if(!this.isCancelled()) {
 		    this.cancel(true);
 	    }
+
     }
 
 
@@ -113,7 +122,8 @@ class PlaylistJsonAsync extends AsyncTask <String,Void,String> //Generic: Params
 		String playlistIdStr = Util.getYoutubePlaylistId(youtubeUrl);
 
 		try {
-			String apiKey = YouTubeDeveloperKey.DEVELOPER_KEY;
+//			String apiKey = YouTubeDeveloperKey.DEVELOPER_KEY;
+			String apiKey = Util.getYouTube_ApiKey(act);
 			String prefixUrlStr = "https://youtube.googleapis.com/youtube/v3/playlistItems?" +
 					"part=contentDetails" +
 					"&part=snippet" +
@@ -138,6 +148,8 @@ class PlaylistJsonAsync extends AsyncTask <String,Void,String> //Generic: Params
 
 				String reqStr = prefixUrlStr.concat("&playlistId=").concat(playlistIdStr)
 						.concat("&key=").concat(apiKey)
+						.concat("&X-Android-Package=").concat("com.cw.youlite")
+						.concat("&X-Android-Cert=").concat(Util.getYouTube_SHA_1(act))
 						.concat("&maxResults=").concat(String.valueOf(MAX_RESULTS_PER_PAGE))
 						.concat("&pageToken=").concat(nextPageToken);
 
@@ -207,4 +219,93 @@ class PlaylistJsonAsync extends AsyncTask <String,Void,String> //Generic: Params
 		}
 	}
 
+	// do request 2
+	String nextPageToken;
+	void doRequest2(String youtubeUrl) {
+		System.out.println("PlaylistJsonAsync / _doRequest2");
+		// get playlist ID
+		String playlistIdStr = Util.getYoutubePlaylistId(youtubeUrl);
+		videos = new ArrayList<>();
+		nextPageToken = "";
+
+		ExecutorService myExecutor = Executors.newCachedThreadPool();
+		myExecutor.execute(new Runnable() {
+			@Override
+			public void run() {
+				YouTube youtube = new YouTube.Builder(new NetHttpTransport(), new AndroidJsonFactory(),
+						new HttpRequestInitializer() {
+							public void initialize(HttpRequest request) throws IOException {
+							}
+						}).setApplicationName(MainAct.mAct.getString(R.string.app_name)).build();
+
+				YouTube.PlaylistItems.List request = null;
+				PlaylistItemListResponse response = null;
+
+				List<String> tokens = new ArrayList<>();
+				boolean tokenIsRepeated = false;
+
+				do {
+					int repeatedTimes = 0;
+					for (int i = 0; i < tokens.size(); i++) {
+						if (!nextPageToken.isEmpty() && tokens.get(i).equalsIgnoreCase(nextPageToken)) {
+							repeatedTimes++;
+
+							if (repeatedTimes > 1)
+								tokenIsRepeated = true;
+						}
+					}
+
+					try {
+						request = youtube.playlistItems()
+								.list("contentDetails,snippet");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					request.setKey(Util.getYouTube_ApiKey(act));
+					request.setRequestHeaders(Util.getHttpHeaders(act));
+
+					if(!nextPageToken.isEmpty())
+						request.setPageToken(nextPageToken);
+
+					try {
+						response = request.setMaxResults(50L)
+								.setPlaylistId(playlistIdStr)
+								.setFields("nextPageToken,items(contentDetails/videoId,snippet/title)")
+								.execute();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
+					int count = response.getItems().size();
+
+					for (int i = 0; i < count; i++) {
+						String title = response.getItems().get(i).getSnippet().getTitle();
+						System.out.println("title = " + title);
+						String videoId = response.getItems().get(i).getContentDetails().getVideoId();
+						System.out.println("videoId = " + videoId);
+						String url = "https://youtu.be/".concat(videoId);
+						System.out.println("url = " + url);
+
+						// add video instance
+						Video video = new Video(url, title);
+						videos.add(video);
+					}
+
+					nextPageToken = response.getNextPageToken();
+					tokens.add(nextPageToken);
+					System.out.println(">> token = " + nextPageToken);
+				}
+				while( !tokenIsRepeated &&(nextPageToken !=null) && (!nextPageToken.isEmpty()) );
+
+				// insert links to DB
+				DB_page dB_page = new DB_page(act, tableId);
+				dB_page.open();
+				for(int i=0;i<videos.size();i++) {
+					dB_page.insertNote_no_openClose(videos.get(i).title, "", videos.get(i).url, 0, (long) 0);// add new note, get return row Id
+				}
+				dB_page.close();
+
+			}
+		});
+	}
 }

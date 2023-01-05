@@ -28,6 +28,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -73,6 +74,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.cw.youlite.BuildConfig;
 import com.cw.youlite.R;
 import com.cw.youlite.db.DB_drawer;
 import com.cw.youlite.db.DB_folder;
@@ -80,11 +82,17 @@ import com.cw.youlite.db.DB_page;
 import com.cw.youlite.define.Define;
 import com.cw.youlite.main.MainAct;
 import com.cw.youlite.note_edit.Note_edit;
-import com.cw.youlite.operation.youtube.YouTubeDeveloperKey;
 import com.cw.youlite.page.Checked_notes_option;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.preferences.Pref;
 import com.google.android.youtube.player.YouTubeIntents;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.VideoListResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -112,6 +120,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1627,7 +1636,8 @@ public class Util
 		String urlStr = "https://www.googleapis.com/youtube/v3/videos?id=" +
 								idStr +
 								"&key=" +
-								YouTubeDeveloperKey.DEVELOPER_KEY +
+//				YouTubeDeveloperKey.DEVELOPER_KEY +
+				Util.getYouTube_ApiKey(mAct) +
 //				"&part=snippet,contentDetails,statistics,status";
 		"&part=snippet";
 
@@ -1691,6 +1701,98 @@ public class Util
 		return title;
 	}
 
+
+	// Request YouTube title via Runnable and save it to DB
+	public static String request_and_save_youTubeTitle2(String youtubeUrl,boolean isAdded_onNewIntent){
+		System.out.println("Util / _request_and_save_youTubeTitle2 / youtubeUrl = " + youtubeUrl);
+
+		Toast.makeText(MainAct.mAct,
+						MainAct.mAct.getResources().getText(R.string.add_new_note),
+						Toast.LENGTH_SHORT)
+				.show();
+
+		ExecutorService myExecutor = Executors.newCachedThreadPool();
+		myExecutor.execute(new Runnable() {
+			@Override
+			public void run() {
+				YouTube youtube = new YouTube.Builder(new NetHttpTransport(), new AndroidJsonFactory(),
+						new HttpRequestInitializer() {
+							public void initialize(HttpRequest request) throws IOException {
+							}
+						}).setApplicationName(MainAct.mAct.getString(R.string.app_name)).build();
+
+				String videoId = Util.getYoutubeId(youtubeUrl);
+
+				YouTube.Videos.List videoRequest = null;
+				try {
+					videoRequest = youtube.videos().list("snippet");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				videoRequest.setId(videoId);
+
+				//get the key/values from the meta-data in AndroidManifest
+				ApplicationInfo ai;
+				String developer_key = null;
+				String sha_1 = null;
+				try {
+					ai = MainAct.mAct.getPackageManager()
+							.getApplicationInfo(MainAct.mAct.getPackageName(), PackageManager.GET_META_DATA);
+					developer_key = ai.metaData.get("key_DEVELOPER_KEY").toString();
+					sha_1 = ai.metaData.get("key_SHA1").toString();
+				} catch (PackageManager.NameNotFoundException e) {
+					e.printStackTrace();
+				}
+				videoRequest.setKey(developer_key);
+
+				// set http headers for restricting Android App
+				HttpHeaders httpHeaders = new HttpHeaders();
+				httpHeaders.set("Content-Type", "application/json");
+				httpHeaders.set("X-Android-Package", BuildConfig.APPLICATION_ID);
+				httpHeaders.set("X-Android-Cert", sha_1);
+				videoRequest.setRequestHeaders(httpHeaders);
+
+				VideoListResponse listResponse = null;
+
+				try {
+					listResponse = videoRequest.execute();
+
+					title = listResponse.getItems().get(0).getSnippet().getTitle();
+					System.out.println("Util / _request_and_save_youTubeTitle2 / title = " + title);
+
+					// save title to DB
+					SharedPreferences pref_show_note_attribute = MainAct.mAct.getSharedPreferences("add_new_note_option", 0);
+					boolean isAddedToTop = pref_show_note_attribute.getString("KEY_ADD_NEW_NOTE_TO", "bottom").equalsIgnoreCase("top");
+
+					DB_page dB_page = new DB_page(MainAct.mAct, Pref.getPref_focusView_page_tableId(MainAct.mAct));
+					int count = dB_page.getNotesCount(true);
+
+					if (pref_show_note_attribute
+							.getString("KEY_ENABLE_LINK_TITLE_SAVE", "yes")
+							.equalsIgnoreCase("yes")) {
+						Date now = new Date();
+
+						long row_id;
+						if (isAddedToTop)
+							row_id = dB_page.getNoteId(0, true);
+						else
+							row_id = dB_page.getNoteId(count - 1, true);
+
+						dB_page.updateNote(row_id, title, "", youtubeUrl, 0, now.getTime(), true); // update note
+					}
+
+					if (!isAdded_onNewIntent)
+						MainAct.mAct.finish();
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+		});
+		return title;
+	}
+
 	// Request, Save and Edit youtube title
 	static int position;
 	public static void request_save_and_edit_youTubeTitle(String youtubeUrl,boolean isAdded_onNewIntent,int _position){
@@ -1702,7 +1804,8 @@ public class Util
 		String urlStr = "https://www.googleapis.com/youtube/v3/videos?id=" +
 				idStr +
 				"&key=" +
-				YouTubeDeveloperKey.DEVELOPER_KEY +
+//				YouTubeDeveloperKey.DEVELOPER_KEY +
+				getYouTube_ApiKey(MainAct.mAct) +
 				"&part=snippet,contentDetails,statistics,status";
 
 		// volley
@@ -2156,5 +2259,43 @@ public class Util
 				else
 					Toast.makeText(act,R.string.toast_check_youtube_installation,Toast.LENGTH_SHORT).show();
 			}
+	}
+
+	// get key of YouTube API
+	public static String getYouTube_ApiKey(Activity act){
+		//get the key/values from the meta-data in AndroidManifest
+		String developer_key = null;
+		try {
+			ApplicationInfo ai = act.getPackageManager()
+					.getApplicationInfo(act.getPackageName(), PackageManager.GET_META_DATA);
+			developer_key = ai.metaData.get("key_DEVELOPER_KEY").toString();
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		return developer_key;
+	}
+
+	// get SHA-1 of YouTube API
+	public static String getYouTube_SHA_1(Activity act){
+		//get the key/values from the meta-data in AndroidManifest
+		String sha_1 = null;
+		try {
+			ApplicationInfo ai = act.getPackageManager()
+					.getApplicationInfo(act.getPackageName(), PackageManager.GET_META_DATA);
+			sha_1 = ai.metaData.get("key_SHA1").toString();
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		return sha_1;
+	}
+
+	// get YouTubeHeader
+	public static HttpHeaders getHttpHeaders(Activity act){
+		// set http headers for restricting Android App
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.set("Content-Type","application/json");
+		httpHeaders.set("X-Android-Package", BuildConfig.APPLICATION_ID);
+		httpHeaders.set("X-Android-Cert",getYouTube_SHA_1(act));
+		return httpHeaders;
 	}
 }

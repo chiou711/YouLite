@@ -41,7 +41,6 @@ import com.cw.youlite.db.DB_page;
 import com.cw.youlite.main.MainAct;
 import com.cw.youlite.note.Note;
 import com.cw.youlite.note_edit.Note_edit;
-import com.cw.youlite.operation.youtube.YouTubeDeveloperKey;
 import com.cw.youlite.operation.youtube.YouTubeTimeConvert;
 import com.cw.youlite.page.item_touch_helper.ItemTouchHelperAdapter;
 import com.cw.youlite.page.item_touch_helper.ItemTouchHelperViewHolder;
@@ -699,7 +698,10 @@ public class PageAdapter_recycler extends RecyclerView.Adapter<PageAdapter_recyc
 					parameters.put("id", stringsList);
 
 					YouTube.Videos.List videosListMultipleIdsRequest = youtube.videos().list(parameters.get("part").toString());
-					videosListMultipleIdsRequest.setKey(YouTubeDeveloperKey.DEVELOPER_KEY);
+//					videosListMultipleIdsRequest.setKey(YouTubeDeveloperKey.DEVELOPER_KEY);
+					videosListMultipleIdsRequest.setKey(Util.getYouTube_ApiKey(mAct));
+					videosListMultipleIdsRequest.setRequestHeaders(Util.getHttpHeaders(mAct));
+
 					if (parameters.containsKey("id") && parameters.get("id") != "") {
 						videosListMultipleIdsRequest.setId(parameters.get("id").toString());
 					}

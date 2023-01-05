@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.cw.youlite"
-    android:versionCode="10407"
-    android:versionName="1.04.07">
+    android:versionCode="10408"
+    android:versionName="1.04.08">
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -143,6 +143,14 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_provider_paths" />
         </provider>
+
+        <!-- YouTube API -->
+        <meta-data
+            android:name = "key_DEVELOPER_KEY"
+            android:value = ""/>
+        <meta-data
+            android:name = "key_SHA1"
+            android:value = ""/>
 
    </application>
 

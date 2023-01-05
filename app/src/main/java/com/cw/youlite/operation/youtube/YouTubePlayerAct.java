@@ -53,7 +53,8 @@ public class YouTubePlayerAct extends YouTubeFailureRecoveryActivity
 
         // initialize YouTubeView
         YouTubePlayerView youTubeView = (YouTubePlayerView) findViewById(R.id.youtube_view);
-        youTubeView.initialize(YouTubeDeveloperKey.DEVELOPER_KEY, this);
+//        youTubeView.initialize(YouTubeDeveloperKey.DEVELOPER_KEY, this);
+        youTubeView.initialize(Util.getYouTube_ApiKey(this), this);
     }
 
     @Override
@@ -198,7 +199,8 @@ public class YouTubePlayerAct extends YouTubeFailureRecoveryActivity
                 youTubePlayer.loadVideo(idStr); // cf. _cueVideo for manual start
             } catch (IllegalStateException e) {
                 youTubeView = findViewById(R.id.youtube_view);
-                youTubeView.initialize(YouTubeDeveloperKey.DEVELOPER_KEY, this);
+//                youTubeView.initialize(YouTubeDeveloperKey.DEVELOPER_KEY, this);
+                youTubeView.initialize(Util.getYouTube_ApiKey(this), this);
             }
         }
         // v and list

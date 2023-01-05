@@ -134,7 +134,7 @@ public class MainUi {
 
             // update link title: YouTube
             if( Util.isYouTubeLink(path))
-                title = Util.request_and_save_youTubeTitle(path, isAdded_onNewIntent);
+                title = Util.request_and_save_youTubeTitle2(path, isAdded_onNewIntent);
             // update title: Web page
             else if(Util.isWebLink(path)){
                 System.out.println("MainUi / _addNote_IntentLink / Web page / path = " + path);

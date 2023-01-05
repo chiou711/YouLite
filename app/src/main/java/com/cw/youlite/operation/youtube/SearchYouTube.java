@@ -176,7 +176,8 @@ public class SearchYouTube extends ListActivity {
             // non-authenticated requests. See:
             // {{ https://cloud.google.com/console }}
 //            String apiKey = properties.getProperty("youtube.apikey");
-            String apiKey = YouTubeDeveloperKey.DEVELOPER_KEY;
+//            String apiKey = YouTubeDeveloperKey.DEVELOPER_KEY;
+            String apiKey = Util.getYouTube_ApiKey(this);
 //            System.out.println("SearchYouTube / _search/ apiKey = " + apiKey);
             search.setKey(apiKey);
             search.setQ(queryTerm);
@@ -272,7 +273,10 @@ public class SearchYouTube extends ListActivity {
                     parameters.put("id", stringsList );
 
                     YouTube.Videos.List videosListMultipleIdsRequest = youtube.videos().list(parameters.get("part").toString());
-                    videosListMultipleIdsRequest.setKey(YouTubeDeveloperKey.DEVELOPER_KEY);
+//                    videosListMultipleIdsRequest.setKey(YouTubeDeveloperKey.DEVELOPER_KEY);
+                    videosListMultipleIdsRequest.setKey(Util.getYouTube_ApiKey(SearchYouTube.this));
+                    videosListMultipleIdsRequest.setRequestHeaders(Util.getHttpHeaders(SearchYouTube.this));
+
                     if (parameters.containsKey("id") && parameters.get("id") != "") {
                         videosListMultipleIdsRequest.setId(parameters.get("id").toString());
                     }
