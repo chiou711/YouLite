@@ -193,16 +193,31 @@ public class SearchYouTube extends ListActivity {
             search.setMaxResults(NUMBER_OF_VIDEOS_RETURNED);
 
             // Call the API and print results.
+            // https://developer.android.com/guide/components/processes-and-threads?hl=zh-tw#WorkerThreads
             Executors.newSingleThreadExecutor().submit(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         SearchListResponse searchResponse = search.execute();
 
-                        if (searchResponse == null)
-                            return;
-                        else
-                            searchResultList = searchResponse.getItems();
+                        editKeyword.post(new Runnable() {
+                            public void run() {
+                                searchResultList = searchResponse.getItems();
+
+                                try {
+                                    getSearchResult(searchResultList.iterator());
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+
+                                fileListAdapter = new SearchYouTubeAdapter(SearchYouTube.this,
+                                        R.layout.search_youtube_list_row,
+                                        listTitles);
+
+                                setListAdapter(fileListAdapter);
+                                searchResultList = null;
+                            }
+                        });
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -210,20 +225,6 @@ public class SearchYouTube extends ListActivity {
                 }
             });
 
-
-            while (searchResultList == null)
-            {
-                Thread.sleep(1);
-            }
-
-            getSearchResult(searchResultList.iterator());
-
-            fileListAdapter = new SearchYouTubeAdapter(this,
-                    R.layout.search_youtube_list_row,
-                    listTitles);
-
-            setListAdapter(fileListAdapter);
-            searchResultList = null;
         }
         catch (GoogleJsonResponseException e)
         {

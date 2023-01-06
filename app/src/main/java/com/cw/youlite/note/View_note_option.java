@@ -20,8 +20,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -45,6 +43,8 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 /**
  * Created by cw on 2017/10/7.
  */
@@ -53,7 +53,7 @@ class View_note_option {
     private int option_drawable_id;
     private int option_string_id;
 
-    View_note_option(){};
+    View_note_option(){}
 
     private View_note_option(int id, int draw_id, int string_id)
     {

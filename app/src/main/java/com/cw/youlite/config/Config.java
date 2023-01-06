@@ -17,27 +17,12 @@
 package com.cw.youlite.config;
 
 
-import java.io.File;
-import java.util.Objects;
-
-import com.cw.youlite.db.RenewDB;
-import com.cw.youlite.folder.FolderUi;
-import com.cw.youlite.tabs.TabsHost;
-import com.cw.youlite.util.BaseBackPressedListener;
-import com.cw.youlite.main.MainAct;
-import com.cw.youlite.R;
-import com.cw.youlite.db.DB_drawer;
-import com.cw.youlite.util.ColorSet;
-import com.cw.youlite.util.Util;
-import com.cw.youlite.util.preferences.Pref;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -46,9 +31,25 @@ import android.widget.CompoundButton;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.RadioGroup.OnCheckedChangeListener;
+
+import com.cw.youlite.R;
+import com.cw.youlite.db.DB_drawer;
+import com.cw.youlite.db.RenewDB;
+import com.cw.youlite.folder.FolderUi;
+import com.cw.youlite.main.MainAct;
+import com.cw.youlite.tabs.TabsHost;
+import com.cw.youlite.util.BaseBackPressedListener;
+import com.cw.youlite.util.ColorSet;
+import com.cw.youlite.util.Util;
+import com.cw.youlite.util.preferences.Pref;
+
+import java.io.File;
+import java.util.Objects;
+
+import androidx.fragment.app.Fragment;
 
 public class Config extends Fragment
 {
@@ -115,7 +116,7 @@ public class Config extends Fragment
 		// Get current style
 		mNewPageTVStyle = (TextView)mRootView.findViewById(R.id.TextViewStyleSetting);
 		View mViewStyle = mRootView.findViewById(R.id.setStyle);
-		int iBtnId = Util.getNewPageStyle(Objects.requireNonNull(getActivity()));
+		int iBtnId = Util.getNewPageStyle(requireActivity());
 		
 		// set background color with current style 
 		mNewPageTVStyle.setBackgroundColor(ColorSet.mBG_ColorArray[iBtnId]);
@@ -352,6 +353,9 @@ public class Config extends Fragment
 						len = "00";
 					else
 						len = (String) items[which].replace("ms","");
+
+					// remove marking
+					len = len.replace("*","");
 
 					mPref_vibration.edit().putString("KEY_VIBRATION_TIME",len).apply();
 					// change the length directly
