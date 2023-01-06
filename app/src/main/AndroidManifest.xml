@@ -147,10 +147,10 @@
         <!-- YouTube API -->
         <meta-data
             android:name = "key_DEVELOPER_KEY"
-            android:value = ""/>
+            android:value = "@string/key_DEVELOPER_KEY"/>
         <meta-data
             android:name = "key_SHA1"
-            android:value = ""/>
+            android:value = "@string/key_SHA1"/>
 
    </application>
 
