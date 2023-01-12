@@ -29,12 +29,14 @@ import java.io.FilenameFilter;
 
 public class  DeleteFileAlarmReceiver extends BroadcastReceiver
 {
-   private static final String EXTRA_FILENAME = "com.cwc.youlite.extras.filename";
+    private static final String EXTRA_FILENAME = "com.cwc.youlite.extras.filename";
 
-   public DeleteFileAlarmReceiver(){}
+	//Can not remove this constructor,although it seems to be not used
+	public DeleteFileAlarmReceiver(){}
 
-   public DeleteFileAlarmReceiver(Context context, long timeMilliSec, String[] filename)
-   {
+	// Delete files with Alarm Receiver
+    public DeleteFileAlarmReceiver(Context context, long timeMilliSec, String[] filename)
+    {
    	    for(int i=0; i<filename.length;i++) {
 			Intent intent = new Intent(context, DeleteFileAlarmReceiver.class);
 			intent.putExtra(EXTRA_FILENAME, filename[i]);
@@ -46,20 +48,28 @@ public class  DeleteFileAlarmReceiver extends BroadcastReceiver
 			PendingIntent pendIntent = PendingIntent.getBroadcast(context, 0, intent, flags);
 			alarmMgr.set(AlarmManager.RTC_WAKEUP, timeMilliSec, pendIntent);
 		}
-   }
+    }
 
-   @Override
-   public void onReceive(final Context context, Intent intent) 
-   {
+    @Override
+    public void onReceive(final Context context, Intent intent)
+    {
 	   System.out.println("DeleteFileAlarmReceiver / _onReceive");
 		// Note: if launch Send mail twice, file name founded is the first one, not the second one
 	    // so, delete any file starts with YouLite_SEND and ends with txt
 		
 	    // SD card path + "/" + directory path
-	    String folderString = Environment.getExternalStorageDirectory().toString() + 
-	    		              "/" + 
-        					  Util.getStorageDirName(context);
-	    File folder = new File( folderString);       
+	    // old path: /storage/emulated/0/YouLite
+//	    String folderString = Environment.getExternalStorageDirectory().toString() +
+//			    "/" +
+//			    /storage/emulated/0/Util.getStorageDirName(context);
+
+	    // new path:
+	    // /storage/sdcard0
+	    // /Android/data/com.cw.youlite/files/Documents
+	    String folderString = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString();
+	    System.out.println("DeleteFileAlarmReceiver / _onReceive / folderString = " + folderString);
+
+		File folder = new File( folderString);
 		
 		File[] files = folder.listFiles( new FilenameFilter() 
 		{
@@ -70,7 +80,7 @@ public class  DeleteFileAlarmReceiver extends BroadcastReceiver
 //		        return name.matches( ".*\\.txt" ); // end with txt
 //		        return name.matches("(YouLite_SEND.+(\\.(?i)(txt))$)" );
 				boolean isMatch = false;
-				if(name.matches("("+ Util.getStorageDirName(context)+"_SEND.+(\\.(?i)(xml))$)" ) ||
+				if(name.matches("("+ Util.getStorageDirName(context)+"_SEND.+(\\.(?i)(json))$)" ) ||
 				   name.matches("("+ Util.getStorageDirName(context)+"_SEND.+(\\.(?i)(txt))$)" )    )
 				{
 					isMatch = true;
@@ -78,13 +88,12 @@ public class  DeleteFileAlarmReceiver extends BroadcastReceiver
 		        return isMatch;
 		    }
 		} );
-		for ( final File fileFound : files )
-		{
-			System.out.println("fileFound = " + fileFound.getName());
+
+		// delete file if found
+		for ( final File fileFound : files ){
+			System.out.println("DeleteFileAlarmReceiver / _onReceive / fileFound = " + fileFound.getName());
 		    if ( !fileFound.delete() )
-			{
 		        System.err.println( "Can't remove " + fileFound.getAbsolutePath() );
-		    }
 		}
-   }
+    }
 }

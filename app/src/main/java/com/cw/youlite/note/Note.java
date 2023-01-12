@@ -16,34 +16,11 @@
 
 package com.cw.youlite.note;
 
-import com.cw.youlite.R;
-import com.cw.youlite.db.DB_folder;
-import com.cw.youlite.db.DB_page;
-import com.cw.youlite.main.MainAct;
-import com.cw.youlite.page.PageAdapter_recycler;
-import com.cw.youlite.tabs.TabsHost;
-import com.cw.youlite.util.CustomWebView;
-import com.cw.youlite.util.DeleteFileAlarmReceiver;
-import com.cw.youlite.util.preferences.Pref;
-import com.cw.youlite.operation.mail.MailNotes;
-import com.cw.youlite.util.uil.UilCommon;
-import com.cw.youlite.util.Util;
-
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
-
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,6 +30,24 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.cw.youlite.R;
+import com.cw.youlite.db.DB_folder;
+import com.cw.youlite.db.DB_page;
+import com.cw.youlite.main.MainAct;
+import com.cw.youlite.operation.mail.MailNotes;
+import com.cw.youlite.page.PageAdapter_recycler;
+import com.cw.youlite.tabs.TabsHost;
+import com.cw.youlite.util.CustomWebView;
+import com.cw.youlite.util.DeleteFileAlarmReceiver;
+import com.cw.youlite.util.Util;
+import com.cw.youlite.util.preferences.Pref;
+import com.cw.youlite.util.uil.UilCommon;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 public class Note extends AppCompatActivity
 {
@@ -284,6 +279,7 @@ public class Note extends AppCompatActivity
 			// note: result code is always 0 (cancel), so it is not used
 			new DeleteFileAlarmReceiver(act,
 					System.currentTimeMillis() + 1000 * 60 * 5, // formal: 300 seconds
+					//for speed up test
 //						    		    System.currentTimeMillis() + 1000 * 10, // test: 10 seconds
 					MailNotes.mAttachmentFileName);
 		}
