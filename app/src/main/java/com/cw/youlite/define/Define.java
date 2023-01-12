@@ -62,6 +62,11 @@ public class Define {
         }
     }
 
+    // get code mode (debug or release)
+    public static int getCodeMode(){
+        return CODE_MODE;
+    }
+
     public static int app_build_mode = 0;
 
     /***************************************************************************

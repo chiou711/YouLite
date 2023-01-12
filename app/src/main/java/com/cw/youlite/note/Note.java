@@ -34,6 +34,7 @@ import android.widget.Toast;
 import com.cw.youlite.R;
 import com.cw.youlite.db.DB_folder;
 import com.cw.youlite.db.DB_page;
+import com.cw.youlite.define.Define;
 import com.cw.youlite.main.MainAct;
 import com.cw.youlite.operation.mail.MailNotes;
 import com.cw.youlite.page.PageAdapter_recycler;
@@ -276,12 +277,14 @@ public class Note extends AppCompatActivity
 		System.out.println("Note / _onActivityResult ");
 		if (requestCode == MailNotes.EMAIL) {
 			Toast.makeText(act, R.string.mail_exit, Toast.LENGTH_SHORT).show();
-			// note: result code is always 0 (cancel), so it is not used
-			new DeleteFileAlarmReceiver(act,
-					System.currentTimeMillis() + 1000 * 60 * 5, // formal: 300 seconds
-					//for speed up test
-//						    		    System.currentTimeMillis() + 1000 * 10, // test: 10 seconds
-					MailNotes.mAttachmentFileName);
+
+			long triggerAtMillis = System.currentTimeMillis();
+			if( Define.getCodeMode() == Define.DEBUG_MODE)
+				triggerAtMillis += 1000 * 10;// test: 10 seconds
+			else if(Define.getCodeMode() == Define.RELEASE_MODE)
+				triggerAtMillis += 1000 * 60 * 5;// formal: 300 seconds
+
+			new DeleteFileAlarmReceiver(act,triggerAtMillis,MailNotes.mAttachmentFileName);
 		}
 
 		// show current item
