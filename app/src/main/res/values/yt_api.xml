@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="key_DEVELOPER_KEY" translatable="false">
+        YOURS
+    </string>
+    <string name="key_SHA1" translatable="false">
+        YOURS
+    </string>
+</resources>

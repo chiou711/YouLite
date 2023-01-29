@@ -16,25 +16,25 @@
 
 package com.cw.youlite.note;
 
-import com.cw.youlite.R;
-import com.cw.youlite.db.DB_page;
-import com.cw.youlite.operation.youtube.YouTubePlayerAct;
-import com.cw.youlite.tabs.TabsHost;
-import com.cw.youlite.util.image.UtilImage;
-import com.cw.youlite.util.CustomWebView;
-import com.cw.youlite.util.Util;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+
+import com.cw.youlite.R;
+import com.cw.youlite.db.DB_page;
+import com.cw.youlite.tabs.TabsHost;
+import com.cw.youlite.util.CustomWebView;
+import com.cw.youlite.util.Util;
+import com.cw.youlite.util.image.UtilImage;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 public class NoteUi
 {
@@ -147,11 +147,13 @@ public class NoteUi
                     System.out.println("NoteUi / _setPictureView_listeners / onClick to play YouTube / linkUri = " + linkUri);
 
                     // apply native YouTube
-//                    Util.openLink_YouTube(act, linkUri);
+                    // without API key
+                    Util.openLink_YouTube(act, linkUri);
 
                     // apply YouTube DATA API for note view
-                    Intent intent = new Intent(act, YouTubePlayerAct.class);
-                    act.startActivityForResult(intent, Util.YOUTUBE_LINK_INTENT);
+                    // with API key
+//                    Intent intent = new Intent(act, YouTubePlayerAct.class);
+//                    act.startActivityForResult(intent, Util.YOUTUBE_LINK_INTENT);
                 }
             });
         }

@@ -33,7 +33,6 @@ import com.cw.youlite.db.DB_page;
 import com.cw.youlite.page.Page_recycler;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.CustomWebView;
-import com.cw.youlite.util.playlist.PlaylistApi;
 import com.cw.youlite.util.Util;
 import com.cw.youlite.util.preferences.Pref;
 
@@ -69,23 +68,28 @@ public class MainUi {
 
 
         String idStr = Util.getYoutubeId(pathOri);
-        String listIdStr = Util.getYoutubeListId(pathOri);
+        String listIdStr = Util.getYoutubeListId(pathOri);//todo Not use now?
         String playListIdStr = Util.getYoutubePlaylistId(pathOri);
 
         // playlist
-        if(Util.isEmptyString(idStr) &&
-           Util.isEmptyString(listIdStr) &&
-           !Util.isEmptyString(playListIdStr) ){
-            System.out.println("MainUi / _addNote_IntentLink / playListIdStr = " + playListIdStr);
-            System.out.println("MainUi / _addNote_IntentLink / isAdded_onNewIntent = " + isAdded_onNewIntent);
-            PlaylistApi listApi = new PlaylistApi(act);
-            listApi.request_and_save_youTubePlaylist(pathOri,isAdded_onNewIntent);
-            return null;
-        } else if(/*!Util.isEmptyString(pathOri)*/
-            // only v
-            !Util.isEmptyString(idStr) &&
-            Util.isEmptyString(listIdStr) &&
-            Util.isEmptyString(playListIdStr) ) {
+//        if(Util.isEmptyString(idStr) &&
+//           Util.isEmptyString(listIdStr) &&
+//           !Util.isEmptyString(playListIdStr) ){
+//            System.out.println("MainUi / _addNote_IntentLink / playListIdStr = " + playListIdStr);
+//            System.out.println("MainUi / _addNote_IntentLink / isAdded_onNewIntent = " + isAdded_onNewIntent);
+//            // with API key
+//            PlaylistApi listApi = new PlaylistApi(act);
+//            listApi.request_and_save_youTubePlaylist(pathOri,isAdded_onNewIntent);
+//            return null;
+//        } else if(/*!Util.isEmptyString(pathOri)*/
+//            // only v
+//            !Util.isEmptyString(idStr) &&
+//            Util.isEmptyString(listIdStr) &&
+//            Util.isEmptyString(playListIdStr) ) {
+
+        // id or playlist
+        if(!Util.isEmptyString(idStr) ||
+           !Util.isEmptyString(playListIdStr)){
             System.out.println("MainUi / _addNote_IntentLink / only v ");
             // for SoundCloud case, path could contain other strings before URI path
             if(pathOri.contains("http")) {
@@ -134,7 +138,8 @@ public class MainUi {
 
             // update link title: YouTube
             if( Util.isYouTubeLink(path))
-                title = Util.request_and_save_youTubeTitle2(path, isAdded_onNewIntent);
+//                title = Util.request_and_save_youTubeTitle2(path, isAdded_onNewIntent);
+                title = Util.request_and_save_youTubeTitle3(path, isAdded_onNewIntent);
             // update title: Web page
             else if(Util.isWebLink(path)){
                 System.out.println("MainUi / _addNote_IntentLink / Web page / path = " + path);

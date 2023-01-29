@@ -17,6 +17,9 @@
 package com.cw.youlite.note;
 
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -34,7 +37,6 @@ import com.cw.youlite.R;
 import com.cw.youlite.db.DB_page;
 import com.cw.youlite.note_edit.Note_edit;
 import com.cw.youlite.operation.mail.MailNotes;
-import com.cw.youlite.operation.youtube.SearchYouTube;
 import com.cw.youlite.tabs.TabsHost;
 import com.cw.youlite.util.Util;
 
@@ -91,9 +93,15 @@ class View_note_option {
                         R.string.mail_notes_btn));
 
         // search youtube with keyword
+        // API clients violation?
+//        option_list.add(new View_note_option(ID_OPTION_SEARCH_YOUTUBE ,
+//                R.drawable.ic_youtube,
+//                R.string.search_youtube));
+
+        // copy title
         option_list.add(new View_note_option(ID_OPTION_SEARCH_YOUTUBE ,
-                R.drawable.ic_youtube,
-                R.string.search_youtube));
+                R.drawable.ic_menu_copy_holo_dark,
+                R.string.copy_title));
 
         // edit
         option_list.add(new View_note_option(ID_OPTION_EDIT ,
@@ -166,10 +174,19 @@ class View_note_option {
 
                 DB_page dB_page = new DB_page(act, TabsHost.getCurrentPageTableId());
                 String keyWord = dB_page.getNoteTitle_byId(noteId);
-                Intent intent = new Intent(act,SearchYouTube.class);
-                intent.putExtra("search_keywords", keyWord );
-                act.startActivity(intent);
-            break;
+
+                // API clients violation?
+//                Intent intent = new Intent(act,SearchYouTube.class);
+//                intent.putExtra("search_keywords", keyWord );
+//                act.startActivity(intent);
+
+                // pop up copied to clipboard dialog
+                ClipboardManager clipboardManager = (ClipboardManager)act.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clipData = ClipData.newPlainText("nonsense_data",keyWord);
+                clipboardManager.setPrimaryClip(clipData);
+//                Toast.makeText(act, keyWord, Toast.LENGTH_SHORT).show();
+
+                break;
 
             case ID_OPTION_EDIT:
                 dlgAddNew.dismiss();

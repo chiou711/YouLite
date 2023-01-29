@@ -103,7 +103,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:contentDescription="@string/note_youtube_link"
-                android:src="@drawable/ic_youtube"/>
+                android:src="@drawable/ic_media_play"/>
 
             <!-- play Web -->
             <ImageView

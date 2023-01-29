@@ -28,6 +28,8 @@
     <string name="search_youtube">YouTube search</string>
     <string name="search_youtube_keywords">Keywords input</string>
     <string name="search_youtube_btn">search</string>
+    <string name="copy_title">Copy title</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
     <string name="drag_folder">Drag folder</string>
     <string name="delete_folders">Delete folders</string>
 </resources>

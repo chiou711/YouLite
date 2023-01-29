@@ -28,6 +28,8 @@
     <string name="search_youtube">YouTube搜索</string>
     <string name="search_youtube_keywords">關鍵詞輸入</string>
     <string name="search_youtube_btn">搜索</string>
+    <string name="copy_title">複製標題</string>
+    <string name="copied_to_clipboard">複製到剪貼板</string>
     <string name="drag_folder">拖放文件夾</string>
     <string name="delete_folders">刪除文件夾</string>
 </resources>

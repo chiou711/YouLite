@@ -94,6 +94,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.VideoListResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1626,6 +1627,7 @@ public class Util
 
 
     // Request YouTube title via Volley and save it to DB
+	// with API key
     // cf: https://stackoverflow.com/questions/44941341/how-to-get-the-title-of-youtube-video-through-the-youtube-api
     public static String title;
 	public static String request_and_save_youTubeTitle(String youtubeUrl,boolean isAdded_onNewIntent){
@@ -1656,27 +1658,8 @@ public class Util
 						title = snippet.getString("title");
 						System.out.println("Util / _request_and_save_youTubeTitle / title = " + title);
 
-						// save title to DB
-						SharedPreferences pref_show_note_attribute = MainAct.mAct.getSharedPreferences("add_new_note_option", 0);
-						boolean isAddedToTop = pref_show_note_attribute.getString("KEY_ADD_NEW_NOTE_TO","bottom").equalsIgnoreCase("top");
-
-						DB_page dB_page = new DB_page(MainAct.mAct,Pref.getPref_focusView_page_tableId(MainAct.mAct));
-						int count = dB_page.getNotesCount(true);
-
-						if(pref_show_note_attribute
-								.getString("KEY_ENABLE_LINK_TITLE_SAVE", "yes")
-								.equalsIgnoreCase("yes"))
-						{
-							Date now = new Date();
-
-							long row_id;
-							if(isAddedToTop)
-								row_id = dB_page.getNoteId(0,true);
-							else
-								row_id = dB_page.getNoteId(count-1,true);
-
-							dB_page.updateNote(row_id, title, "",  youtubeUrl, 0, now.getTime(), true); // update note
-						}
+						// save title
+						saveTitleToDb(youtubeUrl);
 
 						Toast.makeText(MainAct.mAct,
 								MainAct.mAct.getResources().getText(R.string.add_new_note_option_title) + title,
@@ -1703,6 +1686,7 @@ public class Util
 
 
 	// Request YouTube title via Runnable and save it to DB
+	// with API key and SHA1
 	public static String request_and_save_youTubeTitle2(String youtubeUrl,boolean isAdded_onNewIntent){
 		System.out.println("Util / _request_and_save_youTubeTitle2 / youtubeUrl = " + youtubeUrl);
 
@@ -1760,26 +1744,8 @@ public class Util
 					title = listResponse.getItems().get(0).getSnippet().getTitle();
 					System.out.println("Util / _request_and_save_youTubeTitle2 / title = " + title);
 
-					// save title to DB
-					SharedPreferences pref_show_note_attribute = MainAct.mAct.getSharedPreferences("add_new_note_option", 0);
-					boolean isAddedToTop = pref_show_note_attribute.getString("KEY_ADD_NEW_NOTE_TO", "bottom").equalsIgnoreCase("top");
-
-					DB_page dB_page = new DB_page(MainAct.mAct, Pref.getPref_focusView_page_tableId(MainAct.mAct));
-					int count = dB_page.getNotesCount(true);
-
-					if (pref_show_note_attribute
-							.getString("KEY_ENABLE_LINK_TITLE_SAVE", "yes")
-							.equalsIgnoreCase("yes")) {
-						Date now = new Date();
-
-						long row_id;
-						if (isAddedToTop)
-							row_id = dB_page.getNoteId(0, true);
-						else
-							row_id = dB_page.getNoteId(count - 1, true);
-
-						dB_page.updateNote(row_id, title, "", youtubeUrl, 0, now.getTime(), true); // update note
-					}
+					// save title
+					saveTitleToDb(youtubeUrl);
 
 					if (!isAdded_onNewIntent)
 						MainAct.mAct.finish();
@@ -1788,6 +1754,56 @@ public class Util
 					e.printStackTrace();
 				}
 
+			}
+		});
+		return title;
+	}
+
+	// Request YouTube title via Runnable and save it to DB
+	// without API key
+	public static String request_and_save_youTubeTitle3(String youtubeUrl,boolean isAdded_onNewIntent){
+		System.out.println("Util / _request_and_save_youTubeTitle3 / youtubeUrl = " + youtubeUrl);
+
+		// add this will affect title setting
+//		Toast.makeText(MainAct.mAct,
+//						MainAct.mAct.getResources().getText(R.string.add_new_note),
+//						Toast.LENGTH_SHORT)
+//				.show();
+
+		URL embeddedURL = null;
+		try {
+			embeddedURL = new URL("https://www.youtube.com/oembed?url=" +
+										youtubeUrl + "&format=json"	);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Util / _request_and_save_youTubeTitle3 / embeddedURL = " + embeddedURL);
+
+		ExecutorService myExecutor = Executors.newCachedThreadPool();
+		URL finalEmbeddedURL = embeddedURL;
+		myExecutor.execute(new Runnable() {
+			@Override
+			public void run() {
+				title = null;
+				try {
+					if (youtubeUrl != null) {
+						assert finalEmbeddedURL != null;
+						String jsonString = IOUtils.toString(finalEmbeddedURL);
+//						System.out.println("Util / _request_and_save_youTubeTitle3 / jsonString = " + jsonString);
+
+						title = new JSONObject(jsonString).getString("title");
+						System.out.println("Util / _request_and_save_youTubeTitle3 / title = " + title);
+
+						// save title
+						saveTitleToDb(youtubeUrl);
+
+						if (!isAdded_onNewIntent)
+							MainAct.mAct.finish();
+
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		return title;
@@ -2297,5 +2313,28 @@ public class Util
 		httpHeaders.set("X-Android-Package", BuildConfig.APPLICATION_ID);
 		httpHeaders.set("X-Android-Cert",getYouTube_SHA_1(act));
 		return httpHeaders;
+	}
+
+	// save title to DB
+	static void saveTitleToDb(String youtubeUrl){
+		SharedPreferences pref_show_note_attribute = MainAct.mAct.getSharedPreferences("add_new_note_option", 0);
+		boolean isAddedToTop = pref_show_note_attribute.getString("KEY_ADD_NEW_NOTE_TO", "bottom").equalsIgnoreCase("top");
+
+		DB_page dB_page = new DB_page(MainAct.mAct, Pref.getPref_focusView_page_tableId(MainAct.mAct));
+		int count = dB_page.getNotesCount(true);
+
+		if (pref_show_note_attribute
+				.getString("KEY_ENABLE_LINK_TITLE_SAVE", "yes")
+				.equalsIgnoreCase("yes")) {
+			Date now = new Date();
+
+			long row_id;
+			if (isAddedToTop)
+				row_id = dB_page.getNoteId(0, true);
+			else
+				row_id = dB_page.getNoteId(count - 1, true);
+
+			dB_page.updateNote(row_id, title, "", youtubeUrl, 0, now.getTime(), true); // update note
+		}
 	}
 }
