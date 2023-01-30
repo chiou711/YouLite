@@ -30,6 +30,8 @@ android {
         targetSdkVersion 33
         multiDexEnabled true
         signingConfig signingConfigs.gdrive
+        versionName '1.05.02'
+        versionCode 10502
     }
 
     buildTypes {

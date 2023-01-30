@@ -18,7 +18,6 @@ package com.cw.youlite.tabs;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -521,7 +520,7 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
                                     .setPositiveButton(R.string.confirm_dialog_button_yes, new DialogInterface.OnClickListener(){
                                         @Override
                                         public void onClick(DialogInterface dialog1, int which1){
-                                            deletePage(tabPos, act);
+                                            deletePage2(tabPos, act);
                                             FolderUi.selectFolder(act,FolderUi.getFocus_folderPos());
                                         }})
                                     .show();
@@ -567,66 +566,100 @@ public class TabsHost extends AppCompatDialogFragment implements TabLayout.OnTab
      * delete page
      *
      */
-    public static  void deletePage(int tabPos, final AppCompatActivity activity)
-    {
+//    public static  void deletePage(int tabPos, final AppCompatActivity activity)
+//    {
+//
+//        final DB_folder mDbFolder = mTabsPagerAdapter.dbFolder;
+//        int pageId =  mDbFolder.getPageId(tabPos, true);
+//        mDbFolder.open();
+//        // check if only one page left
+//        int pagesCount = mDbFolder.getPagesCount(false);
+//        int mFirstPos_PageId = 1;
+//        Cursor mPageCursor = mDbFolder.getPageCursor();
+//        if(mPageCursor.isFirst())
+//            mFirstPos_PageId = pageId;
+//
+//        if(pagesCount > 0)
+//        {
+//            //if current page is the first page and will be delete,
+//            //try to get next existence of note page
+//            System.out.println("TabsHost / deletePage / tabPos = " + tabPos);
+//            System.out.println("TabsHost / deletePage / mFirstPos_PageId = " + mFirstPos_PageId);
+//            if(pageId == mFirstPos_PageId)
+//            {
+//                int cGetNextExistIndex = getFocus_tabPos() +1;
+//                boolean bGotNext = false;
+//                while(!bGotNext){
+//                    try{
+//                        mFirstPos_PageId =  mDbFolder.getPageId(cGetNextExistIndex, false);
+//                        bGotNext = true;
+//                    }catch(Exception e){
+//                        bGotNext = false;
+//                        cGetNextExistIndex++;}}
+//            }
+//
+//            //change to first existing page
+//            int newFirstPageTblId = 0;
+//            for(int i=0 ; i<pagesCount; i++)
+//            {
+//                if(	mDbFolder.getPageId(i, false)== mFirstPos_PageId)
+//                {
+//                    newFirstPageTblId =  mDbFolder.getPageTableId(i, false);
+//                    System.out.println("TabsHost / deletePage / newFirstPageTblId = " + newFirstPageTblId);
+//                }
+//            }
+//            System.out.println("TabsHost / deletePage / --- after delete / newFirstPageTblId = " + newFirstPageTblId);
+//            Pref.setPref_focusView_page_tableId(activity, newFirstPageTblId);//todo Could be 0?
+//        }
+////		else
+////		{
+////             Toast.makeText(activity, R.string.toast_keep_one_page , Toast.LENGTH_SHORT).show();
+////             return;
+////		}
+//        mDbFolder.close();
+//
+//        // get page table Id for dropping
+//        int pageTableId = mDbFolder.getPageTableId(tabPos, true);
+//        System.out.println("TabsHost / _deletePage / pageTableId =  " + pageTableId);
+//
+//        // delete tab name
+//        mDbFolder.dropPageTable(pageTableId,true);
+//        mDbFolder.deletePage(DB_folder.getFocusFolder_tableName(),pageId,true);
+////        mPagesCount--;
+//
+//        // update change after deleting tab
+//        FolderUi.startTabsHostRun();
+//    }
+
+    // delete page
+    // start from position 0 after Delete
+    public static  void deletePage2(int tabPos, final AppCompatActivity activity){
 
         final DB_folder mDbFolder = mTabsPagerAdapter.dbFolder;
-        int pageId =  mDbFolder.getPageId(tabPos, true);
-        mDbFolder.open();
-        // check if only one page left
-        int pagesCount = mDbFolder.getPagesCount(false);
-        int mFirstPos_PageId = 1;
-        Cursor mPageCursor = mDbFolder.getPageCursor();
-        if(mPageCursor.isFirst())
-            mFirstPos_PageId = pageId;
 
-        if(pagesCount > 0)
-        {
-            //if current page is the first page and will be delete,
-            //try to get next existence of note page
-            System.out.println("TabsHost / deletePage / tabPos = " + tabPos);
-            System.out.println("TabsHost / deletePage / mFirstPos_PageId = " + mFirstPos_PageId);
-            if(pageId == mFirstPos_PageId)
-            {
-                int cGetNextExistIndex = getFocus_tabPos() +1;
-                boolean bGotNext = false;
-                while(!bGotNext){
-                    try{
-                        mFirstPos_PageId =  mDbFolder.getPageId(cGetNextExistIndex, false);
-                        bGotNext = true;
-                    }catch(Exception e){
-                        bGotNext = false;
-                        cGetNextExistIndex++;}}
-            }
-
-            //change to first existing page
-            int newFirstPageTblId = 0;
-            for(int i=0 ; i<pagesCount; i++)
-            {
-                if(	mDbFolder.getPageId(i, false)== mFirstPos_PageId)
-                {
-                    newFirstPageTblId =  mDbFolder.getPageTableId(i, false);
-                    System.out.println("TabsHost / deletePage / newFirstPageTblId = " + newFirstPageTblId);
-                }
-            }
-            System.out.println("TabsHost / deletePage / --- after delete / newFirstPageTblId = " + newFirstPageTblId);
-            Pref.setPref_focusView_page_tableId(activity, newFirstPageTblId);//todo Could be 0?
-        }
-//		else
-//		{
-//             Toast.makeText(activity, R.string.toast_keep_one_page , Toast.LENGTH_SHORT).show();
-//             return;
-//		}
-        mDbFolder.close();
-
-        // get page table Id for dropping
+        // get page table Id for dropping table
         int pageTableId = mDbFolder.getPageTableId(tabPos, true);
         System.out.println("TabsHost / _deletePage / pageTableId =  " + pageTableId);
 
-        // delete tab name
+        // delete page table: format Page1_2
         mDbFolder.dropPageTable(pageTableId,true);
+
+        // delete row by page ID
+        int pageId =  mDbFolder.getPageId(tabPos, true);
         mDbFolder.deletePage(DB_folder.getFocusFolder_tableName(),pageId,true);
-//        mPagesCount--;
+
+        // change to first existing page
+        mDbFolder.open();
+        int pagesCount = mDbFolder.getPagesCount(false);
+        // check if only one page left
+        if(pagesCount > 0){
+            int newFirstPageTblId = mDbFolder.getPageTableId(0, false);
+            System.out.println("TabsHost / deletePage / newFirstPageTblId = " + newFirstPageTblId);
+
+            // set new focus page table Id
+            Pref.setPref_focusView_page_tableId(activity, newFirstPageTblId);
+        }
+        mDbFolder.close();
 
         // update change after deleting tab
         FolderUi.startTabsHostRun();
