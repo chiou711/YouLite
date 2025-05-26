@@ -66,7 +66,6 @@ public class MainUi {
 
         path = pathOri;
 
-
         String idStr = Util.getYoutubeId(pathOri);
         String listIdStr = Util.getYoutubeListId(pathOri);//todo Not use now?
         String playListIdStr = Util.getYoutubePlaylistId(pathOri);
@@ -89,7 +88,8 @@ public class MainUi {
 
         // id or playlist
         if(!Util.isEmptyString(idStr) ||
-           !Util.isEmptyString(playListIdStr)){
+           Util.isWebLink(path) ||
+           !Util.isEmptyString(playListIdStr)) {
             System.out.println("MainUi / _addNote_IntentLink / only v ");
             // for SoundCloud case, path could contain other strings before URI path
             if(pathOri.contains("http")) {
